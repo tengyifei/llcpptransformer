@@ -1,17 +1,22 @@
 #include <stdio.h>
 
 #include "transformer.h"
+#include "tables.h"
 
-int main() {
-    uint8_t in_buffer[64000];
-    uint8_t out_buffer[64000];
+zx_status_t test_sandwich1() {
+    uint8_t in_buffer[ZX_CHANNEL_MAX_MSG_BYTES];
+    uint8_t out_buffer[ZX_CHANNEL_MAX_MSG_BYTES];
     uint32_t out_buffer_size;
     const char* error_msg;
-    fidl_type_t* type;
-    zx_status_t status = fidl_transform_xunion_to_union(type,
+    zx_status_t status = fidl_transform_xunion_to_union(&example_Sandwich1Table,
                                                         in_buffer, 10,
                                                         out_buffer, &out_buffer_size,
                                                         &error_msg);
-    printf("status: %d\n", status);
+    return status;
+}
+
+int main() {
+    zx_status_t status = test_sandwich1();
+    printf("test_sandwich1: %d\n", status);
     return 0;
 }

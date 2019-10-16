@@ -21,6 +21,8 @@
 #endif
 #endif
 
+#define add_overflow(a, b, c) __builtin_add_overflow(a, b, c)
+
 typedef __INTPTR_TYPE__ intptr_t;
 typedef __UINTPTR_TYPE__ uintptr_t;
 
@@ -34,6 +36,8 @@ typedef __INT32_TYPE__ int32_t;
 typedef __INT64_TYPE__ int64_t;
 
 typedef int32_t zx_status_t;
+
+#define ZX_CHANNEL_MAX_MSG_BYTES            ((uint32_t)65536u)
 
 #define ZX_OK (0)
 
