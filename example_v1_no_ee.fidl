@@ -1,0 +1,36 @@
+library examplev1noee;
+
+xunion UnionSize8Aligned4 {
+    uint32 variant; // 0x7fc2f0db
+};
+
+xunion UnionSize16Aligned4 {
+    array<uint8>:6 variant; // 0x20d1d3bf
+};
+
+struct StructSize16Alignement8 {
+    uint64 f1;
+    uint64 f2;
+};
+
+xunion UnionSize24Alignement8 {
+    StructSize16Alignement8 variant; // 0x3404559b
+};
+
+struct Sandwich1 {
+   uint32 before;
+   UnionSize8Aligned4 union;
+   uint32 after;
+};
+
+struct Sandwich2 {
+   uint32 before;
+   UnionSize16Aligned4 union;
+   uint32 after;
+};
+
+struct Sandwich3 {
+   uint32 before;
+   UnionSize16Aligned4 union;
+   uint32 after;
+};

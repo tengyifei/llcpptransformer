@@ -39,37 +39,21 @@ public:
     uint32_t dst_out_of_line_offset = 0;
   };
 
-  zx_status_t Transform(const fidl_type_t& type, const uint32_t element_size) {
+  zx_status_t Transform(const fidl_type_t& type,
+                        const Position& position, const uint32_t element_size) {
     switch (type.type_tag) {
     case fidl::kFidlTypePrimitive:
     case fidl::kFidlTypeEnum:
     case fidl::kFidlTypeBits:
     case fidl::kFidlTypeStructPointer:
     case fidl::kFidlTypeUnionPointer:
-    case fidl::kFidlTypeString: {
+    case fidl::kFidlTypeString:
       // nothing to do, copy
       // would be nice to be passed "size_including_padding" to have generic handling
       // memcpy(out_bytes_ + current_out_offset_,
       //       in_bytes_ + current_in_offset_,
       //       field_size_plus_padding);
-      // current_out_offset_ += field_size_plus_padding;
-      current_in_offset_ += element_size;
       return ZX_OK;
-    }
-    case fidl::kFidlTypeStruct:
-    case fidl::kFidlTypeUnion:
-    case fidl::kFidlTypeArray:
-    case fidl::kFidlTypeHandle:
-    case fidl::kFidlTypeVector:
-    case fidl::kFidlTypeTable:
-    case fidl::kFidlTypeXUnion:
-      assert(false && "bug: should not be called with element_size");
-    }
-    return ZX_ERR_BAD_STATE;
-  }
-
-  zx_status_t Transform(const fidl_type_t& type, const Position& position) {
-    switch (type.type_tag) {
     case fidl::kFidlTypeStruct:
       return TransformStruct(type, position);
     case fidl::kFidlTypeUnion:
@@ -89,14 +73,6 @@ public:
     case fidl::kFidlTypeXUnion:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
-
-    case fidl::kFidlTypePrimitive:
-    case fidl::kFidlTypeEnum:
-    case fidl::kFidlTypeBits:
-    case fidl::kFidlTypeStructPointer:
-    case fidl::kFidlTypeUnionPointer:
-    case fidl::kFidlTypeString:
-      assert(false && "bug: should not be called with position");
     }
     return ZX_ERR_BAD_STATE;
   }
@@ -106,15 +82,23 @@ public:
     const fidl::FidlCodedStruct& coded_struct = type.coded_struct;
   
     const uint32_t last_field_index = coded_struct.field_count - 1;
-    const uint32_t offset_start_of_struct = current_in_offset_;
-    const uint32_t offset_end_of_struct = current_in_offset_ + coded_struct.size;
+    const uint32_t offset_end_of_src_struct = position.src_inline_offset + coded_struct.size;
     for (uint32_t field_index = 0; field_index <= last_field_index; field_index++) {
-      const auto& field = coded_struct.fields[field_index];
-      uint32_t next_field_offset = (field_index == last_field_index) ?
-          offset_end_of_struct :
-          offset_start_of_struct + coded_struct.fields[field_index + 1].offset;
-      uint32_t field_size_plus_padding = next_field_offset - current_in_offset_;
-      if (zx_status_t status = Transform(*field.type, field_size_plus_padding); status != ZX_OK) {
+      const auto& src_field = coded_struct.fields[field_index];
+      const auto& dst_field = coded_struct.fields[field_index];
+      uint32_t src_field_offset = position.src_inline_offset + src_field.offset;
+      uint32_t dst_field_offset = position.dst_inline_offset + dst_field.offset;
+      uint32_t next_src_field_offset = (field_index == last_field_index) ?
+          offset_end_of_src_struct :
+          position.src_inline_offset + coded_struct.fields[field_index + 1].offset;
+      uint32_t field_size_plus_padding = next_src_field_offset - src_field_offset;
+      auto field_position = Position{
+        .src_inline_offset = src_field_offset,
+        .src_out_of_line_offset = position.src_out_of_line_offset,
+        .dst_inline_offset = dst_field_offset,
+        .dst_out_of_line_offset = position.dst_out_of_line_offset,
+      };
+      if (zx_status_t status = Transform(*src_field.type, field_position, field_size_plus_padding); status != ZX_OK) {
         return status;
       }
     }
@@ -126,11 +110,11 @@ public:
     const fidl::FidlCodedUnion& coded_union = type.coded_union;
     const fidl::FidlCodedXUnion& coded_xunion = *type.coded_union.in_v1_no_ee;
 
-    const fidl_xunion_t* union_as_xunion =
-      reinterpret_cast<const fidl_xunion_t*>(in_bytes_ + current_in_offset_);
+    const fidl_xunion_t* src_union_as_xunion =
+      reinterpret_cast<const fidl_xunion_t*>(in_bytes_ + position.src_inline_offset);
 
     // look up variant type by ordinal
-    const auto ordinal = reinterpret_cast<uint32_t>(union_as_xunion->tag);
+    const auto ordinal = reinterpret_cast<uint32_t>(src_union_as_xunion->tag);
     const fidl_type_t* variant_type = nullptr;
     for (uint32_t variant_index = 0; variant_index <= coded_xunion.field_count; variant_index++) {
       const fidl::FidlXUnionField& candidate_variant = coded_xunion.fields[variant_index];
@@ -141,19 +125,18 @@ public:
     }
     assert(variant_type != nullptr && "ordinal has no corresponding variant");
 
+    // TODO: write ordinal in dst
+    // TODO: align dst
+
     // copy out-of-line data into inline portion
-    Transform(*variant_type, Position{
+    return Transform(*variant_type, Position{
       .src_inline_offset = position.src_out_of_line_offset,
       .src_out_of_line_offset = 0, // NEXT out of line object!
       .dst_inline_offset = position.dst_inline_offset + 4, // or 8 depending on alignment
       .dst_out_of_line_offset = 0, // NEXT out of line object!
-    });
-
-    return ZX_OK;
+    }, 0 /* WRONG */);
   }
 
-  uint32_t current_in_offset_ = 0;
-  uint32_t current_out_offset_ = 0;
   const uint8_t* in_bytes_;
   const uint32_t in_num_bytes_;
   uint8_t* out_bytes_;

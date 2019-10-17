@@ -5,6 +5,8 @@
 #ifndef SYSROOT_ZIRCON_FIDL_H_
 #define SYSROOT_ZIRCON_FIDL_H_
 
+#include <cstddef>
+
 #if !defined(__cplusplus)
 #if defined(__GNUC__) && \
     (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) < 40800
@@ -585,12 +587,11 @@ struct FidlCodedStruct {
   const uint32_t field_count;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
-  const FidlCodedStruct* const in_v1_no_ee;
+  FidlCodedStruct* in_v1_no_ee;
 
   constexpr FidlCodedStruct(const FidlStructField* fields, uint32_t field_count, uint32_t size,
-                            const char* name, const FidlCodedStruct* const in_v1_no_ee)
-      : fields(fields), field_count(field_count), size(size), name(name),
-        in_v1_no_ee(in_v1_no_ee) {}
+                            const char* name)
+      : fields(fields), field_count(field_count), size(size), name(name), in_v1_no_ee(nullptr) {}
 };
 
 struct FidlCodedStructPointer {
@@ -619,17 +620,16 @@ struct FidlCodedUnion {
   const uint32_t data_offset;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
-  const FidlCodedXUnion* const in_v1_no_ee;
+  FidlCodedXUnion* in_v1_no_ee;
 
   constexpr FidlCodedUnion(const FidlUnionField* const fields, uint32_t field_count,
-                           uint32_t data_offset, uint32_t size, const char* name,
-                           const FidlCodedXUnion* const in_v1_no_ee)
+                           uint32_t data_offset, uint32_t size, const char* name)
       : fields(fields),
         field_count(field_count),
         data_offset(data_offset),
         size(size),
         name(name),
-        in_v1_no_ee(in_v1_no_ee) {}
+        in_v1_no_ee(nullptr) {}
 };
 
 struct FidlCodedUnionPointer {
@@ -734,16 +734,16 @@ struct FidlCodedVector {
 
 struct fidl_type {
   const fidl::FidlTypeTag type_tag;
-  const union {
+  union {
     const fidl::FidlCodedPrimitive coded_primitive;
     const fidl::FidlCodedEnum coded_enum;
     const fidl::FidlCodedBits coded_bits;
-    const fidl::FidlCodedStruct coded_struct;
+    fidl::FidlCodedStruct coded_struct;
     const fidl::FidlCodedStructPointer coded_struct_pointer;
     const fidl::FidlCodedTable coded_table;
-    const fidl::FidlCodedUnion coded_union;
+    fidl::FidlCodedUnion coded_union;
     const fidl::FidlCodedUnionPointer coded_union_pointer;
-    const fidl::FidlCodedXUnion coded_xunion;
+    fidl::FidlCodedXUnion coded_xunion;
     // const fidl::FidlCodedHandle coded_handle;
     const fidl::FidlCodedString coded_string;
     const fidl::FidlCodedArray coded_array;
