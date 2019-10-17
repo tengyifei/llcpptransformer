@@ -1,0 +1,390 @@
+{
+  "version": "0.0.1",
+  "name": "examplev1noee",
+  "library_dependencies": [],
+  "bits_declarations": [],
+  "const_declarations": [],
+  "enum_declarations": [],
+  "interface_declarations": [],
+  "service_declarations": [],
+  "struct_declarations": [
+    {
+      "name": "examplev1noee/StructSize16Alignement8",
+      "location": {
+        "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+        "line": 11,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint64"
+          },
+          "name": "f1",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 12,
+            "column": 12
+          },
+          "size": 8,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 0,
+          "max_handles": 0
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint64"
+          },
+          "name": "f2",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 13,
+            "column": 12
+          },
+          "size": 8,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0
+        }
+      ],
+      "size": 16,
+      "max_out_of_line": 0,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": false
+    },
+    {
+      "name": "examplev1noee/Sandwich1",
+      "location": {
+        "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+        "line": 20,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 21,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "examplev1noee/UnionSize8Aligned4",
+            "nullable": false
+          },
+          "name": "union",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 22,
+            "column": 23
+          },
+          "size": 24,
+          "max_out_of_line": 8,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 23,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 32,
+          "max_handles": 0
+        }
+      ],
+      "size": 40,
+      "max_out_of_line": 8,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true
+    },
+    {
+      "name": "examplev1noee/Sandwich2",
+      "location": {
+        "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+        "line": 26,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 27,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "examplev1noee/UnionSize16Aligned4",
+            "nullable": false
+          },
+          "name": "union",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 28,
+            "column": 24
+          },
+          "size": 24,
+          "max_out_of_line": 8,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 29,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 32,
+          "max_handles": 0
+        }
+      ],
+      "size": 40,
+      "max_out_of_line": 8,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true
+    },
+    {
+      "name": "examplev1noee/Sandwich3",
+      "location": {
+        "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+        "line": 32,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 33,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "examplev1noee/UnionSize16Aligned4",
+            "nullable": false
+          },
+          "name": "union",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 34,
+            "column": 24
+          },
+          "size": 24,
+          "max_out_of_line": 8,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 35,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 32,
+          "max_handles": 0
+        }
+      ],
+      "size": 40,
+      "max_out_of_line": 8,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true
+    }
+  ],
+  "table_declarations": [],
+  "union_declarations": [],
+  "xunion_declarations": [
+    {
+      "name": "examplev1noee/UnionSize8Aligned4",
+      "location": {
+        "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+        "line": 3,
+        "column": 8
+      },
+      "members": [
+        {
+          "name": "variant",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "ordinal": 1561634187,
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 4,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0
+        }
+      ],
+      "size": 24,
+      "max_out_of_line": 8,
+      "alignment": 8,
+      "max_handles": 0,
+      "strict": false
+    },
+    {
+      "name": "examplev1noee/UnionSize16Aligned4",
+      "location": {
+        "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+        "line": 7,
+        "column": 8
+      },
+      "members": [
+        {
+          "name": "variant",
+          "type": {
+            "kind": "array",
+            "element_type": {
+              "kind": "primitive",
+              "subtype": "uint8"
+            },
+            "element_count": 6
+          },
+          "ordinal": 859165658,
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 8,
+            "column": 20
+          },
+          "size": 6,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 0
+        }
+      ],
+      "size": 24,
+      "max_out_of_line": 8,
+      "alignment": 8,
+      "max_handles": 0,
+      "strict": false
+    },
+    {
+      "name": "examplev1noee/UnionSize24Alignement8",
+      "location": {
+        "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+        "line": 16,
+        "column": 8
+      },
+      "members": [
+        {
+          "name": "variant",
+          "type": {
+            "kind": "identifier",
+            "identifier": "examplev1noee/StructSize16Alignement8",
+            "nullable": false
+          },
+          "ordinal": 1646444695,
+          "location": {
+            "filename": "../llcpptransformer/example_v1_no_ee.fidl",
+            "line": 17,
+            "column": 29
+          },
+          "size": 16,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 0
+        }
+      ],
+      "size": 24,
+      "max_out_of_line": 16,
+      "alignment": 8,
+      "max_handles": 0,
+      "strict": false
+    }
+  ],
+  "type_alias_declarations": [],
+  "declaration_order": [
+    "examplev1noee/UnionSize8Aligned4",
+    "examplev1noee/Sandwich1",
+    "examplev1noee/UnionSize16Aligned4",
+    "examplev1noee/Sandwich3",
+    "examplev1noee/Sandwich2",
+    "examplev1noee/StructSize16Alignement8",
+    "examplev1noee/UnionSize24Alignement8"
+  ],
+  "declarations": {
+    "examplev1noee/StructSize16Alignement8": "struct",
+    "examplev1noee/Sandwich1": "struct",
+    "examplev1noee/Sandwich2": "struct",
+    "examplev1noee/Sandwich3": "struct",
+    "examplev1noee/UnionSize8Aligned4": "xunion",
+    "examplev1noee/UnionSize16Aligned4": "xunion",
+    "examplev1noee/UnionSize24Alignement8": "xunion"
+  }
+}

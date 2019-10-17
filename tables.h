@@ -61,10 +61,15 @@ extern const fidl_type_t examplev1noee_UnionSize24Alignement8NullableRefTable;
 static const fidl_type_t Array6_5uint8Table = fidl_type_t(::fidl::FidlCodedArray(nullptr, 6u, 1u));
 
 
-static const ::fidl::FidlXUnionField Fields32examplev1noee_UnionSize8Aligned4[] = {
-    ::fidl::FidlXUnionField(&::fidl::internal::kUint32Table,0x7fc2f0db)
+// static const ::fidl::FidlXUnionField Fields32examplev1noee_UnionSize8Aligned4[] = {
+//     ::fidl::FidlXUnionField(&::fidl::internal::kUint32Table,0x7fc2f0db)
+// };
+// fidl_type_t examplev1noee_UnionSize8Aligned4Table = fidl_type_t(::fidl::FidlCodedXUnion(1u, Fields32examplev1noee_UnionSize8Aligned4, ::fidl::kNonnullable, "examplev1noee/UnionSize8Aligned4", ::fidl::kFlexible));
+
+static const ::fidl::FidlUnionField Fields26examplev1noee_UnionSize8Aligned4[] = {
+    ::fidl::FidlUnionField(nullptr, 0u, 0x7fc2f0db)
 };
-fidl_type_t examplev1noee_UnionSize8Aligned4Table = fidl_type_t(::fidl::FidlCodedXUnion(1u, Fields32examplev1noee_UnionSize8Aligned4, ::fidl::kNonnullable, "examplev1noee/UnionSize8Aligned4", ::fidl::kFlexible));
+fidl_type_t examplev1noee_UnionSize8Aligned4Table = fidl_type_t(::fidl::FidlCodedUnion(Fields26examplev1noee_UnionSize8Aligned4, 1u, 4u, 8u, "example/UnionSize8Aligned4"));
 
 static const ::fidl::FidlXUnionField Fields43examplev1noee_UnionSize8Aligned4NullableRef[] = {
     ::fidl::FidlXUnionField(&::fidl::internal::kUint32Table,0x7fc2f0db)
@@ -72,7 +77,7 @@ static const ::fidl::FidlXUnionField Fields43examplev1noee_UnionSize8Aligned4Nul
 const fidl_type_t examplev1noee_UnionSize8Aligned4NullableRefTable = fidl_type_t(::fidl::FidlCodedXUnion(1u, Fields43examplev1noee_UnionSize8Aligned4NullableRef, ::fidl::kNullable, "examplev1noee/UnionSize8Aligned4", ::fidl::kFlexible));
 
 static const ::fidl::FidlStructField Fields23examplev1noee_Sandwich1[] = {
-    ::fidl::FidlStructField(nullptr, 4u, 4u),
+    ::fidl::FidlStructField(nullptr, 0u, 4u),
     ::fidl::FidlStructField(&examplev1noee_UnionSize8Aligned4Table, 8u, 0u),
     ::fidl::FidlStructField(nullptr, 36u, 4u)
 };
@@ -115,11 +120,11 @@ static const ::fidl::FidlXUnionField Fields47examplev1noee_UnionSize24Alignement
 };
 const fidl_type_t examplev1noee_UnionSize24Alignement8NullableRefTable = fidl_type_t(::fidl::FidlCodedXUnion(1u, Fields47examplev1noee_UnionSize24Alignement8NullableRef, ::fidl::kNullable, "examplev1noee/UnionSize24Alignement8", ::fidl::kFlexible));
 
-void init() {
-    example_Sandwich1Table.coded_struct.in_v1_no_ee =
-        &examplev1noee_Sandwich1Table.coded_struct;
-    example_UnionSize8Aligned4Table.coded_union.in_v1_no_ee =
-        &examplev1noee_UnionSize8Aligned4Table.coded_xunion;
+void init_coding_tables() {
+    examplev1noee_Sandwich1Table.coded_struct.alt_type =
+        &example_Sandwich1Table.coded_struct;
+    examplev1noee_UnionSize8Aligned4Table.coded_union.alt_type =
+        &examplev1noee_UnionSize8Aligned4Table.coded_union;
 }
 
 } // extern "C"

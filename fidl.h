@@ -507,9 +507,13 @@ struct FidlStructField {
 struct FidlUnionField {
   const fidl_type* type;
   uint32_t padding;
+  uint32_t xunion_ordinal;
 
   constexpr FidlUnionField(const fidl_type* type, uint32_t padding)
-      : type(type), padding(padding) {}
+      : type(type), padding(padding), xunion_ordinal(0) {}
+
+  constexpr FidlUnionField(const fidl_type* type, uint32_t padding, uint32_t xunion_ordinal)
+      : type(type), padding(padding), xunion_ordinal(xunion_ordinal) {}
 };
 
 struct FidlTableField {
@@ -587,11 +591,11 @@ struct FidlCodedStruct {
   const uint32_t field_count;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
-  FidlCodedStruct* in_v1_no_ee;
+  FidlCodedStruct* alt_type;
 
   constexpr FidlCodedStruct(const FidlStructField* fields, uint32_t field_count, uint32_t size,
                             const char* name)
-      : fields(fields), field_count(field_count), size(size), name(name), in_v1_no_ee(nullptr) {}
+      : fields(fields), field_count(field_count), size(size), name(name), alt_type(nullptr) {}
 };
 
 struct FidlCodedStructPointer {
@@ -620,7 +624,7 @@ struct FidlCodedUnion {
   const uint32_t data_offset;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
-  FidlCodedXUnion* in_v1_no_ee;
+  FidlCodedUnion* alt_type;
 
   constexpr FidlCodedUnion(const FidlUnionField* const fields, uint32_t field_count,
                            uint32_t data_offset, uint32_t size, const char* name)
@@ -629,7 +633,7 @@ struct FidlCodedUnion {
         data_offset(data_offset),
         size(size),
         name(name),
-        in_v1_no_ee(nullptr) {}
+        alt_type(nullptr) {}
 };
 
 struct FidlCodedUnionPointer {
