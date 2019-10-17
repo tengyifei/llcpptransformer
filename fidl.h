@@ -585,10 +585,12 @@ struct FidlCodedStruct {
   const uint32_t field_count;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
+  const FidlCodedStruct* const in_v1_no_ee;
 
   constexpr FidlCodedStruct(const FidlStructField* fields, uint32_t field_count, uint32_t size,
-                            const char* name)
-      : fields(fields), field_count(field_count), size(size), name(name) {}
+                            const char* name, const FidlCodedStruct* const in_v1_no_ee)
+      : fields(fields), field_count(field_count), size(size), name(name),
+        in_v1_no_ee(in_v1_no_ee) {}
 };
 
 struct FidlCodedStructPointer {
@@ -607,6 +609,8 @@ struct FidlCodedTable {
       : fields(fields), field_count(field_count), name(name) {}
 };
 
+struct FidlCodedXUnion;
+
 // On-the-wire unions begin with a tag which is an index into |fields|.
 // |data_offset| is the offset of the data in the wire format (tag + padding).
 struct FidlCodedUnion {
@@ -615,14 +619,17 @@ struct FidlCodedUnion {
   const uint32_t data_offset;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
+  const FidlCodedXUnion* const in_v1_no_ee;
 
   constexpr FidlCodedUnion(const FidlUnionField* const fields, uint32_t field_count,
-                           uint32_t data_offset, uint32_t size, const char* name)
+                           uint32_t data_offset, uint32_t size, const char* name,
+                           const FidlCodedXUnion* const in_v1_no_ee)
       : fields(fields),
         field_count(field_count),
         data_offset(data_offset),
         size(size),
-        name(name) {}
+        name(name),
+        in_v1_no_ee(in_v1_no_ee) {}
 };
 
 struct FidlCodedUnionPointer {
