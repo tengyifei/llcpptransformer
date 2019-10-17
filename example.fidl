@@ -1,11 +1,11 @@
 library example;
 
 union UnionSize8Aligned4 {
-    uint32 variant;
+    uint32 variant; // 0x7fc2f0db
 };
 
 union UnionSize16Aligned4 {
-    array<uint8>:6 variant;
+    array<uint8>:6 variant; // 0x20d1d3bf
 };
 
 struct StructSize16Alignement8 {
@@ -14,7 +14,7 @@ struct StructSize16Alignement8 {
 };
 
 union UnionSize24Alignement8 {
-    StructSize16Alignement8 variant;
+    StructSize16Alignement8 variant; // 0x3404559b
 };
 
 struct Sandwich1 {
