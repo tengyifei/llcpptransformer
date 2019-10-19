@@ -55,3 +55,16 @@ struct Sandwich4 {
     UnionSize36Alignment4 union;
     uint32 after;
 };
+
+union UnionOfUnion {
+    uint8 unused; // to avoid using tag 0
+    UnionSize8Aligned4 size8aligned4;
+    UnionSize16Aligned4 size16aligned4;
+    UnionSize24Alignement8 size24aligned8;
+};
+
+struct Sandwich5 {
+    uint32 before;
+    UnionOfUnion union_of_union;
+    uint32 after;
+};

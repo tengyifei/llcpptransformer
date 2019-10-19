@@ -14,6 +14,8 @@ extern const fidl_type_t example_UnionSize16Aligned4Table;
 extern const fidl_type_t example_Sandwich2Table;
 extern const fidl_type_t example_StructSize16Alignement8Table;
 extern const fidl_type_t example_UnionSize24Alignement8Table;
+extern const fidl_type_t example_UnionOfUnionTable;
+extern const fidl_type_t example_Sandwich5Table;
 extern const fidl_type_t example_Sandwich3Table;
 
 
@@ -78,6 +80,24 @@ static const ::fidl::FidlUnionField Fields30example_UnionSize24Alignement8[] = {
 extern inline const ::fidl::FidlCodedUnion* const example_UnionSize24Alignement8Table_alt;
 const fidl_type_t example_UnionSize24Alignement8Table = fidl_type_t(::fidl::FidlCodedUnion(Fields30example_UnionSize24Alignement8, 4u, 8u, 24u, "example/UnionSize24Alignement8", example_UnionSize24Alignement8Table_alt));
 
+static const ::fidl::FidlUnionField Fields20example_UnionOfUnion[] = {
+    ::fidl::FidlUnionField(nullptr, 23u, 1201318480u),
+    ::fidl::FidlUnionField(&example_UnionSize8Aligned4Table, 16u, 548068704u),
+    ::fidl::FidlUnionField(&example_UnionSize16Aligned4Table, 12u, 762734029u),
+    ::fidl::FidlUnionField(&example_UnionSize24Alignement8Table, 0u, 108145951u)
+};
+extern inline const ::fidl::FidlCodedUnion* const example_UnionOfUnionTable_alt;
+const fidl_type_t example_UnionOfUnionTable = fidl_type_t(::fidl::FidlCodedUnion(Fields20example_UnionOfUnion, 4u, 8u, 32u, "example/UnionOfUnion", example_UnionOfUnionTable_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields17example_Sandwich5_field1_alt_field;
+static const ::fidl::FidlStructField Fields17example_Sandwich5[] = {
+    ::fidl::FidlStructField(nullptr, 4u, 4u),
+    ::fidl::FidlStructField(&example_UnionOfUnionTable, 8u, 0u, Fields17example_Sandwich5_field1_alt_field),
+    ::fidl::FidlStructField(nullptr, 44u, 4u)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_Sandwich5Table_alt;
+const fidl_type_t example_Sandwich5Table = fidl_type_t(::fidl::FidlCodedStruct(Fields17example_Sandwich5, 3u, 48u, "example/Sandwich5", example_Sandwich5Table_alt));
+
 extern inline const ::fidl::FidlStructField* const Fields17example_Sandwich3_field1_alt_field;
 static const ::fidl::FidlStructField Fields17example_Sandwich3[] = {
     ::fidl::FidlStructField(nullptr, 4u, 4u),
@@ -97,6 +117,8 @@ extern const fidl_type_t v1_example_UnionSize16Aligned4Table;
 extern const fidl_type_t v1_example_Sandwich2Table;
 extern const fidl_type_t v1_example_StructSize16Alignement8Table;
 extern const fidl_type_t v1_example_UnionSize24Alignement8Table;
+extern const fidl_type_t v1_example_UnionOfUnionTable;
+extern const fidl_type_t v1_example_Sandwich5Table;
 extern const fidl_type_t v1_example_Sandwich3Table;
 
 
@@ -167,6 +189,24 @@ static const ::fidl::FidlUnionField Fields33v1_example_UnionSize24Alignement8[] 
 extern inline const ::fidl::FidlCodedUnion* const v1_example_UnionSize24Alignement8Table_alt;
 const fidl_type_t v1_example_UnionSize24Alignement8Table = fidl_type_t(::fidl::FidlCodedUnion(Fields33v1_example_UnionSize24Alignement8, 4u, 8u, 24u, "example/UnionSize24Alignement8", v1_example_UnionSize24Alignement8Table_alt));
 
+static const ::fidl::FidlUnionField Fields23v1_example_UnionOfUnion[] = {
+    ::fidl::FidlUnionField(nullptr, 7u, 1201318480u),
+    ::fidl::FidlUnionField(&v1_example_UnionSize8Aligned4Table, 0u, 548068704u),
+    ::fidl::FidlUnionField(&v1_example_UnionSize16Aligned4Table, 0u, 762734029u),
+    ::fidl::FidlUnionField(&v1_example_UnionSize24Alignement8Table, 0u, 108145951u)
+};
+extern inline const ::fidl::FidlCodedUnion* const v1_example_UnionOfUnionTable_alt;
+const fidl_type_t v1_example_UnionOfUnionTable = fidl_type_t(::fidl::FidlCodedUnion(Fields23v1_example_UnionOfUnion, 4u, 8u, 24u, "example/UnionOfUnion", v1_example_UnionOfUnionTable_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich5_field1_alt_field;
+static const ::fidl::FidlStructField Fields20v1_example_Sandwich5[] = {
+    ::fidl::FidlStructField(nullptr, 4u, 4u),
+    ::fidl::FidlStructField(&v1_example_UnionOfUnionTable, 8u, 0u, Fields20v1_example_Sandwich5_field1_alt_field),
+    ::fidl::FidlStructField(nullptr, 36u, 4u)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich5Table_alt;
+const fidl_type_t v1_example_Sandwich5Table = fidl_type_t(::fidl::FidlCodedStruct(Fields20v1_example_Sandwich5, 3u, 40u, "example/Sandwich5", v1_example_Sandwich5Table_alt));
+
 extern inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich3_field1_alt_field;
 static const ::fidl::FidlStructField Fields20v1_example_Sandwich3[] = {
     ::fidl::FidlStructField(nullptr, 4u, 4u),
@@ -202,9 +242,18 @@ inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich4Table_alt = &exa
 inline const ::fidl::FidlStructField* const Fields17example_Sandwich4_field1_alt_field = &Fields20v1_example_Sandwich4[1];
 inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich4_field1_alt_field = &Fields17example_Sandwich4[0];
 
+inline const ::fidl::FidlCodedStruct* const example_Sandwich5Table_alt = &v1_example_Sandwich5Table.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich5Table_alt = &example_Sandwich5Table.coded_struct;
+
+inline const ::fidl::FidlStructField* const Fields17example_Sandwich5_field1_alt_field = &Fields20v1_example_Sandwich5[1];
+inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich5_field1_alt_field = &Fields17example_Sandwich5[1];
+
 inline const ::fidl::FidlCodedStruct* const example_StructSize16Alignement8Table_alt = &v1_example_StructSize16Alignement8Table.coded_struct;
 inline const ::fidl::FidlCodedStruct* const v1_example_StructSize16Alignement8Table_alt = &example_StructSize16Alignement8Table.coded_struct;
 
+
+inline const ::fidl::FidlCodedUnion* const example_UnionOfUnionTable_alt = &v1_example_UnionOfUnionTable.coded_union;
+inline const ::fidl::FidlCodedUnion* const v1_example_UnionOfUnionTable_alt = &example_UnionOfUnionTable.coded_union;
 
 inline const ::fidl::FidlCodedUnion* const example_UnionSize16Aligned4Table_alt = &v1_example_UnionSize16Aligned4Table.coded_union;
 inline const ::fidl::FidlCodedUnion* const v1_example_UnionSize16Aligned4Table_alt = &example_UnionSize16Aligned4Table.coded_union;
