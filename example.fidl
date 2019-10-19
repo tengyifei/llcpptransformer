@@ -1,7 +1,9 @@
 library example;
 
 union UnionSize8Aligned4 {
-    uint32 variant; // 0x7fc2f0db
+    uint8 unused1;   // makes `variant` tagged 2
+    uint8 unused2;   // since it is the third
+    uint32 variant;  // xunion_ordinal = 0x7fc2f0db
 };
 
 union UnionSize16Aligned4 {

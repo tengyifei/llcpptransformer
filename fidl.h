@@ -499,9 +499,10 @@ struct FidlStructField {
   // Otherwise, |offset| stores the offset of the padding.
   uint32_t offset;
   uint8_t padding;
+  const FidlStructField* alt_field;
 
-  constexpr FidlStructField(const fidl_type* type, uint32_t offset, uint8_t padding)
-      : type(type), offset(offset), padding(padding) {}
+  constexpr FidlStructField(const fidl_type* type, uint32_t offset, uint8_t padding, const FidlStructField* alt_field = nullptr)
+      : type(type), offset(offset), padding(padding), alt_field(alt_field) {}
 };
 
 struct FidlUnionField {
