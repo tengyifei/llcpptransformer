@@ -15,8 +15,11 @@ enum struct WireFormat {
   kV1NoEe,
 };
 
-uint32_t InlineSize(const fidl_type_t& type, WireFormat wire_format) {
-    switch (type.type_tag) {
+uint32_t InlineSize(const fidl_type_t* type, WireFormat wire_format) {
+    if (!type) {
+      return 8;
+    }
+    switch (type->type_tag) {
     case fidl::kFidlTypePrimitive:
     case fidl::kFidlTypeEnum:
     case fidl::kFidlTypeBits:
@@ -28,11 +31,11 @@ uint32_t InlineSize(const fidl_type_t& type, WireFormat wire_format) {
     case fidl::kFidlTypeString:
       return 16;
     case fidl::kFidlTypeStruct:
-      return type.coded_struct.size;
+      return type->coded_struct.size;
     case fidl::kFidlTypeUnion:
       switch (wire_format) {
       case WireFormat::kOld:
-        return type.coded_union.size;
+        return type->coded_union.size;
       case WireFormat::kV1NoEe:
         return 24; // xunion
       }
@@ -66,8 +69,8 @@ public:
     printf("Copy: src_offset=%d dst_offset=%d size=%d\n", src_offset, dst_offset, size);
     printf("\n");
 
-    assert(0 < size);
-    assert(src_offset + size < src_num_bytes_);
+    assert(size > 0);
+    assert(src_offset + size <= src_num_bytes_);
 
     memcpy(dst_bytes_ + dst_offset, src_bytes_ + src_offset, size);
     UpdateHighestOffset(dst_offset + size);
@@ -77,6 +80,7 @@ public:
   void Write(uint32_t dst_offset, T value) {
     printf("Write: dst_offset=%d, sizeof(value)=%d\n", dst_offset, sizeof(value));
     printf("\n");
+
     auto ptr = reinterpret_cast<T*>(dst_bytes_ + dst_offset);
     *ptr = value;
     UpdateHighestOffset(dst_offset + sizeof(value));
@@ -177,6 +181,7 @@ no_transform_just_copy:
     printf("Transform (just copy): position.dst_inline_offset=%d\n", position.dst_inline_offset);
     printf("Transform (just copy): element_size=%d\n", element_size);
     printf("\n");
+
     src_dst.Copy(position.src_inline_offset, position.dst_inline_offset, element_size);
     return ZX_OK;
   }
@@ -185,6 +190,7 @@ no_transform_just_copy:
     printf("TransformStruct: position.src_inline_offset=%d\n", current_position.src_inline_offset);
     printf("TransformStruct: position.dst_inline_offset=%d\n", current_position.dst_inline_offset);
     printf("\n", current_position.dst_inline_offset);
+
     assert(v1_no_ee_type.type_tag == fidl::kFidlTypeStruct);
     const fidl::FidlCodedStruct& src_coded_struct = v1_no_ee_type.coded_struct;
     const fidl::FidlCodedStruct& dst_coded_struct = *v1_no_ee_type.coded_struct.alt_type;
@@ -229,9 +235,9 @@ no_transform_just_copy:
       //     src_end_of_src_struct :
       //     current_position.src_inline_offset + InlineSize(*src_field.type, WireFormat::kV1NoEe);
       uint32_t src_next_field_offset =
-          current_position.src_inline_offset + InlineSize(*src_field.type, WireFormat::kV1NoEe);
+          current_position.src_inline_offset + InlineSize(src_field.type, WireFormat::kV1NoEe);
       uint32_t dst_next_field_offset =
-          current_position.dst_inline_offset + InlineSize(*dst_field.type, WireFormat::kOld);
+          current_position.dst_inline_offset + InlineSize(dst_field.type, WireFormat::kOld);
       uint32_t size = src_next_field_offset - src_field.offset;
       if (zx_status_t status = Transform(src_field.type, current_position, size);
           status != ZX_OK) {
@@ -253,6 +259,8 @@ no_transform_just_copy:
 
     assert(type.type_tag == fidl::kFidlTypeUnion);
     const fidl::FidlCodedUnion& src_coded_union = type.coded_union;
+    const fidl::FidlCodedUnion& dst_coded_union = *type.coded_union.alt_type;
+    assert(src_coded_union.field_count == dst_coded_union.field_count);
 
     // Read: flexible-union ordinal.
     const fidl_xunion_t* src_union_as_xunion =
@@ -275,6 +283,7 @@ no_transform_just_copy:
       }
     }
     assert(src_field_found && "ordinal has no corresponding variant");
+    const fidl::FidlUnionField* dst_field = &dst_coded_union.fields[src_field_index];
 
     // Write: static-union tag.
     src_dst.Write(position.dst_inline_offset, src_field_index);
@@ -286,7 +295,8 @@ no_transform_just_copy:
       .dst_inline_offset = position.dst_inline_offset + 4, // TODO: or 8 depending on alignment
       .dst_out_of_line_offset = UNKNOWN_OFFSET,
     };
-    uint32_t element_size = 8 - src_field->padding;
+    uint32_t element_size =
+      InlineSize(src_field->type, WireFormat::kV1NoEe) + dst_field->padding - src_field->padding;
     if (zx_status_t status = Transform(src_field->type, field_position, element_size);
         status != ZX_OK) {
       return status;
@@ -303,7 +313,7 @@ no_transform_just_copy:
 }  // namespace
 
 zx_status_t fidl_transform_xunion_to_union(const fidl_type_t* type,
-                                           void* in_bytes, uint32_t in_num_bytes,
+                                           const void* in_bytes, uint32_t in_num_bytes,
                                            void* out_bytes, uint32_t* out_num_bytes,
                                            const char** out_error_msg) {
   auto transformer = Transformer(

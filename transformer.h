@@ -15,7 +15,7 @@
 // on the wire xunions get converted to static unions
 // out buffer should be of at least the size of type->format2->(size + max_out_of_line)
 zx_status_t fidl_transform_xunion_to_union(const fidl_type_t* type,
-                                           void* in_bytes, uint32_t in_num_bytes,
+                                           const void* in_bytes, uint32_t in_num_bytes,
                                            void* out_bytes, uint32_t* out_num_bytes,
                                            const char** out_error_msg);
 
