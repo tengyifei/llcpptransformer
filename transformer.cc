@@ -67,7 +67,6 @@ public:
 
   void Copy(uint32_t src_offset, uint32_t dst_offset, uint32_t size) {
     printf("Copy: src_offset=%d dst_offset=%d size=%d\n", src_offset, dst_offset, size);
-    printf("\n");
 
     assert(size > 0);
     assert(src_offset + size <= src_num_bytes_);
@@ -76,10 +75,18 @@ public:
     UpdateHighestOffset(dst_offset + size);
   }
 
+  void Pad(uint32_t dst_offset, uint32_t size) {
+    printf("Pad: dst_offset=%d size=%d\n", dst_offset, size);
+
+    assert(size > 0);
+
+    memset(dst_bytes_ + dst_offset, 0, size);
+    UpdateHighestOffset(dst_offset + size);
+  }
+
   template <typename T> // TODO: restrict to only uint32_t, uint64_t, etc.?
   void Write(uint32_t dst_offset, T value) {
     printf("Write: dst_offset=%d, sizeof(value)=%d\n", dst_offset, sizeof(value));
-    printf("\n");
 
     auto ptr = reinterpret_cast<T*>(dst_bytes_ + dst_offset);
     *ptr = value;
@@ -177,63 +184,61 @@ public:
     return ZX_ERR_BAD_STATE;
 
 no_transform_just_copy:
-    printf("Transform (just copy): position.src_inline_offset=%d\n", position.src_inline_offset);
-    printf("Transform (just copy): position.dst_inline_offset=%d\n", position.dst_inline_offset);
-    printf("Transform (just copy): dst_size=%d\n", dst_size);
-    printf("\n");
-
     src_dst.Copy(position.src_inline_offset, position.dst_inline_offset, dst_size);
     return ZX_OK;
   }
 
   zx_status_t TransformStruct(const fidl_type_t& v1_no_ee_type, Position current_position) {
-    printf("TransformStruct: position.src_inline_offset=%d\n", current_position.src_inline_offset);
-    printf("TransformStruct: position.dst_inline_offset=%d\n", current_position.dst_inline_offset);
-    printf("\n", current_position.dst_inline_offset);
-
     assert(v1_no_ee_type.type_tag == fidl::kFidlTypeStruct);
     const fidl::FidlCodedStruct& src_coded_struct = v1_no_ee_type.coded_struct;
-    const fidl::FidlCodedStruct& dst_coded_struct = *v1_no_ee_type.coded_struct.alt_type;
-  
-    // src last field index
-    // potentially more fields in the v1_no_ee
-    // need to skip the ones with no type when incrementing the dst_field_index
-    const uint32_t src_last_field_index = src_coded_struct.field_count - 1;
 
-    // starts and end
+    // Copy structs without any coded fields, and done.
+    if (src_coded_struct.field_count == 0) {
+      src_dst.Copy(current_position.src_inline_offset,
+                    current_position.dst_inline_offset,
+                    src_coded_struct.size);
+      return ZX_OK;
+    }
+
     const uint32_t src_start_of_struct = current_position.src_inline_offset;
+
+    const fidl::FidlCodedStruct& dst_coded_struct = *v1_no_ee_type.coded_struct.alt_type;
     const uint32_t dst_start_of_struct = current_position.dst_inline_offset;
-    const uint32_t src_end_of_src_struct =
-        current_position.src_inline_offset + src_coded_struct.size;
+    const uint32_t dst_end_of_src_struct =
+        current_position.dst_inline_offset + dst_coded_struct.size;
 
     for (uint32_t src_field_index = 0;
-         src_field_index <= src_last_field_index;
+         src_field_index < src_coded_struct.field_count;
          src_field_index++) {
 
       const auto& src_field = src_coded_struct.fields[src_field_index];
+
+      // Copy fields without coding tables.
       if (!src_field.type) {
-        // uint32_t src_next_field_offset =
-        //   (src_start_of_struct + src_field.offset + src_field.padding);
-        // assert(current_position.src_inline_offset < src_next_field_offset);
-        uint32_t size =
-          src_field.offset + (src_start_of_struct - current_position.src_inline_offset);
+        uint32_t dst_size =
+          src_field.offset /*.padding_offset*/ + (src_start_of_struct - current_position.src_inline_offset);
         src_dst.Copy(current_position.src_inline_offset,
                      current_position.dst_inline_offset,
-                     size);
-        // current_position.src_inline_offset += size;
-        // current_position.dst_inline_offset += size;
+                     dst_size);
+        current_position.dst_inline_offset += dst_size;
         continue;
       }
 
-      current_position.src_inline_offset = src_field.offset;
 
       assert(src_field.alt_field);
       const auto& dst_field = *src_field.alt_field;
+
+      // Pad between fields (if needed).
+      if (current_position.dst_inline_offset < dst_field.offset) {
+        uint32_t size = dst_field.offset - current_position.dst_inline_offset;
+        src_dst.Pad(current_position.dst_inline_offset, size);
+      }
+
+      // Set current position before transforming field.
+      current_position.src_inline_offset = src_field.offset;
       current_position.dst_inline_offset = dst_field.offset;
 
-      // uint32_t src_next_field_offset = (src_field_index == src_last_field_index) ?
-      //     src_end_of_src_struct :
-      //     current_position.src_inline_offset + InlineSize(*src_field.type, WireFormat::kV1NoEe);
+      // Transform field.
       uint32_t src_next_field_offset =
           current_position.src_inline_offset + InlineSize(src_field.type, WireFormat::kV1NoEe);
       uint32_t dst_next_field_offset =
@@ -244,8 +249,15 @@ no_transform_just_copy:
         return status;
       }
 
+      // Update current position for next iteration.
       current_position.src_inline_offset = src_next_field_offset;
       current_position.dst_inline_offset = dst_next_field_offset;
+    }
+
+    // Pad end (if needed).
+    if (current_position.dst_inline_offset < dst_end_of_src_struct) {
+      uint32_t size = dst_end_of_src_struct - current_position.dst_inline_offset;
+      src_dst.Pad(current_position.dst_inline_offset, size);
     }
 
     // Done.
@@ -254,10 +266,6 @@ no_transform_just_copy:
 
   zx_status_t TransformUnion(const fidl_type_t& type,
                              const Position& position, const uint32_t dst_size) {
-    printf("TransformUnion: position.src_inline_offset=%d\n", position.src_inline_offset);
-    printf("TransformUnion: position.dst_inline_offset=%d\n", position.dst_inline_offset);
-    printf("\n");
-
     assert(type.type_tag == fidl::kFidlTypeUnion);
     const fidl::FidlCodedUnion& src_coded_union = type.coded_union;
     const fidl::FidlCodedUnion& dst_coded_union = *type.coded_union.alt_type;
@@ -286,17 +294,26 @@ no_transform_just_copy:
     assert(src_field_found && "ordinal has no corresponding variant");
     const fidl::FidlUnionField* dst_field = &dst_coded_union.fields[src_field_index];
 
-    // Write: static-union tag.
-    src_dst.Write(position.dst_inline_offset, src_field_index);
+    // Write: static-union tag, and pad (if needed).
+    switch (dst_coded_union.data_offset) {
+    case 4:
+      src_dst.Write(position.dst_inline_offset, src_field_index);
+      break;
+    case 8:
+      src_dst.Write(position.dst_inline_offset, static_cast<uint64_t>(src_field_index));
+      break;
+    default:
+      assert(false && "static-union data offset can only be 4 or 8");
+    }
 
     // Write: static-union field (or variant).
     auto field_position = Position{
       .src_inline_offset = position.src_out_of_line_offset,
       .src_out_of_line_offset = UNKNOWN_OFFSET,
-      .dst_inline_offset = position.dst_inline_offset + 4, // TODO: or 8 depending on alignment
+      .dst_inline_offset = position.dst_inline_offset + dst_coded_union.data_offset,
       .dst_out_of_line_offset = UNKNOWN_OFFSET,
     };
-    uint32_t dst_field_size = dst_size - 4; // TODO: or 8 depending on alignment
+    uint32_t dst_field_size = dst_size - dst_coded_union.data_offset;
     if (zx_status_t status = Transform(src_field->type, field_position, dst_field_size);
         status != ZX_OK) {
       return status;

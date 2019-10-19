@@ -19,6 +19,9 @@ struct StructSize16Alignement8 {
 };
 
 union UnionSize24Alignement8 {
+    uint8 unused1;   // makes `variant` tagged 3
+    uint8 unused2;   // since it is the
+    uint8 unused3;   // the fourth
     StructSize16Alignement8 variant; // 0x3404559b
 };
 

@@ -81,6 +81,41 @@ uint8_t sandwich2_case1_expected_output[] = {
     0x05, 0x06, 0x07, 0x08, // Sandwich2.after
 };
 
+uint8_t sandwich3_case1_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich2.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich2.before (padding)
+
+    0x9b, 0x55, 0x04, 0x34, // Sandwich2.union.tag
+    0x00, 0x00, 0x00, 0x00, // Sandwich2.union.padding
+    0x16, 0x00, 0x00, 0x00, // Sandwich2.union.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // Sandwich2.union.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // Sandwich2.union.env.presence
+    0xff, 0xff, 0xff, 0xff, // Sandwich2.union.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich2.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich2.after (padding)
+
+    0xa0, 0xa1, 0xa2, 0xa3, // Sandwich2.union.data
+    0xa4, 0xa5, 0xa6, 0xa7, // Sandwich2.union.data [cont.]
+    0xa8, 0xa9, 0xaa, 0xab, // Sandwich2.union.data [cont.]
+    0xac, 0xad, 0xae, 0xaf, // Sandwich2.union.data [cont.]
+};
+
+uint8_t sandwich3_case1_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich2.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich2.before (padding)
+
+    0x03, 0x00, 0x00, 0x00, // Sandwich2.union.tag
+    0x00, 0x00, 0x00, 0x00, // Sandwich2.union.tag (padding)
+    0xa0, 0xa1, 0xa2, 0xa3, // Sandwich2.union.data
+    0xa4, 0xa5, 0xa6, 0xa7, // Sandwich2.union.data [cont.]
+    0xa8, 0xa9, 0xaa, 0xab, // Sandwich2.union.data [cont.]
+    0xac, 0xad, 0xae, 0xaf, // Sandwich2.union.data [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich2.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich2.after (padding)
+};
+
 uint8_t sandwich4_case1_input[] = {
     0x01, 0x02, 0x03, 0x04, // Sandwich2.before
     0x00, 0x00, 0x00, 0x00, // Sandwich2.before (padding)
@@ -124,6 +159,8 @@ uint8_t sandwich4_case1_expected_output[] = {
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
                      const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes) {
+    printf("----------------\n");
+
     uint8_t actual_dst_bytes[ZX_CHANNEL_MAX_MSG_BYTES];
     uint32_t actual_dst_num_bytes;
     memset(actual_dst_bytes, 0xcc /* poison */, ZX_CHANNEL_MAX_MSG_BYTES);
@@ -160,6 +197,14 @@ bool test_sandwich2() {
     );
 }
 
+bool test_sandwich3() {
+    return run_single_test(
+        &v1_example_Sandwich3Table,
+        sandwich3_case1_input, sizeof(sandwich3_case1_input),
+        sandwich3_case1_expected_output, sizeof(sandwich3_case1_expected_output)
+    );
+}
+
 bool test_sandwich4() {
     return run_single_test(
         &v1_example_Sandwich4Table,
@@ -176,6 +221,10 @@ int main() {
     {
         zx_status_t status = test_sandwich2();
         printf("test_sandwich2: %d\n", status);
+    }
+    {
+        zx_status_t status = test_sandwich3();
+        printf("test_sandwich3: %d\n", status);
     }
     {
         zx_status_t status = test_sandwich4();
