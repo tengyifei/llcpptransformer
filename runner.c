@@ -72,6 +72,6 @@ bool test_sandwich1() {
 
 int main() {
     zx_status_t status = test_sandwich1();
-    printf("test_sandwich1: %s\n", status);
+    printf("test_sandwich1: %d\n", status);
     return 0;
 }
