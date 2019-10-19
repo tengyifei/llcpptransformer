@@ -44,7 +44,7 @@ union UnionSize36Alignment4 {
     uint8 unused1;   // makes `variant` tagged 3
     uint8 unused2;   // since it is the
     uint8 unused3;   // the fourth
-    array<uint8>:32 variant;
+    array<uint8>:32 variant; // 0x5e411019
 };
 
 struct Sandwich4 {
