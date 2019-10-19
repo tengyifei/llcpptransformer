@@ -9,14 +9,57 @@
 
 namespace {
 
+class SrcDst final {
+public:
+  SrcDst(const uint8_t* src_bytes, const uint32_t src_num_bytes,
+         uint8_t* dst_bytes, uint32_t* dst_num_bytes)
+    : src_bytes_(src_bytes), src_num_bytes_(src_num_bytes),
+      dst_bytes_(dst_bytes), dst_num_bytes_(dst_num_bytes) {}
+
+  ~SrcDst() {
+    *dst_num_bytes_ = dst_highest_offset_;
+  }
+
+  template <typename T> // TODO: restrict T should be pointer type
+  const T Read(uint32_t src_offset) {
+    return reinterpret_cast<const T>(src_bytes_ + src_offset);
+  }
+
+  void Copy(uint32_t src_offset, uint32_t dst_offset, uint32_t size) {
+    assert(src_offset + size < src_num_bytes_);
+    memcpy(dst_bytes_ + dst_offset, src_bytes_ + src_offset, size);
+    UpdateHighestOffset(dst_offset + size);
+  }
+
+  template <typename T> // TODO: restrict to only uint32_t, uint64_t, etc.?
+  void Write(uint32_t dst_offset, T value) {
+    auto ptr = reinterpret_cast<T*>(dst_bytes_ + dst_offset);
+    *ptr = value;
+    UpdateHighestOffset(dst_offset + sizeof(value));
+  }
+
+private:
+  void UpdateHighestOffset(uint32_t dst_offset) {
+    if (dst_offset > dst_highest_offset_) {
+      dst_highest_offset_ = dst_offset;
+    }
+  }
+
+  const uint8_t* src_bytes_;
+  const uint32_t src_num_bytes_;
+  uint8_t* dst_bytes_;
+  uint32_t* dst_num_bytes_;
+
+  uint32_t dst_highest_offset_ = 0;
+};
+
 class Transformer final {
 public:
-  Transformer(const uint8_t* in_bytes, const uint32_t in_num_bytes,
-              uint8_t* out_bytes, uint32_t* out_num_bytes,
-              const char** out_error_msg) :
-    in_bytes_(in_bytes), in_num_bytes_(in_num_bytes),
-    out_bytes_(out_bytes), out_num_bytes_(out_num_bytes),
-    out_error_msg_(out_error_msg) {}
+  Transformer(const uint8_t* src_bytes, const uint32_t src_num_bytes,
+              uint8_t* dst_bytes, uint32_t* dst_num_bytes,
+              const char** out_error_msg)
+    : src_dst(src_bytes, src_num_bytes, dst_bytes, dst_num_bytes),
+      out_error_msg_(out_error_msg) {}
 
   zx_status_t RunOnTopLevelStruct(const fidl_type_t* type) {
     assert(type->type_tag == fidl::kFidlTypeStruct && "only top-level structs supported");
@@ -32,7 +75,6 @@ public:
     if (status != ZX_OK) {
       return status;
     }
-    *out_num_bytes_ = 16; // obviously wrong
     return ZX_OK;
   }
 
@@ -87,34 +129,43 @@ public:
     return ZX_ERR_BAD_STATE;
 
 no_transform_just_copy:
-    memcpy(out_bytes_ + position.dst_inline_offset,
-           in_bytes_ + position.src_inline_offset,
-           element_size);
+    src_dst.Copy(position.src_inline_offset, position.dst_inline_offset, element_size);
     return ZX_OK;
   }
 
-  zx_status_t TransformStruct(const fidl_type_t& type, const Position& position) {
-    assert(type.type_tag == fidl::kFidlTypeStruct);
-    const fidl::FidlCodedStruct& coded_struct = type.coded_struct;
+  zx_status_t TransformStruct(const fidl_type_t& v1_no_ee_type, Position current_position) {
+    assert(v1_no_ee_type.type_tag == fidl::kFidlTypeStruct);
+    const fidl::FidlCodedStruct& coded_struct = v1_no_ee_type.coded_struct;
   
     const uint32_t last_field_index = coded_struct.field_count - 1;
-    const uint32_t offset_end_of_src_struct = position.src_inline_offset + coded_struct.size;
+    const uint32_t src_start_of_struct = current_position.src_inline_offset;
+    const uint32_t src_end_of_src_struct = current_position.src_inline_offset + coded_struct.size;
     for (uint32_t field_index = 0; field_index <= last_field_index; field_index++) {
+      // catch up if we skipped inline bytes in the struct
+      // update current src inline position
       const auto& src_field = coded_struct.fields[field_index];
+      // here special because src_field.type == null => offset really means padding_offset!
+      uint32_t src_field_offset = src_start_of_struct + src_field.offset + src_field.padding;
+      if (current_position.src_inline_offset < src_field_offset) {
+        uint32_t size = src_field_offset - current_position.src_inline_offset;
+        src_dst.Copy(current_position.src_inline_offset,
+                     current_position.dst_inline_offset,
+                     size);
+      }
+      current_position.src_inline_offset = src_field_offset;
+
       const auto& dst_field = coded_struct.fields[field_index];
-      uint32_t src_field_offset = position.src_inline_offset + src_field.offset;
-      uint32_t dst_field_offset = position.dst_inline_offset + dst_field.offset;
+      uint32_t dst_field_offset = current_position.dst_inline_offset + dst_field.offset;
+      current_position.dst_inline_offset = dst_field_offset;
+
+      // transformed element size if we need it
       uint32_t next_src_field_offset = (field_index == last_field_index) ?
-          offset_end_of_src_struct :
-          position.src_inline_offset + coded_struct.fields[field_index + 1].offset;
+          src_end_of_src_struct :
+          current_position.src_inline_offset + coded_struct.fields[field_index + 1].offset;
       uint32_t field_size_plus_padding = next_src_field_offset - src_field_offset;
-      auto field_position = Position{
-        .src_inline_offset = src_field_offset,
-        .src_out_of_line_offset = position.src_out_of_line_offset,
-        .dst_inline_offset = dst_field_offset,
-        .dst_out_of_line_offset = position.dst_out_of_line_offset,
-      };
-      if (zx_status_t status = Transform(src_field.type, field_position, field_size_plus_padding); status != ZX_OK) {
+
+      if (zx_status_t status = Transform(src_field.type, current_position, field_size_plus_padding);
+          status != ZX_OK) {
         return status;
       }
     }
@@ -128,7 +179,7 @@ no_transform_just_copy:
 
     // retrieve union-as-xunion ordinal
     const fidl_xunion_t* src_union_as_xunion =
-        reinterpret_cast<const fidl_xunion_t*>(in_bytes_ + position.src_inline_offset);
+        src_dst.Read<const fidl_xunion_t*>(position.src_inline_offset);
     const auto xunion_ordinal =
         reinterpret_cast<uint32_t>(src_union_as_xunion->tag);
 
@@ -146,7 +197,7 @@ no_transform_just_copy:
     }
     assert(variant_found && "ordinal has no corresponding variant");
 
-    out_bytes_[position.dst_inline_offset] = variant_index;
+    src_dst.Write(position.dst_inline_offset, variant_index);
     auto variant_position = Position{
       .src_inline_offset = position.src_out_of_line_offset,
       .src_out_of_line_offset = UNKNOWN_OFFSET,
@@ -156,10 +207,11 @@ no_transform_just_copy:
     return Transform(variant_type, variant_position, 0 /* WRONG */);
   }
 
-  const uint8_t* in_bytes_;
-  const uint32_t in_num_bytes_;
-  uint8_t* out_bytes_;
-  uint32_t* out_num_bytes_;
+  SrcDst src_dst;
+  // const uint8_t* in_bytes_;
+  // const uint32_t in_num_bytes_;
+  // uint8_t* out_bytes_;
+  // uint32_t* out_num_bytes_;
   const char** const out_error_msg_;
 };
 

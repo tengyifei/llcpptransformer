@@ -57,7 +57,7 @@ bool test_sandwich1() {
     uint32_t out_buffer_size;
     const char* error_msg;
     zx_status_t status = fidl_transform_xunion_to_union(
-        &examplev1noee_Sandwich1Table,
+        &v1_example_Sandwich1Table,
         sandwich1_case1_input, sizeof(sandwich1_case1_input),
         out_buffer, &out_buffer_size,
         &error_msg);
@@ -71,7 +71,6 @@ bool test_sandwich1() {
 }
 
 int main() {
-    init_coding_tables(); // TODO: how to do this better?
     zx_status_t status = test_sandwich1();
     printf("test_sandwich1: %s\n", status);
     return 0;

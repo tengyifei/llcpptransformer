@@ -31,6 +31,6 @@ struct Sandwich2 {
 
 struct Sandwich3 {
    uint32 before;
-   UnionSize16Aligned4 union;
+   UnionSize24Alignement8 union;
    uint32 after;
 };

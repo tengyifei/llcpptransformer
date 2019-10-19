@@ -591,11 +591,11 @@ struct FidlCodedStruct {
   const uint32_t field_count;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
-  FidlCodedStruct* alt_type;
+  const FidlCodedStruct* alt_type;
 
   constexpr FidlCodedStruct(const FidlStructField* fields, uint32_t field_count, uint32_t size,
-                            const char* name)
-      : fields(fields), field_count(field_count), size(size), name(name), alt_type(nullptr) {}
+                            const char* name, const FidlCodedStruct* alt_type = nullptr)
+      : fields(fields), field_count(field_count), size(size), name(name), alt_type(alt_type) {}
 };
 
 struct FidlCodedStructPointer {
@@ -624,16 +624,17 @@ struct FidlCodedUnion {
   const uint32_t data_offset;
   const uint32_t size;
   const char* name;  // may be nullptr if omitted at compile time
-  FidlCodedUnion* alt_type;
+  const FidlCodedUnion* alt_type;
 
   constexpr FidlCodedUnion(const FidlUnionField* const fields, uint32_t field_count,
-                           uint32_t data_offset, uint32_t size, const char* name)
+                           uint32_t data_offset, uint32_t size, const char* name,
+                           const FidlCodedUnion* alt_type = nullptr)
       : fields(fields),
         field_count(field_count),
         data_offset(data_offset),
         size(size),
         name(name),
-        alt_type(nullptr) {}
+        alt_type(alt_type) {}
 };
 
 struct FidlCodedUnionPointer {
