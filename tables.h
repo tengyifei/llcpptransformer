@@ -24,8 +24,9 @@ static const ::fidl::FidlUnionField Fields26example_UnionSize8Aligned4[] = {
 extern inline const ::fidl::FidlCodedUnion* const example_UnionSize8Aligned4Table_alt;
 const fidl_type_t example_UnionSize8Aligned4Table = fidl_type_t(::fidl::FidlCodedUnion(Fields26example_UnionSize8Aligned4, 3u, 4u, 8u, "example/UnionSize8Aligned4", example_UnionSize8Aligned4Table_alt));
 
+extern inline const ::fidl::FidlStructField* const Fields17example_Sandwich1_field1_alt_field;
 static const ::fidl::FidlStructField Fields17example_Sandwich1[] = {
-    ::fidl::FidlStructField(&example_UnionSize8Aligned4Table, 4u, 0u)
+    ::fidl::FidlStructField(&example_UnionSize8Aligned4Table, 4u, 0u, Fields17example_Sandwich1_field1_alt_field)
 };
 extern inline const ::fidl::FidlCodedStruct* const example_Sandwich1Table_alt;
 const fidl_type_t example_Sandwich1Table = fidl_type_t(::fidl::FidlCodedStruct(Fields17example_Sandwich1, 1u, 16u, "example/Sandwich1", example_Sandwich1Table_alt));
@@ -80,9 +81,10 @@ static const ::fidl::FidlUnionField Fields29v1_example_UnionSize8Aligned4[] = {
 extern inline const ::fidl::FidlCodedUnion* const v1_example_UnionSize8Aligned4Table_alt;
 const fidl_type_t v1_example_UnionSize8Aligned4Table = fidl_type_t(::fidl::FidlCodedUnion(Fields29v1_example_UnionSize8Aligned4, 3u, 8u, 24u, "example/UnionSize8Aligned4", v1_example_UnionSize8Aligned4Table_alt));
 
+extern inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich1_field1_alt_field;
 static const ::fidl::FidlStructField Fields20v1_example_Sandwich1[] = {
     ::fidl::FidlStructField(nullptr, 4u, 4u),
-    ::fidl::FidlStructField(&v1_example_UnionSize8Aligned4Table, 8u, 0u),
+    ::fidl::FidlStructField(&v1_example_UnionSize8Aligned4Table, 8u, 0u, Fields20v1_example_Sandwich1_field1_alt_field),
     ::fidl::FidlStructField(nullptr, 36u, 4u)
 };
 extern inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich1Table_alt;
@@ -120,7 +122,7 @@ static const ::fidl::FidlStructField Fields20v1_example_Sandwich3[] = {
 extern inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich3Table_alt;
 const fidl_type_t v1_example_Sandwich3Table = fidl_type_t(::fidl::FidlCodedStruct(Fields20v1_example_Sandwich3, 3u, 40u, "example/Sandwich3", v1_example_Sandwich3Table_alt));
 
-// old to v1 map
+// decls: old <-> v1_no_ee map
 
 inline const ::fidl::FidlCodedStruct* const example_Sandwich1Table_alt = &v1_example_Sandwich1Table.coded_struct;
 inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich1Table_alt = &example_Sandwich1Table.coded_struct;
@@ -142,5 +144,10 @@ inline const ::fidl::FidlCodedUnion* const v1_example_UnionSize24Alignement8Tabl
 
 inline const ::fidl::FidlCodedUnion* const example_UnionSize8Aligned4Table_alt = &v1_example_UnionSize8Aligned4Table.coded_union;
 inline const ::fidl::FidlCodedUnion* const v1_example_UnionSize8Aligned4Table_alt = &example_UnionSize8Aligned4Table.coded_union;
+
+// struct fields: old <-> v1_no_ee map
+
+inline const ::fidl::FidlStructField* const Fields17example_Sandwich1_field1_alt_field = &Fields20v1_example_Sandwich1[1];
+inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich1_field1_alt_field = &Fields17example_Sandwich1[0];
 
 } // extern "C"
