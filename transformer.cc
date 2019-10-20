@@ -49,6 +49,15 @@ uint32_t InlineSize(const fidl_type_t* type, WireFormat wire_format) {
     }
 }
 
+const uint32_t UNKNOWN_OFFSET = 0x87654321;
+
+struct Position {
+  uint32_t src_inline_offset = 0;
+  uint32_t src_out_of_line_offset = 0;
+  uint32_t dst_inline_offset = 0;
+  uint32_t dst_out_of_line_offset = 0;
+};
+
 class SrcDst final {
 public:
   SrcDst(const uint8_t* src_bytes, const uint32_t src_num_bytes,
@@ -61,36 +70,41 @@ public:
   }
 
   template <typename T> // TODO: restrict T should be pointer type
-  const T Read(uint32_t src_offset) {
-    return reinterpret_cast<const T>(src_bytes_ + src_offset);
+  const T Read(const Position& position) {
+    return reinterpret_cast<const T>(src_bytes_ + position.src_inline_offset);
   }
 
-  void Copy(uint32_t src_offset, uint32_t dst_offset, uint32_t size) {
-    printf("Copy: src_offset=%d dst_offset=%d size=%d\n", src_offset, dst_offset, size);
+  void Copy(const Position& position, uint32_t size) {
+    printf("Copy: src_offset=%d dst_offset=%d size=%d\n",
+           position.src_inline_offset,
+           position.dst_inline_offset,
+           size);
 
     assert(size > 0);
-    assert(src_offset + size <= src_num_bytes_);
+    assert(position.src_inline_offset + size <= src_num_bytes_);
 
-    memcpy(dst_bytes_ + dst_offset, src_bytes_ + src_offset, size);
-    UpdateHighestOffset(dst_offset + size);
+    memcpy(dst_bytes_ + position.dst_inline_offset,
+           src_bytes_ + position.src_inline_offset,
+           size);
+    UpdateHighestOffset(position.dst_inline_offset + size);
   }
 
-  void Pad(uint32_t dst_offset, uint32_t size) {
-    printf("Pad: dst_offset=%d size=%d\n", dst_offset, size);
+  void Pad(const Position& position, uint32_t size) {
+    printf("Pad: dst_offset=%d size=%d\n", position.dst_inline_offset, size);
 
     assert(size > 0);
 
-    memset(dst_bytes_ + dst_offset, 0, size);
-    UpdateHighestOffset(dst_offset + size);
+    memset(dst_bytes_ + position.dst_inline_offset, 0, size);
+    UpdateHighestOffset(position.dst_inline_offset + size);
   }
 
   template <typename T> // TODO: restrict to only uint32_t, uint64_t, etc.?
-  void Write(uint32_t dst_offset, T value) {
-    printf("Write: dst_offset=%d, sizeof(value)=%d\n", dst_offset, sizeof(value));
+  void Write(const Position& position, T value) {
+    printf("Write: dst_offset=%d, sizeof(value)=%d\n", position.dst_inline_offset, sizeof(value));
 
-    auto ptr = reinterpret_cast<T*>(dst_bytes_ + dst_offset);
+    auto ptr = reinterpret_cast<T*>(dst_bytes_ + position.dst_inline_offset);
     *ptr = value;
-    UpdateHighestOffset(dst_offset + sizeof(value));
+    UpdateHighestOffset(position.dst_inline_offset + sizeof(value));
   }
 
 private:
@@ -134,15 +148,6 @@ public:
   }
 
  private:
-  const uint32_t UNKNOWN_OFFSET = 0x87654321;
-
-  struct Position {
-    uint32_t src_inline_offset = 0;
-    uint32_t src_out_of_line_offset = 0;
-    uint32_t dst_inline_offset = 0;
-    uint32_t dst_out_of_line_offset = 0;
-  };
-
   zx_status_t Transform(const fidl_type_t* type,
                         const Position& position, const uint32_t dst_size) {
     if (!type) {
@@ -184,7 +189,7 @@ public:
     return ZX_ERR_BAD_STATE;
 
 no_transform_just_copy:
-    src_dst.Copy(position.src_inline_offset, position.dst_inline_offset, dst_size);
+    src_dst.Copy(position, dst_size);
     return ZX_OK;
   }
 
@@ -194,9 +199,7 @@ no_transform_just_copy:
 
     // Copy structs without any coded fields, and done.
     if (src_coded_struct.field_count == 0) {
-      src_dst.Copy(current_position.src_inline_offset,
-                    current_position.dst_inline_offset,
-                    src_coded_struct.size);
+      src_dst.Copy(current_position, src_coded_struct.size);
       return ZX_OK;
     }
 
@@ -217,9 +220,7 @@ no_transform_just_copy:
       if (!src_field.type) {
         uint32_t dst_size =
           src_field.offset /*.padding_offset*/ + (src_start_of_struct - current_position.src_inline_offset);
-        src_dst.Copy(current_position.src_inline_offset,
-                     current_position.dst_inline_offset,
-                     dst_size);
+        src_dst.Copy(current_position, dst_size);
         current_position.dst_inline_offset += dst_size;
         continue;
       }
@@ -231,7 +232,7 @@ no_transform_just_copy:
       // Pad between fields (if needed).
       if (current_position.dst_inline_offset < dst_field.offset) {
         uint32_t size = dst_field.offset - current_position.dst_inline_offset;
-        src_dst.Pad(current_position.dst_inline_offset, size);
+        src_dst.Pad(current_position, size);
       }
 
       // Set current position before transforming field.
@@ -257,7 +258,7 @@ no_transform_just_copy:
     // Pad end (if needed).
     if (current_position.dst_inline_offset < dst_end_of_src_struct) {
       uint32_t size = dst_end_of_src_struct - current_position.dst_inline_offset;
-      src_dst.Pad(current_position.dst_inline_offset, size);
+      src_dst.Pad(current_position, size);
     }
 
     // Done.
@@ -273,7 +274,7 @@ no_transform_just_copy:
 
     // Read: flexible-union ordinal.
     const fidl_xunion_t* src_union_as_xunion =
-        src_dst.Read<const fidl_xunion_t*>(position.src_inline_offset);
+        src_dst.Read<const fidl_xunion_t*>(position);
     const auto xunion_ordinal =
         reinterpret_cast<uint32_t>(src_union_as_xunion->tag);
 
@@ -297,10 +298,10 @@ no_transform_just_copy:
     // Write: static-union tag, and pad (if needed).
     switch (dst_coded_union.data_offset) {
     case 4:
-      src_dst.Write(position.dst_inline_offset, src_field_index);
+      src_dst.Write(position, src_field_index);
       break;
     case 8:
-      src_dst.Write(position.dst_inline_offset, static_cast<uint64_t>(src_field_index));
+      src_dst.Write(position, static_cast<uint64_t>(src_field_index));
       break;
     default:
       assert(false && "static-union data offset can only be 4 or 8");
