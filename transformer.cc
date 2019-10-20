@@ -8,7 +8,7 @@
 
 #include "transformer.h"
 
-// #define DEBUG 1
+// #define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINTF(FORMAT, ...)                                  \
   {                                                                \
@@ -27,6 +27,16 @@
 #define DEBUG_PRINTF(FORMAT, ...) { /* no debug */ }
 #define DEBUG_PRINT_POSITION(POSITION) { /* no debug */ }
 #endif
+
+// Aligns array or vector elements. It is simiar to FIDL_ALIGN except that is
+// aligns to 1 for elements of size 1,
+//           2 for those of size 2
+//           4 for elements of size 3,
+//           8 otherwise.
+#define FIDL_VEC_ELEM_ALIGN(a)    \
+  (((a) < 3) ? (a) :              \
+  ((a) == 3) ? (((a) + 3) & ~3)   \
+             : (((a) + 7) & ~7))
 
 namespace {
 
@@ -176,15 +186,15 @@ public:
 
   zx_status_t RunOnTopLevelStruct(const fidl_type_t* type) {
     assert(type->type_tag == fidl::kFidlTypeStruct && "only top-level structs supported");
-    const fidl::FidlCodedStruct& coded_struct = type->coded_struct;
-    const fidl::FidlCodedStruct& coded_struct_in_v1_no_ee = *coded_struct.alt_type;
+    const fidl::FidlCodedStruct& src_coded_struct = type->coded_struct;
+    const fidl::FidlCodedStruct& dst_coded_struct = *src_coded_struct.alt_type;
 
-    zx_status_t status = TransformStruct(*type, Position{
+    zx_status_t status = TransformStruct(type->coded_struct, Position{
       .src_inline_offset = 0,
-      .src_out_of_line_offset = coded_struct.size,
+      .src_out_of_line_offset = src_coded_struct.size,
       .dst_inline_offset = 0,
-      .dst_out_of_line_offset = coded_struct_in_v1_no_ee.size,
-    });
+      .dst_out_of_line_offset = dst_coded_struct.size,
+    }, dst_coded_struct.size);
     if (status != ZX_OK) {
       return status;
     }
@@ -193,7 +203,8 @@ public:
 
  private:
   zx_status_t Transform(const fidl_type_t* type,
-                        const Position& position, const uint32_t dst_size) {
+                        const Position& position,
+                        const uint32_t dst_size) {
     if (!type) {
       goto no_transform_just_copy;
     }
@@ -210,7 +221,7 @@ public:
       return ZX_ERR_BAD_STATE;
 
     case fidl::kFidlTypeStruct:
-      return TransformStruct(*type, position);
+      return TransformStruct(type->coded_struct, position, dst_size);
     case fidl::kFidlTypeUnion:
       return TransformUnion(*type, position);
     case fidl::kFidlTypeArray:
@@ -237,22 +248,24 @@ no_transform_just_copy:
     return ZX_OK;
   }
 
-  zx_status_t TransformStruct(const fidl_type_t& v1_no_ee_type, Position current_position) {
-    assert(v1_no_ee_type.type_tag == fidl::kFidlTypeStruct);
-    const fidl::FidlCodedStruct& src_coded_struct = v1_no_ee_type.coded_struct;
+  zx_status_t TransformStruct(const fidl::FidlCodedStruct& src_coded_struct,
+                              Position current_position,
+                              uint32_t dst_size) {
+    // Note: we cannot use dst_coded_struct.size, and must instead rely on
+    // the provided dst_size since this struct could be placed in an alignment
+    // context that is larger than its inherent size.
 
     // Copy structs without any coded fields, and done.
     if (src_coded_struct.field_count == 0) {
-      src_dst.Copy(current_position, src_coded_struct.size);
+      src_dst.Copy(current_position, dst_size);
       return ZX_OK;
     }
 
     const uint32_t src_start_of_struct = current_position.src_inline_offset;
 
-    const fidl::FidlCodedStruct& dst_coded_struct = *v1_no_ee_type.coded_struct.alt_type;
+    const fidl::FidlCodedStruct& dst_coded_struct = *src_coded_struct.alt_type;
     const uint32_t dst_start_of_struct = current_position.dst_inline_offset;
-    const uint32_t dst_end_of_src_struct =
-        current_position.dst_inline_offset + dst_coded_struct.size;
+    const uint32_t dst_end_of_src_struct = current_position.dst_inline_offset + dst_size;
 
     for (uint32_t src_field_index = 0;
          src_field_index < src_coded_struct.field_count;
@@ -401,6 +414,11 @@ no_transform_just_copy:
       // TODO fast pass where we do a straight copy of data
     }
 
+    // Element sizing, and padding.
+    uint32_t element_size = src_coded_vector.element_size;
+    uint32_t aligned_element_size = FIDL_VEC_ELEM_ALIGN(src_coded_vector.element_size);
+    uint32_t element_padding = aligned_element_size - src_coded_vector.element_size;
+
     // Transform each element.
     auto element_position = Position{
       .src_inline_offset = position.src_out_of_line_offset,
@@ -409,12 +427,15 @@ no_transform_just_copy:
       .dst_out_of_line_offset = 123456789, // TODO
     };
     for (uint32_t i = 0; i < num_elements; i++) {
-      if (zx_status_t status = Transform(src_coded_vector.element, element_position,
-                                         src_coded_vector.element_size);
+      if (zx_status_t status = Transform(src_coded_vector.element, element_position, element_size);
           status != ZX_OK) {
         return status;
       }
-      element_position = element_position.IncreaseInlineOffset(src_coded_vector.element_size);
+
+      auto padding_position = element_position.IncreaseInlineOffset(src_coded_vector.element_size);
+      src_dst.Pad(padding_position, element_padding);
+      
+      element_position = element_position.IncreaseInlineOffset(aligned_element_size);
     }
 
     // Pad end of elements.

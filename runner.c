@@ -369,7 +369,50 @@ uint8_t sandwich6_case2_expected_output[] = {
     0x21, 0x00, 0x00, 0x00, // vector<uint8>.data [cont.] + padding
 };
 
-// TODO absent vector
+uint8_t sandwich6_case3_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0xca, 0xd2, 0x17, 0x21, // UnionWithVector.ordinal (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.ordinal (padding)
+    0x0f, 0x00, 0x00, 0x00, // UnionWithVector.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0x03, 0x00, 0x00, 0x00, // vector<struct>.size (21), i.e. Sandwich6.union.data
+    0x00, 0x00, 0x00, 0x00, // vector<struct>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // vector<struct>.presence
+    0xff, 0xff, 0xff, 0xff, // vector<struct>.presence [cont.]
+
+    0x73, 0x6f, 0x66, 0xcc, // StructSize3Alignment1 (start of vector<struct>.data)
+    0x20, 0x6d, 0x69, 0xcc, // StructSize3Alignment1 (element #2)
+    0x72, 0x61, 0x74, 0xcc, // StructSize3Alignment1 (element #3)
+    0xcc, 0xcc, 0xcc, 0xcc, // (padding)
+};
+
+uint8_t sandwich6_case3_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0x03, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.tag (padding)
+    0x03, 0x00, 0x00, 0x00, // vector<uint8>.size (start of UnionWithVector.data)
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence
+    0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0x73, 0x6f, 0x66, 0x00, // StructSize3Alignment1 (start of vector<struct>.data)
+    0x20, 0x6d, 0x69, 0x00, // StructSize3Alignment1 (element #2)
+    0x72, 0x61, 0x74, 0x00, // StructSize3Alignment1 (element #3)
+    0x00, 0x00, 0x00, 0x00, // (padding)
+};
 
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
@@ -466,6 +509,14 @@ bool test_sandwich6_case2() {
     );
 }
 
+bool test_sandwich6_case3() {
+    return run_single_test(
+        &v1_example_Sandwich6Table,
+        sandwich6_case3_input, sizeof(sandwich6_case3_input),
+        sandwich6_case3_expected_output, sizeof(sandwich6_case3_expected_output)
+    );
+}
+
 #define RUN(TEST_FUNC)                       \
     {                                        \
         zx_status_t status = TEST_FUNC();    \
@@ -487,5 +538,6 @@ int main() {
     RUN(test_sandwich6_case1)
     RUN(test_sandwich6_case1_absent_vector)
     RUN(test_sandwich6_case2)
+    RUN(test_sandwich6_case3)
     return 0;
 }

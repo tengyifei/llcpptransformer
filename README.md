@@ -22,3 +22,7 @@ Then run
 
     ../fuchsia/out/default/host_x64/fidlc --tables tables.h --files example.fidl
     sed 's,#include <lib/fidl/internal.h>,#include "fidl.h",' -i tables.h
+
+You can use this one liner to convert ordinals to hex
+
+    echo 'obase=16; 555209418' | bc
