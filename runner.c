@@ -285,6 +285,41 @@ uint8_t sandwich6_case1_expected_output[] = {
     0xa4, 0xa5, 0x00, 0x00, // vector<uint8>.data [cont.] + padding
 };
 
+uint8_t sandwich6_case1_absent_vector_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0xad, 0xcc, 0xc3, 0x79, // UnionWithVector.ordinal (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.ordinal (padding)
+    0x0f, 0x00, 0x00, 0x00, // UnionWithVector.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size, i.e. Sandwich5.union.data
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.size (padding)
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.absent
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.absent [cont.]
+};
+
+uint8_t sandwich6_case1_absent_vector_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0x01, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.tag (padding)
+    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size (start of UnionWithVector.data)
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.size (padding)
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.absent
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.absent [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+};
+
 uint8_t sandwich6_case2_input[] = {
     0x01, 0x02, 0x03, 0x04, // Sandwich6.before
     0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
@@ -415,6 +450,14 @@ bool test_sandwich6_case1() {
     );
 }
 
+bool test_sandwich6_case1_absent_vector() {
+    return run_single_test(
+        &v1_example_Sandwich6Table,
+        sandwich6_case1_absent_vector_input, sizeof(sandwich6_case1_absent_vector_input),
+        sandwich6_case1_absent_vector_expected_output, sizeof(sandwich6_case1_absent_vector_expected_output)
+    );
+}
+
 bool test_sandwich6_case2() {
     return run_single_test(
         &v1_example_Sandwich6Table,
@@ -442,6 +485,7 @@ int main() {
     RUN(test_sandwich5_case1)
     RUN(test_sandwich5_case2)
     RUN(test_sandwich6_case1)
+    RUN(test_sandwich6_case1_absent_vector)
     RUN(test_sandwich6_case2)
     return 0;
 }

@@ -6,6 +6,7 @@
 #define SYSROOT_ZIRCON_FIDL_H_
 
 #include <cstddef>
+#include <stdint.h>
 
 #if !defined(__cplusplus)
 #if defined(__GNUC__) && \

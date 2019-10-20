@@ -77,11 +77,11 @@ struct Position {
   uint32_t dst_inline_offset = 0;
   uint32_t dst_out_of_line_offset = 0;
 
-  inline Position IncreaseInlineOffset(uint32_t increase) {
+  inline Position IncreaseInlineOffset(uint32_t increase) const {
     return IncreaseSrcInlineOffset(increase).IncreaseDstInlineOffset(increase);
   }
 
-  inline Position IncreaseSrcInlineOffset(uint32_t increase) {
+  inline Position IncreaseSrcInlineOffset(uint32_t increase) const {
     return Position{
       .src_inline_offset = src_inline_offset + increase,
       .src_out_of_line_offset = src_out_of_line_offset,
@@ -90,7 +90,7 @@ struct Position {
     };
   }
 
-  inline Position IncreaseDstInlineOffset(uint32_t increase) {
+  inline Position IncreaseDstInlineOffset(uint32_t increase) const {
     return Position{
       .src_inline_offset = src_inline_offset,
       .src_out_of_line_offset = src_out_of_line_offset,
@@ -386,8 +386,16 @@ no_transform_just_copy:
     // Read number of elements in vectors.
     auto num_elements = *src_dst.Read<uint32_t>(position);
 
+    // Read presence.
+    auto presence = *src_dst.Read<uint64_t>(position.IncreaseSrcInlineOffset(8));
+
     // Copy vector header.
     src_dst.Copy(position, 16);
+
+    // Early exit on nullable vectors.
+    if (presence != FIDL_ALLOC_PRESENT) {
+      return ZX_OK;
+    }
 
     if (!src_coded_vector.element) {
       // TODO fast pass where we do a straight copy of data
