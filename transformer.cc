@@ -122,7 +122,7 @@ public:
   }
 
   template <typename T> // TODO: restrict T should be pointer type
-  const T* Read(const Position& position) {
+  const T* Read(const Position& position) const {
     return reinterpret_cast<const T*>(src_bytes_ + position.src_inline_offset);
   }
 

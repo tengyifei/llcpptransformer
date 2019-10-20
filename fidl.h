@@ -47,6 +47,8 @@ typedef int32_t zx_status_t;
 
 #define FIDL_MAX_SIZE UINT32_MAX
 
+#define ZX_OBJ_TYPE_NONE            ((uint32_t)0u)
+
 // Out of line allocations.
 
 // The fidl wire format represents potential out-of-line allocations
@@ -705,15 +707,13 @@ struct FidlCodedArray {
 //   kFidlHandleSubtypeVmo = ZX_OBJ_TYPE_VMO,
 // };
 
-// struct FidlCodedHandle {
-//   const zx_obj_type_t handle_subtype;
-//   const FidlNullability nullable;
+struct FidlCodedHandle {
+  const uint32_t handle_subtype;
+  const FidlNullability nullable;
 
-//   constexpr FidlCodedHandle(uint32_t handle_subtype, FidlNullability nullable)
-//       : handle_subtype(handle_subtype), nullable(nullable) {}
-
-//   static_assert(ZX_OBJ_TYPE_UPPER_BOUND <= UINT32_MAX, "");
-// };
+  constexpr FidlCodedHandle(uint32_t handle_subtype, FidlNullability nullable)
+      : handle_subtype(handle_subtype), nullable(nullable) {}
+};
 
 struct FidlCodedString {
   const uint32_t max_size;
@@ -753,7 +753,7 @@ struct fidl_type {
     fidl::FidlCodedUnion coded_union;
     const fidl::FidlCodedUnionPointer coded_union_pointer;
     fidl::FidlCodedXUnion coded_xunion;
-    // const fidl::FidlCodedHandle coded_handle;
+    const fidl::FidlCodedHandle coded_handle;
     const fidl::FidlCodedString coded_string;
     const fidl::FidlCodedArray coded_array;
     const fidl::FidlCodedVector coded_vector;
@@ -786,8 +786,8 @@ struct fidl_type {
   constexpr fidl_type(fidl::FidlCodedXUnion coded_xunion) noexcept
       : type_tag(fidl::kFidlTypeXUnion), coded_xunion(coded_xunion) {}
 
-  // constexpr fidl_type(fidl::FidlCodedHandle coded_handle) noexcept
-  //     : type_tag(fidl::kFidlTypeHandle), coded_handle(coded_handle) {}
+  constexpr fidl_type(fidl::FidlCodedHandle coded_handle) noexcept
+      : type_tag(fidl::kFidlTypeHandle), coded_handle(coded_handle) {}
 
   constexpr fidl_type(fidl::FidlCodedString coded_string) noexcept
       : type_tag(fidl::kFidlTypeString), coded_string(coded_string) {}
