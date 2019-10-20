@@ -81,6 +81,9 @@ public:
            size);
 
     assert(size > 0);
+    if (!(position.src_inline_offset + size <= src_num_bytes_)) {
+      printf("don't stop me now!");
+    }
     assert(position.src_inline_offset + size <= src_num_bytes_);
 
     memcpy(dst_bytes_ + position.dst_inline_offset,
@@ -310,9 +313,9 @@ no_transform_just_copy:
     // Write: static-union field (or variant).
     auto field_position = Position{
       .src_inline_offset = position.src_out_of_line_offset,
-      .src_out_of_line_offset = UNKNOWN_OFFSET,
+      .src_out_of_line_offset = position.src_out_of_line_offset + InlineSize(src_field->type, WireFormat::kOld),
       .dst_inline_offset = position.dst_inline_offset + dst_coded_union.data_offset,
-      .dst_out_of_line_offset = UNKNOWN_OFFSET,
+      .dst_out_of_line_offset = position.dst_out_of_line_offset,
     };
     uint32_t dst_field_size = dst_size - dst_coded_union.data_offset;
     if (zx_status_t status = Transform(src_field->type, field_position, dst_field_size);

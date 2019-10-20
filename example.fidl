@@ -58,7 +58,7 @@ struct Sandwich4 {
 
 union UnionOfUnion {
     uint8 unused; // to avoid using tag 0
-    UnionSize8Aligned4 size8aligned4;
+    UnionSize8Aligned4 size8aligned4; // 0x20AADD60
     UnionSize16Aligned4 size16aligned4;
     UnionSize24Alignement8 size24aligned8;
 };

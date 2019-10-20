@@ -156,6 +156,50 @@ uint8_t sandwich4_case1_expected_output[] = {
     0x05, 0x06, 0x07, 0x08, // Sandwich2.after
 };
 
+uint8_t sandwich5_case1_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich5.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.before (padding)
+
+    0x60, 0xdd, 0xaa, 0x20, // Sandwich5.UnionOfUnion.ordinal
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.padding
+    0x32, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // Sandwich5.UnionOfUnion.env.presence
+    0xff, 0xff, 0xff, 0xff, // Sandwich5.UnionOfUnion.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich5.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.after (padding)
+
+    0xdb, 0xf0, 0xc2, 0x7f, // UnionOfUnion.UnionSize8Aligned4.ordinal
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.padding
+    0x08, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionOfUnion.UnionSize8Aligned4.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionOfUnion.UnionSize8Aligned4.env.presence [cont.]
+
+    0x09, 0x0a, 0x0b, 0x0c, // UnionOfUnion.UnionSize8Aligned4.data
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
+};
+
+uint8_t sandwich5_case1_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich5.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.before (padding)
+
+    0x01, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.tag
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.tag (padding)
+
+    0x02, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.tag, i.e Sandwich5.UnionOfUnion.data
+    0x09, 0x0a, 0x0b, 0x0c, // UnionOfUnion.UnionSize8Aligned4.data
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich5.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.after (padding)
+};
+
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
                      const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes) {
@@ -213,6 +257,14 @@ bool test_sandwich4() {
     );
 }
 
+bool test_sandwich5_case1() {
+    return run_single_test(
+        &v1_example_Sandwich5Table,
+        sandwich5_case1_input, sizeof(sandwich5_case1_input),
+        sandwich5_case1_expected_output, sizeof(sandwich5_case1_expected_output)
+    );
+}
+
 int main() {
     {
         zx_status_t status = test_sandwich1();
@@ -228,6 +280,10 @@ int main() {
     }
     {
         zx_status_t status = test_sandwich4();
+        printf("test_sandwich4: %d\n", status);
+    }
+    {
+        zx_status_t status = test_sandwich5_case1();
         printf("test_sandwich4: %d\n", status);
     }
     return 0;
