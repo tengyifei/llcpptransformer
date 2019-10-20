@@ -35,7 +35,7 @@
 //           8 otherwise.
 #define FIDL_VEC_ELEM_ALIGN(a)    \
   (((a) < 3) ? (a) :              \
-  ((a) == 3) ? (((a) + 3) & ~3)   \
+  ((a) <= 4) ? (((a) + 3) & ~3)   \
              : (((a) + 7) & ~7))
 
 namespace {
@@ -213,6 +213,7 @@ public:
     case fidl::kFidlTypePrimitive:
     case fidl::kFidlTypeEnum:
     case fidl::kFidlTypeBits:
+    case fidl::kFidlTypeHandle:
       goto no_transform_just_copy;
 
     case fidl::kFidlTypeStructPointer:
@@ -225,9 +226,6 @@ public:
     case fidl::kFidlTypeUnion:
       return TransformUnion(*type, position);
     case fidl::kFidlTypeArray:
-      assert(false && "TODO!");
-      return ZX_ERR_BAD_STATE;
-    case fidl::kFidlTypeHandle:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
     case fidl::kFidlTypeString:

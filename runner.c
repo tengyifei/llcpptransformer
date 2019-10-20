@@ -258,7 +258,7 @@ uint8_t sandwich6_case1_input[] = {
     0x05, 0x06, 0x07, 0x08, // Sandwich6.after
     0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
 
-    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size, i.e. Sandwich5.union.data
+    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size, i.e. Sandwich6.union.data
     0x00, 0x00, 0x00, 0x00, // vector<uint8>.size (padding)
     0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence
     0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence [cont.]
@@ -299,7 +299,7 @@ uint8_t sandwich6_case1_absent_vector_input[] = {
     0x05, 0x06, 0x07, 0x08, // Sandwich6.after
     0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
 
-    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size, i.e. Sandwich5.union.data
+    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size, i.e. Sandwich6.union.data
     0x00, 0x00, 0x00, 0x00, // vector<uint8>.size (padding)
     0x00, 0x00, 0x00, 0x00, // vector<uint8>.absent
     0x00, 0x00, 0x00, 0x00, // vector<uint8>.absent [cont.]
@@ -414,6 +414,51 @@ uint8_t sandwich6_case3_expected_output[] = {
     0x00, 0x00, 0x00, 0x00, // (padding)
 };
 
+uint8_t sandwich6_case4_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0x76, 0xaa, 0x1e, 0x47, // UnionWithVector.ordinal (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.ordinal (padding)
+    0x0f, 0x00, 0x00, 0x00, // UnionWithVector.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0x03, 0x00, 0x00, 0x00, // vector<handle>.size, i.e. Sandwich6.union.data
+    0x00, 0x00, 0x00, 0x00, // vector<handle>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.presence
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.presence [cont.]
+
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.data
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.data
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.data
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.data (padding)
+};
+
+uint8_t sandwich6_case4_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0x04, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.tag (padding)
+    0x03, 0x00, 0x00, 0x00, // vector<handle>.size, i.e. Sandwich6.union.data
+    0x00, 0x00, 0x00, 0x00, // vector<handle>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.presence
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.data
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.data
+    0xff, 0xff, 0xff, 0xff, // vector<handle>.data
+    0x00, 0x00, 0x00, 0x00, // vector<handle>.data (padding)
+};
+
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
                      const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes) {
@@ -517,15 +562,23 @@ bool test_sandwich6_case3() {
     );
 }
 
-#define RUN(TEST_FUNC)                       \
-    {                                        \
-        zx_status_t status = TEST_FUNC();    \
-        if (status == ZX_OK) { \
-            printf("[ \033[0;31mERROR\033[0m  ]"); \
-        } else { \
-            printf("[ \033[0;32mPASSES\033[0m ]"); \
-        } \
-        printf(" " #TEST_FUNC "\n"); \
+bool test_sandwich6_case4() {
+    return run_single_test(
+        &v1_example_Sandwich6Table,
+        sandwich6_case4_input, sizeof(sandwich6_case4_input),
+        sandwich6_case4_expected_output, sizeof(sandwich6_case4_expected_output)
+    );
+}
+
+#define RUN(TEST_FUNC)                              \
+    {                                               \
+        zx_status_t status = TEST_FUNC();           \
+        if (status == ZX_OK) {                      \
+            printf("[ \033[0;31mERROR\033[0m  ]");  \
+        } else {                                    \
+            printf("[ \033[0;32mPASSES\033[0m ]");  \
+        }                                           \
+        printf(" " #TEST_FUNC "\n");                \
     }
 
 int main() {
@@ -539,5 +592,6 @@ int main() {
     RUN(test_sandwich6_case1_absent_vector)
     RUN(test_sandwich6_case2)
     RUN(test_sandwich6_case3)
+    RUN(test_sandwich6_case4)
     return 0;
 }
