@@ -206,7 +206,6 @@ public:
 
     case fidl::kFidlTypeStructPointer:
     case fidl::kFidlTypeUnionPointer:
-    case fidl::kFidlTypeString:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
 
@@ -220,8 +219,10 @@ public:
     case fidl::kFidlTypeHandle:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
+    case fidl::kFidlTypeString:
+      return TransformString(position);
     case fidl::kFidlTypeVector:
-      return TransformVector(*type, position);
+      return TransformVector(type->coded_vector, position);
     case fidl::kFidlTypeTable:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
@@ -369,16 +370,28 @@ no_transform_just_copy:
     return ZX_OK;
   }
 
-  zx_status_t TransformVector(const fidl_type_t& type, const Position& position) {
-    assert(type.type_tag == fidl::kFidlTypeVector);
-    const fidl::FidlCodedVector& src_coded_vector = type.coded_vector;
-    const fidl::FidlCodedVector& dst_coded_vector = *type.coded_vector.alt_type;
+  zx_status_t TransformString(const Position& position) {
+    static const auto string_as_coded_vector = fidl::FidlCodedVector(
+      nullptr /* element */,
+      0 /*max count, unused */,
+      1 /* element_size */,
+      fidl::FidlNullability::kNullable /* being lax, we do not check constraints */,
+      nullptr /* alt_type, unused */
+    );
+    return TransformVector(string_as_coded_vector, position);
+  }
 
+  zx_status_t TransformVector(const fidl::FidlCodedVector& src_coded_vector,
+                              const Position& position) {
     // Read number of elements in vectors.
     auto num_elements = *src_dst.Read<uint32_t>(position);
 
     // Copy vector header.
     src_dst.Copy(position, 16);
+
+    if (!src_coded_vector.element) {
+      // TODO fast pass where we do a straight copy of data
+    }
 
     // Transform each element.
     auto element_position = Position{
