@@ -14,9 +14,11 @@ But most likely, you'll then need to
 
 ### Regen tables
 
-Assuming you have a fully built tree in a sibling directory with both
+You must have a fully built tree in a sibling directory with both
 [fxr/330748](https://fuchsia-review.googlesource.com/c/fuchsia/+/330748) and
-[fxr/331213](https://fuchsia-review.googlesource.com/c/fuchsia/+/331213)
-you can
+[fxr/331213](https://fuchsia-review.googlesource.com/c/fuchsia/+/331213).
+
+Then run
 
     ../fuchsia/out/default/host_x64/fidlc --tables tables.h --files example.fidl
+    sed 's,#include <lib/fidl/internal.h>,#include "fidl.h",' -i tables.h
