@@ -373,7 +373,7 @@ uint8_t sandwich6_case3_input[] = {
     0x01, 0x02, 0x03, 0x04, // Sandwich6.before
     0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
 
-    0xca, 0xd2, 0x17, 0x21, // UnionWithVector.ordinal (start of Sandwich6.union)
+    0xdc, 0x3c, 0xc1, 0x4b, // UnionWithVector.ordinal (start of Sandwich6.union)
     0x00, 0x00, 0x00, 0x00, // UnionWithVector.ordinal (padding)
     0x0f, 0x00, 0x00, 0x00, // UnionWithVector.env.num_bytes
     0x00, 0x00, 0x00, 0x00, // UnionWithVector.env.num_handle
@@ -414,7 +414,7 @@ uint8_t sandwich6_case3_expected_output[] = {
     0x00, 0x00, 0x00, 0x00, // (padding)
 };
 
-uint8_t sandwich6_case4_input[] = {
+uint8_t sandwich6_case5_input[] = {
     0x01, 0x02, 0x03, 0x04, // Sandwich6.before
     0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
 
@@ -439,11 +439,11 @@ uint8_t sandwich6_case4_input[] = {
     0xff, 0xff, 0xff, 0xff, // vector<handle>.data (padding)
 };
 
-uint8_t sandwich6_case4_expected_output[] = {
+uint8_t sandwich6_case5_expected_output[] = {
     0x01, 0x02, 0x03, 0x04, // Sandwich6.before
     0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
 
-    0x04, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
+    0x05, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
     0x00, 0x00, 0x00, 0x00, // UnionWithVector.tag (padding)
     0x03, 0x00, 0x00, 0x00, // vector<handle>.size, i.e. Sandwich6.union.data
     0x00, 0x00, 0x00, 0x00, // vector<handle>.size (padding)
@@ -459,11 +459,11 @@ uint8_t sandwich6_case4_expected_output[] = {
     0x00, 0x00, 0x00, 0x00, // vector<handle>.data (padding)
 };
 
-uint8_t sandwich6_case5_input[] = {
+uint8_t sandwich6_case6_input[] = {
     0x01, 0x02, 0x03, 0x04, // Sandwich6.before
     0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
 
-    0x88, 0x64, 0xb3, 0x3b, // UnionWithVector.ordinal (start of Sandwich6.union)
+    0x10, 0xa8, 0xa0, 0x5e, // UnionWithVector.ordinal (start of Sandwich6.union)
     0x00, 0x00, 0x00, 0x00, // UnionWithVector.ordinal (padding)
     0x0f, 0x00, 0x00, 0x00, // UnionWithVector.env.num_bytes
     0x00, 0x00, 0x00, 0x00, // UnionWithVector.env.num_handle
@@ -477,11 +477,11 @@ uint8_t sandwich6_case5_input[] = {
     0xa5, 0xa6, 0xcc, 0xcc, // array<StructSize3Alignment1>:2
 };
 
-uint8_t sandwich6_case5_expected_output[] = {
+uint8_t sandwich6_case6_expected_output[] = {
     0x01, 0x02, 0x03, 0x04, // Sandwich6.before
     0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
 
-    0x05, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
+    0x06, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
     0x00, 0x00, 0x00, 0x00, // UnionWithVector.tag (padding)
     0xa1, 0xa2, 0xa3, 0xa4, // array<StructSize3Alignment1>:2, i.e. Sandwich6.union.data
     0xa5, 0xa6, 0x00, 0x00, // array<StructSize3Alignment1>:2
@@ -494,18 +494,17 @@ uint8_t sandwich6_case5_expected_output[] = {
 
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
-                     const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes) {
+                     const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes,
+                     const char** out_error_msg) {
     uint8_t actual_dst_bytes[ZX_CHANNEL_MAX_MSG_BYTES];
     uint32_t actual_dst_num_bytes;
     memset(actual_dst_bytes, 0xcc /* poison */, ZX_CHANNEL_MAX_MSG_BYTES);
-
-    const char* error_msg;
 
     zx_status_t status = fidl_transform_xunion_to_union(
         src_type,
         src_bytes, src_num_bytes,
         actual_dst_bytes, &actual_dst_num_bytes,
-        &error_msg);
+        out_error_msg);
     if (status != ZX_OK) {
         return false;
     }
@@ -515,111 +514,137 @@ bool run_single_test(const fidl_type_t* src_type,
         );
 }
 
-bool test_sandwich1() {
+bool test_sandwich1(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich1Table,
         sandwich1_case1_input, sizeof(sandwich1_case1_input),
-        sandwich1_case1_expected_output, sizeof(sandwich1_case1_expected_output)
+        sandwich1_case1_expected_output, sizeof(sandwich1_case1_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich2() {
+bool test_sandwich2(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich2Table,
         sandwich2_case1_input, sizeof(sandwich2_case1_input),
-        sandwich2_case1_expected_output, sizeof(sandwich2_case1_expected_output)
+        sandwich2_case1_expected_output, sizeof(sandwich2_case1_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich3() {
+bool test_sandwich3(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich3Table,
         sandwich3_case1_input, sizeof(sandwich3_case1_input),
-        sandwich3_case1_expected_output, sizeof(sandwich3_case1_expected_output)
+        sandwich3_case1_expected_output, sizeof(sandwich3_case1_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich4() {
+bool test_sandwich4(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich4Table,
         sandwich4_case1_input, sizeof(sandwich4_case1_input),
-        sandwich4_case1_expected_output, sizeof(sandwich4_case1_expected_output)
+        sandwich4_case1_expected_output, sizeof(sandwich4_case1_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich5_case1() {
+bool test_sandwich5_case1(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich5Table,
         sandwich5_case1_input, sizeof(sandwich5_case1_input),
-        sandwich5_case1_expected_output, sizeof(sandwich5_case1_expected_output)
+        sandwich5_case1_expected_output, sizeof(sandwich5_case1_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich5_case2() {
+bool test_sandwich5_case2(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich5Table,
         sandwich5_case2_input, sizeof(sandwich5_case2_input),
-        sandwich5_case2_expected_output, sizeof(sandwich5_case2_expected_output)
+        sandwich5_case2_expected_output, sizeof(sandwich5_case2_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich6_case1() {
+bool test_sandwich6_case1(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich6Table,
         sandwich6_case1_input, sizeof(sandwich6_case1_input),
-        sandwich6_case1_expected_output, sizeof(sandwich6_case1_expected_output)
+        sandwich6_case1_expected_output, sizeof(sandwich6_case1_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich6_case1_absent_vector() {
+bool test_sandwich6_case1_absent_vector(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich6Table,
         sandwich6_case1_absent_vector_input, sizeof(sandwich6_case1_absent_vector_input),
-        sandwich6_case1_absent_vector_expected_output, sizeof(sandwich6_case1_absent_vector_expected_output)
+        sandwich6_case1_absent_vector_expected_output, sizeof(sandwich6_case1_absent_vector_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich6_case2() {
+bool test_sandwich6_case2(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich6Table,
         sandwich6_case2_input, sizeof(sandwich6_case2_input),
-        sandwich6_case2_expected_output, sizeof(sandwich6_case2_expected_output)
+        sandwich6_case2_expected_output, sizeof(sandwich6_case2_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich6_case3() {
+bool test_sandwich6_case3(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich6Table,
         sandwich6_case3_input, sizeof(sandwich6_case3_input),
-        sandwich6_case3_expected_output, sizeof(sandwich6_case3_expected_output)
+        sandwich6_case3_expected_output, sizeof(sandwich6_case3_expected_output),
+        out_error_msg
     );
 }
 
-bool test_sandwich6_case4() {
-    return run_single_test(
-        &v1_example_Sandwich6Table,
-        sandwich6_case4_input, sizeof(sandwich6_case4_input),
-        sandwich6_case4_expected_output, sizeof(sandwich6_case4_expected_output)
-    );
-}
+// bool test_sandwich6_case4(const char** out_error_msg) {
+//     return run_single_test(
+//         &v1_example_Sandwich6Table,
+//         sandwich6_case4_input, sizeof(sandwich6_case4_input),
+//         sandwich6_case4_expected_output, sizeof(sandwich6_case4_expected_output),
+//         out_error_msg
+//     );
+// }
 
-bool test_sandwich6_case5() {
+bool test_sandwich6_case5(const char** out_error_msg) {
     return run_single_test(
         &v1_example_Sandwich6Table,
         sandwich6_case5_input, sizeof(sandwich6_case5_input),
-        sandwich6_case5_expected_output, sizeof(sandwich6_case5_expected_output)
+        sandwich6_case5_expected_output, sizeof(sandwich6_case5_expected_output),
+        out_error_msg
+    );
+}
+
+bool test_sandwich6_case6(const char** out_error_msg) {
+    return run_single_test(
+        &v1_example_Sandwich6Table,
+        sandwich6_case6_input, sizeof(sandwich6_case6_input),
+        sandwich6_case6_expected_output, sizeof(sandwich6_case6_expected_output),
+        out_error_msg
     );
 }
 
 #define RUN(TEST_FUNC)                              \
     {                                               \
-        zx_status_t status = TEST_FUNC();           \
+        const char* error_msg = nullptr;            \
+        zx_status_t status = TEST_FUNC(&error_msg); \
         if (status == ZX_OK) {                      \
             printf("[ \033[0;31mERROR\033[0m  ]");  \
         } else {                                    \
             printf("[ \033[0;32mPASSES\033[0m ]");  \
         }                                           \
-        printf(" " #TEST_FUNC "\n");                \
+        printf(" " #TEST_FUNC);                     \
+        if (error_msg) {                            \
+            printf(": %s ", error_msg);             \
+        }                                           \
+        printf("\n");                               \
     }
 
 int main() {
@@ -633,7 +658,8 @@ int main() {
     RUN(test_sandwich6_case1_absent_vector)
     RUN(test_sandwich6_case2)
     RUN(test_sandwich6_case3)
-    RUN(test_sandwich6_case4)
+    // RUN(test_sandwich6_case4)
     RUN(test_sandwich6_case5)
+    RUN(test_sandwich6_case6)
     return 0;
 }

@@ -12,6 +12,7 @@ extern const fidl_type_t example_UnionSize36Alignment4Table;
 extern const fidl_type_t example_Sandwich4Table;
 extern const fidl_type_t example_UnionSize16Aligned4Table;
 extern const fidl_type_t example_Sandwich2Table;
+extern const fidl_type_t example_StructSize3Alignment2Table;
 extern const fidl_type_t example_StructSize3Alignment1Table;
 extern const fidl_type_t example_UnionWithVectorTable;
 extern const fidl_type_t example_Sandwich6Table;
@@ -30,6 +31,9 @@ static const fidl_type_t String4294967295nonnullableTable = fidl_type_t(::fidl::
 extern inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable29example_StructSize3Alignment1Table_alt;
 static const fidl_type_t Vector4294967295nonnullable29example_StructSize3Alignment1Table = fidl_type_t(::fidl::FidlCodedVector(&example_StructSize3Alignment1Table, 4294967295u, 3u, ::fidl::kNonnullable, Vector4294967295nonnullable29example_StructSize3Alignment1Table_alt));
 
+extern inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable29example_StructSize3Alignment2Table_alt;
+static const fidl_type_t Vector4294967295nonnullable29example_StructSize3Alignment2Table = fidl_type_t(::fidl::FidlCodedVector(&example_StructSize3Alignment2Table, 4294967295u, 4u, ::fidl::kNonnullable, Vector4294967295nonnullable29example_StructSize3Alignment2Table_alt));
+
 static const fidl_type_t HandlehandlenonnullableTable = fidl_type_t(::fidl::FidlCodedHandle(ZX_OBJ_TYPE_NONE, ::fidl::kNonnullable));
 
 extern inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable23HandlehandlenonnullableTable_alt;
@@ -37,6 +41,9 @@ static const fidl_type_t Vector4294967295nonnullable23HandlehandlenonnullableTab
 
 extern inline const ::fidl::FidlCodedArray* const Array6_29example_StructSize3Alignment1Table_alt;
 static const fidl_type_t Array6_29example_StructSize3Alignment1Table = fidl_type_t(::fidl::FidlCodedArray(&example_StructSize3Alignment1Table, 6u, 3u, Array6_29example_StructSize3Alignment1Table_alt));
+
+extern inline const ::fidl::FidlCodedArray* const Array8_29example_StructSize3Alignment2Table_alt;
+static const fidl_type_t Array8_29example_StructSize3Alignment2Table = fidl_type_t(::fidl::FidlCodedArray(&example_StructSize3Alignment2Table, 8u, 4u, Array8_29example_StructSize3Alignment2Table_alt));
 
 
 static const ::fidl::FidlUnionField Fields26example_UnionSize8Aligned4[] = {
@@ -86,6 +93,12 @@ static const ::fidl::FidlStructField Fields17example_Sandwich2[] = {
 extern inline const ::fidl::FidlCodedStruct* const example_Sandwich2Table_alt;
 const fidl_type_t example_Sandwich2Table = fidl_type_t(::fidl::FidlCodedStruct(Fields17example_Sandwich2, 1u, 20u, "example/Sandwich2", example_Sandwich2Table_alt));
 
+static const ::fidl::FidlStructField Fields29example_StructSize3Alignment2[] = {
+    ::fidl::FidlStructField(nullptr, 3u, 1u)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_StructSize3Alignment2Table_alt;
+const fidl_type_t example_StructSize3Alignment2Table = fidl_type_t(::fidl::FidlCodedStruct(Fields29example_StructSize3Alignment2, 1u, 4u, "example/StructSize3Alignment2", example_StructSize3Alignment2Table_alt));
+
 static const ::fidl::FidlStructField Fields29example_StructSize3Alignment1[] = {};
 extern inline const ::fidl::FidlCodedStruct* const example_StructSize3Alignment1Table_alt;
 const fidl_type_t example_StructSize3Alignment1Table = fidl_type_t(::fidl::FidlCodedStruct(Fields29example_StructSize3Alignment1, 0u, 3u, "example/StructSize3Alignment1", example_StructSize3Alignment1Table_alt));
@@ -94,12 +107,14 @@ static const ::fidl::FidlUnionField Fields23example_UnionWithVector[] = {
     ::fidl::FidlUnionField(nullptr, 15u, 124309599u),
     ::fidl::FidlUnionField(&Vector4294967295nonnullable5uint8Table, 0u, 2042875053u),
     ::fidl::FidlUnionField(&String4294967295nonnullableTable, 0u, 993084216u),
-    ::fidl::FidlUnionField(&Vector4294967295nonnullable29example_StructSize3Alignment1Table, 0u, 555209418u),
+    ::fidl::FidlUnionField(&Vector4294967295nonnullable29example_StructSize3Alignment1Table, 0u, 1270955228u),
+    ::fidl::FidlUnionField(&Vector4294967295nonnullable29example_StructSize3Alignment2Table, 0u, 487107132u),
     ::fidl::FidlUnionField(&Vector4294967295nonnullable23HandlehandlenonnullableTable, 0u, 1193192054u),
-    ::fidl::FidlUnionField(&Array6_29example_StructSize3Alignment1Table, 10u, 1001612424u)
+    ::fidl::FidlUnionField(&Array6_29example_StructSize3Alignment1Table, 10u, 1587587088u),
+    ::fidl::FidlUnionField(&Array8_29example_StructSize3Alignment2Table, 8u, 1559803661u)
 };
 extern inline const ::fidl::FidlCodedUnion* const example_UnionWithVectorTable_alt;
-const fidl_type_t example_UnionWithVectorTable = fidl_type_t(::fidl::FidlCodedUnion(Fields23example_UnionWithVector, 6u, 8u, 24u, "example/UnionWithVector", example_UnionWithVectorTable_alt));
+const fidl_type_t example_UnionWithVectorTable = fidl_type_t(::fidl::FidlCodedUnion(Fields23example_UnionWithVector, 8u, 8u, 24u, "example/UnionWithVector", example_UnionWithVectorTable_alt));
 
 extern inline const ::fidl::FidlStructField* const Fields17example_Sandwich6_field1_alt_field;
 static const ::fidl::FidlStructField Fields17example_Sandwich6[] = {
@@ -158,6 +173,7 @@ extern const fidl_type_t v1_example_UnionSize36Alignment4Table;
 extern const fidl_type_t v1_example_Sandwich4Table;
 extern const fidl_type_t v1_example_UnionSize16Aligned4Table;
 extern const fidl_type_t v1_example_Sandwich2Table;
+extern const fidl_type_t v1_example_StructSize3Alignment2Table;
 extern const fidl_type_t v1_example_StructSize3Alignment1Table;
 extern const fidl_type_t v1_example_UnionWithVectorTable;
 extern const fidl_type_t v1_example_Sandwich6Table;
@@ -176,6 +192,9 @@ static const fidl_type_t v1_String4294967295nonnullableTable = fidl_type_t(::fid
 extern inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment1Table_alt;
 static const fidl_type_t v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment1Table = fidl_type_t(::fidl::FidlCodedVector(&v1_example_StructSize3Alignment1Table, 4294967295u, 3u, ::fidl::kNonnullable, v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment1Table_alt));
 
+extern inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment2Table_alt;
+static const fidl_type_t v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment2Table = fidl_type_t(::fidl::FidlCodedVector(&v1_example_StructSize3Alignment2Table, 4294967295u, 4u, ::fidl::kNonnullable, v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment2Table_alt));
+
 static const fidl_type_t v1_HandlehandlenonnullableTable = fidl_type_t(::fidl::FidlCodedHandle(ZX_OBJ_TYPE_NONE, ::fidl::kNonnullable));
 
 extern inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable26v1_HandlehandlenonnullableTable_alt;
@@ -183,6 +202,9 @@ static const fidl_type_t v1_Vector4294967295nonnullable26v1_Handlehandlenonnulla
 
 extern inline const ::fidl::FidlCodedArray* const v1_Array6_32v1_example_StructSize3Alignment1Table_alt;
 static const fidl_type_t v1_Array6_32v1_example_StructSize3Alignment1Table = fidl_type_t(::fidl::FidlCodedArray(&v1_example_StructSize3Alignment1Table, 6u, 3u, v1_Array6_32v1_example_StructSize3Alignment1Table_alt));
+
+extern inline const ::fidl::FidlCodedArray* const v1_Array8_32v1_example_StructSize3Alignment2Table_alt;
+static const fidl_type_t v1_Array8_32v1_example_StructSize3Alignment2Table = fidl_type_t(::fidl::FidlCodedArray(&v1_example_StructSize3Alignment2Table, 8u, 4u, v1_Array8_32v1_example_StructSize3Alignment2Table_alt));
 
 
 static const ::fidl::FidlUnionField Fields29v1_example_UnionSize8Aligned4[] = {
@@ -238,6 +260,12 @@ static const ::fidl::FidlStructField Fields20v1_example_Sandwich2[] = {
 extern inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich2Table_alt;
 const fidl_type_t v1_example_Sandwich2Table = fidl_type_t(::fidl::FidlCodedStruct(Fields20v1_example_Sandwich2, 3u, 40u, "example/Sandwich2", v1_example_Sandwich2Table_alt));
 
+static const ::fidl::FidlStructField Fields32v1_example_StructSize3Alignment2[] = {
+    ::fidl::FidlStructField(nullptr, 3u, 1u)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_StructSize3Alignment2Table_alt;
+const fidl_type_t v1_example_StructSize3Alignment2Table = fidl_type_t(::fidl::FidlCodedStruct(Fields32v1_example_StructSize3Alignment2, 1u, 4u, "example/StructSize3Alignment2", v1_example_StructSize3Alignment2Table_alt));
+
 static const ::fidl::FidlStructField Fields32v1_example_StructSize3Alignment1[] = {};
 extern inline const ::fidl::FidlCodedStruct* const v1_example_StructSize3Alignment1Table_alt;
 const fidl_type_t v1_example_StructSize3Alignment1Table = fidl_type_t(::fidl::FidlCodedStruct(Fields32v1_example_StructSize3Alignment1, 0u, 3u, "example/StructSize3Alignment1", v1_example_StructSize3Alignment1Table_alt));
@@ -246,12 +274,14 @@ static const ::fidl::FidlUnionField Fields26v1_example_UnionWithVector[] = {
     ::fidl::FidlUnionField(nullptr, 7u, 124309599u),
     ::fidl::FidlUnionField(&v1_Vector4294967295nonnullable8v1_uint8Table, 0u, 2042875053u),
     ::fidl::FidlUnionField(&v1_String4294967295nonnullableTable, 0u, 993084216u),
-    ::fidl::FidlUnionField(&v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment1Table, 0u, 555209418u),
+    ::fidl::FidlUnionField(&v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment1Table, 0u, 1270955228u),
+    ::fidl::FidlUnionField(&v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment2Table, 0u, 487107132u),
     ::fidl::FidlUnionField(&v1_Vector4294967295nonnullable26v1_HandlehandlenonnullableTable, 0u, 1193192054u),
-    ::fidl::FidlUnionField(&v1_Array6_32v1_example_StructSize3Alignment1Table, 2u, 1001612424u)
+    ::fidl::FidlUnionField(&v1_Array6_32v1_example_StructSize3Alignment1Table, 2u, 1587587088u),
+    ::fidl::FidlUnionField(&v1_Array8_32v1_example_StructSize3Alignment2Table, 0u, 1559803661u)
 };
 extern inline const ::fidl::FidlCodedUnion* const v1_example_UnionWithVectorTable_alt;
-const fidl_type_t v1_example_UnionWithVectorTable = fidl_type_t(::fidl::FidlCodedUnion(Fields26v1_example_UnionWithVector, 6u, 8u, 24u, "example/UnionWithVector", v1_example_UnionWithVectorTable_alt));
+const fidl_type_t v1_example_UnionWithVectorTable = fidl_type_t(::fidl::FidlCodedUnion(Fields26v1_example_UnionWithVector, 8u, 8u, 24u, "example/UnionWithVector", v1_example_UnionWithVectorTable_alt));
 
 extern inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich6_field1_alt_field;
 static const ::fidl::FidlStructField Fields20v1_example_Sandwich6[] = {
@@ -348,6 +378,10 @@ inline const ::fidl::FidlCodedStruct* const example_StructSize3Alignment1Table_a
 inline const ::fidl::FidlCodedStruct* const v1_example_StructSize3Alignment1Table_alt = &example_StructSize3Alignment1Table.coded_struct;
 
 
+inline const ::fidl::FidlCodedStruct* const example_StructSize3Alignment2Table_alt = &v1_example_StructSize3Alignment2Table.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_StructSize3Alignment2Table_alt = &example_StructSize3Alignment2Table.coded_struct;
+
+
 inline const ::fidl::FidlCodedUnion* const example_UnionOfUnionTable_alt = &v1_example_UnionOfUnionTable.coded_union;
 inline const ::fidl::FidlCodedUnion* const v1_example_UnionOfUnionTable_alt = &example_UnionOfUnionTable.coded_union;
 
@@ -372,10 +406,16 @@ inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable8v1_uint8Tab
 inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable29example_StructSize3Alignment1Table_alt = &v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment1Table.coded_vector;
 inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment1Table_alt = &Vector4294967295nonnullable29example_StructSize3Alignment1Table.coded_vector;
 
+inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable29example_StructSize3Alignment2Table_alt = &v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment2Table.coded_vector;
+inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable32v1_example_StructSize3Alignment2Table_alt = &Vector4294967295nonnullable29example_StructSize3Alignment2Table.coded_vector;
+
 inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable23HandlehandlenonnullableTable_alt = &v1_Vector4294967295nonnullable26v1_HandlehandlenonnullableTable.coded_vector;
 inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable26v1_HandlehandlenonnullableTable_alt = &Vector4294967295nonnullable23HandlehandlenonnullableTable.coded_vector;
 
 inline const ::fidl::FidlCodedArray* const Array6_29example_StructSize3Alignment1Table_alt = &v1_Array6_32v1_example_StructSize3Alignment1Table.coded_array;
 inline const ::fidl::FidlCodedArray* const v1_Array6_32v1_example_StructSize3Alignment1Table_alt = &Array6_29example_StructSize3Alignment1Table.coded_array;
+
+inline const ::fidl::FidlCodedArray* const Array8_29example_StructSize3Alignment2Table_alt = &v1_Array8_32v1_example_StructSize3Alignment2Table.coded_array;
+inline const ::fidl::FidlCodedArray* const v1_Array8_32v1_example_StructSize3Alignment2Table_alt = &Array8_29example_StructSize3Alignment2Table.coded_array;
 
 } // extern "C"

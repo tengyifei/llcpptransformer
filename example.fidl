@@ -73,14 +73,21 @@ struct StructSize3Alignment1 {
     array<uint8>:3 three_bytes;
 };
 
+struct StructSize3Alignment2 {
+    uint16 f1;
+    uint8 f2;
+};
+
 union UnionWithVector {
-    uint8 unused;                                    // avoid tag 0
-    vector<uint8> vector_of_uint8;                   // 0x79C3CCAD
-    string string;                                   // 0x3B314338
-    vector<StructSize3Alignment1> size3_alignment1;  // 0x2117D2CA
-    vector<handle> handles;                          // 0x471EAA76
-    array<StructSize3Alignment1>:2 two_size3;        // 0x3BB36488
-    // TODO: StructSize3Alignment2
+                                                     // case number is by tag
+    uint8 unused;                                    // 0: unused
+    vector<uint8> vector_of_uint8;                   // 1: 0x79C3CCAD
+    string string;                                   // 2: 0x3B314338
+    vector<StructSize3Alignment1> vector_s3_a1;      // 3: 0x4BC13CDC
+    vector<StructSize3Alignment2> vector_s3_a2;      // 4: 0x1D08AA3C
+    vector<handle> handles;                          // 5: 0x471EAA76
+    array<StructSize3Alignment1>:2 array_s3_a1;      // 6: 0x5EA0A810
+    array<StructSize3Alignment2>:2 array_s3_a2;      // 7: 0x5CF8B70D
     // TODO: vector of unions
 };
 

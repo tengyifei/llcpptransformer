@@ -353,7 +353,11 @@ no_transform_just_copy:
         break;
       }
     }
-    assert(src_field_found && "ordinal has no corresponding variant");
+    if (!src_field_found) {
+      SetError("ordinal has no corresponding variant");
+      return ZX_ERR_BAD_STATE;
+    }
+
     const fidl::FidlUnionField& dst_field = dst_coded_union.fields[src_field_index];
 
     // Write: static-union tag, and pad (if needed).
@@ -476,8 +480,12 @@ no_transform_just_copy:
     return ZX_OK;
   }
 
+  void SetError(const char* error_msg) {
+    *out_error_msg_ = error_msg;
+  }
+
   SrcDst src_dst;
-  const char** const out_error_msg_;
+  const char** out_error_msg_;
 };
 
 }  // namespace
