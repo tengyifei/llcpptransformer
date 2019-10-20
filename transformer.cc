@@ -28,11 +28,11 @@
 #define DEBUG_PRINT_POSITION(POSITION) { /* no debug */ }
 #endif
 
-// Aligns array or vector elements. It is simiar to FIDL_ALIGN except that is
-// aligns to 1 for elements of size 1,
-//           2 for those of size 2
-//           4 for elements of size 3,
-//           8 otherwise.
+// Aligns elements within an array or vector. Simiar to FIDL_ALIGN except that
+// alignment is 1 for elements of size 1,
+//              2 for those of size 2
+//              4 for elements of size 3,
+//              8 otherwise.
 #define FIDL_VEC_ELEM_ALIGN(a)    \
   (((a) < 3) ? (a) :              \
   ((a) <= 4) ? (((a) + 3) & ~3)   \
@@ -53,7 +53,7 @@ uint32_t InlineSize(const fidl_type_t* type, WireFormat wire_format) {
     case fidl::kFidlTypePrimitive:
     case fidl::kFidlTypeEnum:
     case fidl::kFidlTypeBits:
-      assert(false && "bug should not get called");
+      assert(false && "bug: should not get called");
     case fidl::kFidlTypeStructPointer:
     case fidl::kFidlTypeUnionPointer:
       return 8;
@@ -239,6 +239,7 @@ public:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
     }
+
     return ZX_ERR_BAD_STATE;
 
 no_transform_just_copy:
@@ -408,22 +409,27 @@ no_transform_just_copy:
       return ZX_OK;
     }
 
-    if (!src_coded_vector.element) {
-      // TODO fast pass where we do a straight copy of data
-    }
-
     // Element sizing, and padding.
     uint32_t element_size = src_coded_vector.element_size;
     uint32_t aligned_element_size = FIDL_VEC_ELEM_ALIGN(src_coded_vector.element_size);
     uint32_t element_padding = aligned_element_size - src_coded_vector.element_size;
 
-    // Transform each element.
+    // Transform elements.
     auto element_position = Position{
       .src_inline_offset = position.src_out_of_line_offset,
       .src_out_of_line_offset = 123456789, // TODO
       .dst_inline_offset = position.dst_out_of_line_offset,
       .dst_out_of_line_offset = 123456789, // TODO
     };
+
+    // Fast path for elements without coding tables (e.g. strings).
+    if (!src_coded_vector.element) {
+      uint32_t elements_size = FIDL_ALIGN(aligned_element_size * num_elements);
+      src_dst.Copy(element_position, elements_size);
+      return ZX_OK;
+    }
+
+    // Slow path otherwise.
     for (uint32_t i = 0; i < num_elements; i++) {
       if (zx_status_t status = Transform(src_coded_vector.element, element_position, element_size);
           status != ZX_OK) {
