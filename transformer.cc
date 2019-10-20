@@ -8,6 +8,8 @@
 
 #include "transformer.h"
 
+// #define DEBUG 1
+#ifdef DEBUG
 #define DEBUG_PRINTF(FORMAT, ...)                                  \
   {                                                                \
     printf(FORMAT, __VA_ARGS__);                                   \
@@ -21,6 +23,10 @@
             POSITION.src_out_of_line_offset,                       \
             POSITION.dst_out_of_line_offset);                      \
   }
+#else
+#define DEBUG_PRINTF(FORMAT, ...) { /* no debug */ }
+#define DEBUG_PRINT_POSITION(POSITION) { /* no debug */ }
+#endif
 
 namespace {
 

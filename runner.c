@@ -288,8 +288,6 @@ uint8_t sandwich6_case1_expected_output[] = {
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
                      const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes) {
-    printf("----------------\n");
-
     uint8_t actual_dst_bytes[ZX_CHANNEL_MAX_MSG_BYTES];
     uint32_t actual_dst_num_bytes;
     memset(actual_dst_bytes, 0xcc /* poison */, ZX_CHANNEL_MAX_MSG_BYTES);
@@ -369,16 +367,21 @@ bool test_sandwich6_case1() {
 #define RUN(TEST_FUNC)                       \
     {                                        \
         zx_status_t status = TEST_FUNC();    \
-        printf(#TEST_FUNC ": %d\n", status); \
+        if (status == ZX_OK) { \
+            printf("[ \033[0;31mERROR\033[0m  ]"); \
+        } else { \
+            printf("[ \033[0;32mPASSES\033[0m ]"); \
+        } \
+        printf(" " #TEST_FUNC "\n"); \
     }
 
 int main() {
-    // RUN(test_sandwich1)
-    // RUN(test_sandwich2)
-    // RUN(test_sandwich3)
-    // RUN(test_sandwich4)
-    // RUN(test_sandwich5_case1)
-    // RUN(test_sandwich5_case2)
+    RUN(test_sandwich1)
+    RUN(test_sandwich2)
+    RUN(test_sandwich3)
+    RUN(test_sandwich4)
+    RUN(test_sandwich5_case1)
+    RUN(test_sandwich5_case2)
     RUN(test_sandwich6_case1)
     return 0;
 }
