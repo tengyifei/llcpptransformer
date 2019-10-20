@@ -79,6 +79,8 @@ union UnionWithVector {
     string string;                                   // 0x3B314338
     vector<StructSize3Alignment1> size3_alignment1;  // 0x2117D2CA
     vector<handle> handles;                          // 0x471EAA76
+    array<StructSize3Alignment1>:2 two_size3;        // 0x3BB36488
+    // TODO: StructSize3Alignment2
     // TODO: vector of unions
 };
 

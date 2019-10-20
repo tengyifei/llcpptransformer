@@ -33,7 +33,7 @@
 //              2 for those of size 2
 //              4 for elements of size 3,
 //              8 otherwise.
-#define FIDL_VEC_ELEM_ALIGN(a)    \
+#define FIDL_ELEM_ALIGN(a)    \
   (((a) < 3) ? (a) :              \
   ((a) <= 4) ? (((a) + 3) & ~3)   \
              : (((a) + 7) & ~7))
@@ -70,6 +70,7 @@ uint32_t InlineSize(const fidl_type_t* type, WireFormat wire_format) {
         return 24; // xunion
       }
     case fidl::kFidlTypeArray:
+      return type->coded_array.array_size;
     case fidl::kFidlTypeHandle:
     case fidl::kFidlTypeTable:
     case fidl::kFidlTypeXUnion:
@@ -225,9 +226,16 @@ public:
       return TransformStruct(type->coded_struct, position, dst_size);
     case fidl::kFidlTypeUnion:
       return TransformUnion(*type, position);
-    case fidl::kFidlTypeArray:
-      assert(false && "TODO!");
-      return ZX_ERR_BAD_STATE;
+    case fidl::kFidlTypeArray: {
+      const auto& tmp = type->coded_array;
+      const auto coded_array = fidl::FidlCodedArrayNew(
+        tmp.element,
+        tmp.array_size / tmp.element_size,
+        tmp.element_size,
+        0
+      );
+      return TransformArray(coded_array, position);
+    }
     case fidl::kFidlTypeString:
       return TransformString(position);
     case fidl::kFidlTypeVector:
@@ -393,7 +401,7 @@ no_transform_just_copy:
     return TransformVector(string_as_coded_vector, position);
   }
 
-  zx_status_t TransformVector(const fidl::FidlCodedVector& src_coded_vector,
+  zx_status_t TransformVector(const fidl::FidlCodedVector& coded_vector,
                               const Position& position) {
     // Read number of elements in vectors.
     auto num_elements = *src_dst.Read<uint32_t>(position);
@@ -409,42 +417,60 @@ no_transform_just_copy:
       return ZX_OK;
     }
 
-    // Element sizing, and padding.
-    uint32_t element_size = src_coded_vector.element_size;
-    uint32_t aligned_element_size = FIDL_VEC_ELEM_ALIGN(src_coded_vector.element_size);
-    uint32_t element_padding = aligned_element_size - src_coded_vector.element_size;
+    // Viewing vector's data as an array.
+    const auto vector_data_as_coded_array = fidl::FidlCodedArrayNew(
+      coded_vector.element,
+      num_elements,
+      coded_vector.element_size,
+      FIDL_ELEM_ALIGN(coded_vector.element_size) - coded_vector.element_size
+    );
 
     // Transform elements.
-    auto element_position = Position{
+    zx_status_t status = TransformArray(vector_data_as_coded_array, Position{
       .src_inline_offset = position.src_out_of_line_offset,
-      .src_out_of_line_offset = 123456789, // TODO
+      .src_out_of_line_offset = 123456789, // TODO: position.src_out_of_line_offset + total_elements_size
       .dst_inline_offset = position.dst_out_of_line_offset,
-      .dst_out_of_line_offset = 123456789, // TODO
-    };
+      .dst_out_of_line_offset = 123456789, // TODO: position.dst_out_of_line_offset + total_elements_size
+    });
+    if (status != ZX_OK) {
+      return status;
+    }
+
+    // Done.
+    return ZX_OK;
+  }
+
+  zx_status_t TransformArray(const fidl::FidlCodedArrayNew& coded_array,
+                             const Position& position) {
+      // Calculate array size.
+      uint32_t array_size = FIDL_ALIGN(coded_array.element_count *
+                                       (coded_array.element_size + coded_array.element_padding));
 
     // Fast path for elements without coding tables (e.g. strings).
-    if (!src_coded_vector.element) {
-      uint32_t elements_size = FIDL_ALIGN(aligned_element_size * num_elements);
-      src_dst.Copy(element_position, elements_size);
+    if (!coded_array.element) {
+      src_dst.Copy(position, array_size);
       return ZX_OK;
     }
 
     // Slow path otherwise.
-    for (uint32_t i = 0; i < num_elements; i++) {
-      if (zx_status_t status = Transform(src_coded_vector.element, element_position, element_size);
+    auto element_position = position;
+    for (uint32_t i = 0; i < coded_array.element_count; i++) {
+      if (zx_status_t status = Transform(coded_array.element, element_position,
+                                         coded_array.element_size);
           status != ZX_OK) {
         return status;
       }
 
-      auto padding_position = element_position.IncreaseInlineOffset(src_coded_vector.element_size);
-      src_dst.Pad(padding_position, element_padding);
+      // Pad end of an element.
+      auto padding_position = element_position.IncreaseInlineOffset(coded_array.element_size);
+      src_dst.Pad(padding_position, coded_array.element_padding);
       
-      element_position = element_position.IncreaseInlineOffset(aligned_element_size);
+      element_position = padding_position.IncreaseInlineOffset(coded_array.element_padding);
     }
 
     // Pad end of elements.
-    uint32_t padding =
-        FIDL_ALIGN(element_position.src_inline_offset) - element_position.src_inline_offset;
+    uint32_t padding = array_size + position.src_inline_offset
+                                  - element_position.src_inline_offset;
     src_dst.Pad(element_position, padding);
 
     return ZX_OK;

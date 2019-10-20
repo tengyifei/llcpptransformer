@@ -671,8 +671,21 @@ struct FidlCodedArray {
   const uint32_t array_size;
   const uint32_t element_size;
 
-  constexpr FidlCodedArray(const fidl_type* element, uint32_t array_size, uint32_t element_size)
+  constexpr FidlCodedArray(const fidl_type* element, uint32_t array_size, uint32_t element_size, const FidlCodedArray* unused)
       : element(element), array_size(array_size), element_size(element_size) {}
+};
+
+// TODO(fxb/???): Switch to using this more ergonomic coding table.
+struct FidlCodedArrayNew {
+  const fidl_type* const element;
+  const uint32_t element_count;
+  const uint32_t element_size;
+  const uint32_t element_padding;
+
+  constexpr FidlCodedArrayNew(const fidl_type* element, uint32_t element_count,
+                              uint32_t element_size, uint32_t element_padding)
+      : element(element), element_count(element_count),
+        element_size(element_size), element_padding(element_padding) {}
 };
 
 // Note: must keep in sync with fidlc types.h HandleSubtype.
@@ -731,12 +744,10 @@ struct FidlCodedVector {
   const uint32_t max_count;
   const uint32_t element_size;
   const FidlNullability nullable;
-  const FidlCodedVector* alt_type;
 
   constexpr FidlCodedVector(const fidl_type* element, uint32_t max_count, uint32_t element_size,
-                            FidlNullability nullable, const FidlCodedVector* alt_type)
-      : element(element), max_count(max_count), element_size(element_size), nullable(nullable),
-        alt_type(alt_type) {}
+                            FidlNullability nullable, const FidlCodedVector* unused)
+      : element(element), max_count(max_count), element_size(element_size), nullable(nullable) {}
 };
 
 }  // namespace fidl
