@@ -730,10 +730,12 @@ struct FidlCodedVector {
   const uint32_t max_count;
   const uint32_t element_size;
   const FidlNullability nullable;
+  const FidlCodedVector* alt_type;
 
   constexpr FidlCodedVector(const fidl_type* element, uint32_t max_count, uint32_t element_size,
-                            FidlNullability nullable)
-      : element(element), max_count(max_count), element_size(element_size), nullable(nullable) {}
+                            FidlNullability nullable, const FidlCodedVector* alt_type)
+      : element(element), max_count(max_count), element_size(element_size), nullable(nullable),
+        alt_type(alt_type) {}
 };
 
 }  // namespace fidl

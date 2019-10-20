@@ -8,15 +8,19 @@
 
 #include "transformer.h"
 
-#define PRINT_POSITION(position)                                     \
-    {                                                                \
-      printf("Position: src_inline=%d -> dst_inline=%d\n",           \
-             position.src_inline_offset,                             \
-             position.dst_inline_offset);                            \
-      printf("          src_out_of_line=%d -> dst_out_of_line=%d\n", \
-             position.src_out_of_line_offset,                        \
-             position.dst_out_of_line_offset);                       \
-    }
+#define DEBUG_PRINTF(FORMAT, ...)                                  \
+  {                                                                \
+    printf(FORMAT, __VA_ARGS__);                                   \
+  }
+#define DEBUG_PRINT_POSITION(POSITION)                             \
+  {                                                                \
+    printf("Position: src_inline=%d -> dst_inline=%d\n",           \
+            POSITION.src_inline_offset,                            \
+            POSITION.dst_inline_offset);                           \
+    printf("          src_out_of_line=%d -> dst_out_of_line=%d\n", \
+            POSITION.src_out_of_line_offset,                       \
+            POSITION.dst_out_of_line_offset);                      \
+  }
 
 namespace {
 
@@ -67,11 +71,24 @@ struct Position {
   uint32_t dst_inline_offset = 0;
   uint32_t dst_out_of_line_offset = 0;
 
-  Position IncreaseDstInlineOffset(uint32_t dst_inline_offset_increase) {
+  inline Position IncreaseInlineOffset(uint32_t increase) {
+    return IncreaseSrcInlineOffset(increase).IncreaseDstInlineOffset(increase);
+  }
+
+  inline Position IncreaseSrcInlineOffset(uint32_t increase) {
+    return Position{
+      .src_inline_offset = src_inline_offset + increase,
+      .src_out_of_line_offset = src_out_of_line_offset,
+      .dst_inline_offset = dst_inline_offset,
+      .dst_out_of_line_offset = dst_out_of_line_offset,
+    };
+  }
+
+  inline Position IncreaseDstInlineOffset(uint32_t increase) {
     return Position{
       .src_inline_offset = src_inline_offset,
       .src_out_of_line_offset = src_out_of_line_offset,
-      .dst_inline_offset = dst_inline_offset + dst_inline_offset_increase,
+      .dst_inline_offset = dst_inline_offset + increase,
       .dst_out_of_line_offset = dst_out_of_line_offset,
     };
   }
@@ -89,20 +106,17 @@ public:
   }
 
   template <typename T> // TODO: restrict T should be pointer type
-  const T Read(const Position& position) {
-    return reinterpret_cast<const T>(src_bytes_ + position.src_inline_offset);
+  const T* Read(const Position& position) {
+    return reinterpret_cast<const T*>(src_bytes_ + position.src_inline_offset);
   }
 
   void Copy(const Position& position, uint32_t size) {
-    printf("Copy: src_offset=%d dst_offset=%d size=%d\n",
+    DEBUG_PRINTF("Copy: src_offset=%d dst_offset=%d size=%d\n",
            position.src_inline_offset,
            position.dst_inline_offset,
            size);
 
     assert(size > 0);
-    if (!(position.src_inline_offset + size <= src_num_bytes_)) {
-      printf("don't stop me now!");
-    }
     assert(position.src_inline_offset + size <= src_num_bytes_);
 
     memcpy(dst_bytes_ + position.dst_inline_offset,
@@ -112,15 +126,19 @@ public:
   }
 
   void Pad(const Position& position, uint32_t size) {
-    printf("Pad: dst_offset=%d size=%d\n", position.dst_inline_offset, size);
+    DEBUG_PRINTF("Pad: dst_offset=%d size=%d\n",
+                 position.dst_inline_offset,
+                 size);
 
     memset(dst_bytes_ + position.dst_inline_offset, 0, size);
     UpdateHighestOffset(position.dst_inline_offset + size);
   }
 
-  template <typename T> // TODO: restrict to only uint32_t, uint64_t, etc.?
+  template <typename T> // TODO: restrict to only uint32_t, uint64_t, etc.
   void Write(const Position& position, T value) {
-    printf("Write: dst_offset=%d, sizeof(value)=%d\n", position.dst_inline_offset, sizeof(value));
+    DEBUG_PRINTF("Write: dst_offset=%d, sizeof(value)=%d\n",
+                 position.dst_inline_offset,
+                 sizeof(value));
 
     auto ptr = reinterpret_cast<T*>(dst_bytes_ + position.dst_inline_offset);
     *ptr = value;
@@ -197,8 +215,7 @@ public:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
     case fidl::kFidlTypeVector:
-      assert(false && "TODO!");
-      return ZX_ERR_BAD_STATE;
+      return TransformVector(*type, position);
     case fidl::kFidlTypeTable:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
@@ -286,17 +303,14 @@ no_transform_just_copy:
   }
 
   zx_status_t TransformUnion(const fidl_type_t& type, const Position& position) {
-    // PRINT_POSITION(position)
     assert(type.type_tag == fidl::kFidlTypeUnion);
     const fidl::FidlCodedUnion& src_coded_union = type.coded_union;
     const fidl::FidlCodedUnion& dst_coded_union = *type.coded_union.alt_type;
     assert(src_coded_union.field_count == dst_coded_union.field_count);
 
     // Read: flexible-union ordinal.
-    const fidl_xunion_t* src_union_as_xunion =
-        src_dst.Read<const fidl_xunion_t*>(position);
-    const auto xunion_ordinal =
-        reinterpret_cast<uint32_t>(src_union_as_xunion->tag);
+    auto src_xunion = src_dst.Read<const fidl_xunion_t>(position);
+    uint32_t xunion_ordinal = src_xunion->tag;
 
     // Retrieve: flexible-union field (or variant).
     bool src_field_found = false;
@@ -346,6 +360,41 @@ no_transform_just_copy:
     src_dst.Pad(field_padding_position, dst_field.padding);
 
     // Done.
+    return ZX_OK;
+  }
+
+  zx_status_t TransformVector(const fidl_type_t& type, const Position& position) {
+    assert(type.type_tag == fidl::kFidlTypeVector);
+    const fidl::FidlCodedVector& src_coded_vector = type.coded_vector;
+    const fidl::FidlCodedVector& dst_coded_vector = *type.coded_vector.alt_type;
+
+    // Read number of elements in vectors.
+    auto num_elements = *src_dst.Read<uint32_t>(position);
+
+    // Copy vector header.
+    src_dst.Copy(position, 16);
+
+    // Transform each element.
+    auto element_position = Position{
+      .src_inline_offset = position.src_out_of_line_offset,
+      .src_out_of_line_offset = 123456789, // TODO
+      .dst_inline_offset = position.dst_out_of_line_offset,
+      .dst_out_of_line_offset = 123456789, // TODO
+    };
+    for (uint32_t i = 0; i < num_elements; i++) {
+      if (zx_status_t status = Transform(src_coded_vector.element, element_position,
+                                         src_coded_vector.element_size);
+          status != ZX_OK) {
+        return status;
+      }
+      element_position = element_position.IncreaseInlineOffset(src_coded_vector.element_size);
+    }
+
+    // Pad end of elements.
+    uint32_t padding =
+        FIDL_ALIGN(element_position.src_inline_offset) - element_position.src_inline_offset;
+    src_dst.Pad(element_position, padding);
+
     return ZX_OK;
   }
 

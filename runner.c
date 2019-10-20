@@ -244,6 +244,47 @@ uint8_t sandwich5_case2_expected_output[] = {
     0x00, 0x00, 0x00, 0x00, // Sandwich5.after (padding)
 };
 
+uint8_t sandwich6_case1_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0xad, 0xcc, 0xc3, 0x79, // UnionWithVector.ordinal (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.ordinal (padding)
+    0x0f, 0x00, 0x00, 0x00, // UnionWithVector.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size, i.e. Sandwich5.union.data
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence
+    0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence [cont.]
+
+    0xa0, 0xa1, 0xa2, 0xa3, // vector<uint8>.data
+    0xa4, 0xa5, 0x00, 0x00, // vector<uint8>.data [cont.] + padding
+};
+
+uint8_t sandwich6_case1_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0x01, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.tag (padding)
+    0x06, 0x00, 0x00, 0x00, // vector<uint8>.size (start of UnionWithVector.data)
+    0x00, 0x00, 0x00, 0x00, // vector<uint8>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence
+    0xff, 0xff, 0xff, 0xff, // vector<uint8>.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich5.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.after (padding)
+
+    0xa0, 0xa1, 0xa2, 0xa3, // vector<uint8>.data
+    0xa4, 0xa5, 0x00, 0x00, // vector<uint8>.data [cont.] + padding
+};
+
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
                      const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes) {
@@ -317,30 +358,27 @@ bool test_sandwich5_case2() {
     );
 }
 
+bool test_sandwich6_case1() {
+    return run_single_test(
+        &v1_example_Sandwich6Table,
+        sandwich6_case1_input, sizeof(sandwich6_case1_input),
+        sandwich6_case1_expected_output, sizeof(sandwich6_case1_expected_output)
+    );
+}
+
+#define RUN(TEST_FUNC)                       \
+    {                                        \
+        zx_status_t status = TEST_FUNC();    \
+        printf(#TEST_FUNC ": %d\n", status); \
+    }
+
 int main() {
-    {
-        zx_status_t status = test_sandwich1();
-        printf("test_sandwich1: %d\n", status);
-    }
-    {
-        zx_status_t status = test_sandwich2();
-        printf("test_sandwich2: %d\n", status);
-    }
-    {
-        zx_status_t status = test_sandwich3();
-        printf("test_sandwich3: %d\n", status);
-    }
-    {
-        zx_status_t status = test_sandwich4();
-        printf("test_sandwich4: %d\n", status);
-    }
-    {
-        zx_status_t status = test_sandwich5_case1();
-        printf("test_sandwich5_case1: %d\n", status);
-    }
-    {
-        zx_status_t status = test_sandwich5_case2();
-        printf("test_sandwich5_case2: %d\n", status);
-    }
+    // RUN(test_sandwich1)
+    // RUN(test_sandwich2)
+    // RUN(test_sandwich3)
+    // RUN(test_sandwich4)
+    // RUN(test_sandwich5_case1)
+    // RUN(test_sandwich5_case2)
+    RUN(test_sandwich6_case1)
     return 0;
 }

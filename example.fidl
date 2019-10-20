@@ -44,9 +44,9 @@ struct Sandwich3 {
 };
 
 union UnionSize36Alignment4 {
-    uint8 unused1;   // makes `variant` tagged 3
-    uint8 unused2;   // since it is the
-    uint8 unused3;   // the fourth
+    uint8 unused1;           // avoid tag 0
+    uint8 unused2;           // avoid tag 1
+    uint8 unused3;           // avoid tag 2
     array<uint8>:32 variant; // 0x5e411019
 };
 
@@ -57,7 +57,7 @@ struct Sandwich4 {
 };
 
 union UnionOfUnion {
-    uint8 unused; // to avoid using tag 0
+    uint8 unused;                          // avoid tag 0
     UnionSize8Aligned4 size8aligned4;      // 0x20AADD60
     UnionSize16Aligned4 size16aligned4;    // 0x2D7665CD
     UnionSize24Alignement8 size24aligned8; // 0x06722D1F
@@ -66,5 +66,19 @@ union UnionOfUnion {
 struct Sandwich5 {
     uint32 before;
     UnionOfUnion union_of_union;
+    uint32 after;
+};
+
+union UnionWithVector {
+    uint8 unused;                  // avoid tag 0
+    vector<uint8> vector_of_uint8; // 0x79C3CCAD
+    string string;                 // 0x3B314338
+    // TODO: vector of unions
+    // TODO: vector of array<uint8>:3, i.e. that need 1 byte padding in between
+};
+
+struct Sandwich6 {
+    uint32 before;
+    UnionWithVector union;
     uint32 after;
 };
