@@ -191,10 +191,51 @@ uint8_t sandwich5_case1_expected_output[] = {
     0x02, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.tag, i.e Sandwich5.UnionOfUnion.data
     0x09, 0x0a, 0x0b, 0x0c, // UnionOfUnion.UnionSize8Aligned4.data
     0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
-    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
-    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
-    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
-    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize8Aligned4.data (padding)
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich5.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.after (padding)
+};
+
+uint8_t sandwich5_case2_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich5.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.before (padding)
+
+    0x1f, 0x2d, 0x72, 0x06, // Sandwich5.UnionOfUnion.ordinal
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.padding
+    0x32, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // Sandwich5.UnionOfUnion.env.presence
+    0xff, 0xff, 0xff, 0xff, // Sandwich5.UnionOfUnion.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich5.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.after (padding)
+
+    0x9b, 0x55, 0x04, 0x34, // UnionOfUnion.UnionSize24Alignement8.ordinal
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize24Alignement8.padding
+    0x16, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize24Alignement8.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionOfUnion.UnionSize24Alignement8.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionOfUnion.UnionSize24Alignement8.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionOfUnion.UnionSize24Alignement8.env.presence [cont.]
+
+    0xa0, 0xa1, 0xa2, 0xa3, // UnionOfUnion.UnionSize24Alignement8.data
+    0xa4, 0xa5, 0xa6, 0xa7, // UnionOfUnion.UnionSize24Alignement8.data [cont.]
+    0xa8, 0xa9, 0xaa, 0xab, // UnionOfUnion.UnionSize24Alignement8.data [cont.]
+    0xac, 0xad, 0xae, 0xaf, // UnionOfUnion.UnionSize24Alignement8.data [cont.]
+};
+
+uint8_t sandwich5_case2_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich5.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.before (padding)
+
+    0x03, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.tag
+    0x00, 0x00, 0x00, 0x00, // Sandwich5.UnionOfUnion.tag (padding)
+
+    0x03, 0x00, 0x00, 0x00, // UnionSize24Alignement8.tag, i.e Sandwich5.UnionOfUnion.data
+    0x00, 0x00, 0x00, 0x00, // UnionSize24Alignement8.tag (padding)
+    0xa0, 0xa1, 0xa2, 0xa3, // UnionSize24Alignement8.data
+    0xa4, 0xa5, 0xa6, 0xa7, // UnionSize24Alignement8.data [cont.]
+    0xa8, 0xa9, 0xaa, 0xab, // UnionSize24Alignement8.data [cont.]
+    0xac, 0xad, 0xae, 0xaf, // UnionSize24Alignement8.data [cont.]
 
     0x05, 0x06, 0x07, 0x08, // Sandwich5.after
     0x00, 0x00, 0x00, 0x00, // Sandwich5.after (padding)
@@ -284,7 +325,11 @@ int main() {
     }
     {
         zx_status_t status = test_sandwich5_case1();
-        printf("test_sandwich4: %d\n", status);
+        printf("test_sandwich5_case1: %d\n", status);
+    }
+    {
+        zx_status_t status = test_sandwich5_case2();
+        printf("test_sandwich5_case2: %d\n", status);
     }
     return 0;
 }

@@ -8,6 +8,16 @@
 
 #include "transformer.h"
 
+#define PRINT_POSITION(position)                                     \
+    {                                                                \
+      printf("Position: src_inline=%d -> dst_inline=%d\n",           \
+             position.src_inline_offset,                             \
+             position.dst_inline_offset);                            \
+      printf("          src_out_of_line=%d -> dst_out_of_line=%d\n", \
+             position.src_out_of_line_offset,                        \
+             position.dst_out_of_line_offset);                       \
+    }
+
 namespace {
 
 enum struct WireFormat {
@@ -56,6 +66,15 @@ struct Position {
   uint32_t src_out_of_line_offset = 0;
   uint32_t dst_inline_offset = 0;
   uint32_t dst_out_of_line_offset = 0;
+
+  Position IncreaseDstInlineOffset(uint32_t dst_inline_offset_increase) {
+    return Position{
+      .src_inline_offset = src_inline_offset,
+      .src_out_of_line_offset = src_out_of_line_offset,
+      .dst_inline_offset = dst_inline_offset + dst_inline_offset_increase,
+      .dst_out_of_line_offset = dst_out_of_line_offset,
+    };
+  }
 };
 
 class SrcDst final {
@@ -94,8 +113,6 @@ public:
 
   void Pad(const Position& position, uint32_t size) {
     printf("Pad: dst_offset=%d size=%d\n", position.dst_inline_offset, size);
-
-    assert(size > 0);
 
     memset(dst_bytes_ + position.dst_inline_offset, 0, size);
     UpdateHighestOffset(position.dst_inline_offset + size);
@@ -172,7 +189,7 @@ public:
     case fidl::kFidlTypeStruct:
       return TransformStruct(*type, position);
     case fidl::kFidlTypeUnion:
-      return TransformUnion(*type, position, dst_size);
+      return TransformUnion(*type, position);
     case fidl::kFidlTypeArray:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
@@ -268,8 +285,8 @@ no_transform_just_copy:
     return ZX_OK;
   }
 
-  zx_status_t TransformUnion(const fidl_type_t& type,
-                             const Position& position, const uint32_t dst_size) {
+  zx_status_t TransformUnion(const fidl_type_t& type, const Position& position) {
+    // PRINT_POSITION(position)
     assert(type.type_tag == fidl::kFidlTypeUnion);
     const fidl::FidlCodedUnion& src_coded_union = type.coded_union;
     const fidl::FidlCodedUnion& dst_coded_union = *type.coded_union.alt_type;
@@ -296,7 +313,7 @@ no_transform_just_copy:
       }
     }
     assert(src_field_found && "ordinal has no corresponding variant");
-    const fidl::FidlUnionField* dst_field = &dst_coded_union.fields[src_field_index];
+    const fidl::FidlUnionField& dst_field = dst_coded_union.fields[src_field_index];
 
     // Write: static-union tag, and pad (if needed).
     switch (dst_coded_union.data_offset) {
@@ -317,11 +334,16 @@ no_transform_just_copy:
       .dst_inline_offset = position.dst_inline_offset + dst_coded_union.data_offset,
       .dst_out_of_line_offset = position.dst_out_of_line_offset,
     };
-    uint32_t dst_field_size = dst_size - dst_coded_union.data_offset;
+    uint32_t dst_field_size = dst_coded_union.size - dst_coded_union.data_offset;
     if (zx_status_t status = Transform(src_field->type, field_position, dst_field_size);
         status != ZX_OK) {
       return status;
     }
+
+    // Pad after static-union data.
+    auto field_padding_position = field_position.IncreaseDstInlineOffset(
+      dst_field_size - dst_field.padding);
+    src_dst.Pad(field_padding_position, dst_field.padding);
 
     // Done.
     return ZX_OK;
