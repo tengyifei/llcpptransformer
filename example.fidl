@@ -88,7 +88,7 @@ union UnionWithVector {
     vector<handle> handles;                          // 5: 0x471EAA76
     array<StructSize3Alignment1>:2 array_s3_a1;      // 6: 0x5EA0A810
     array<StructSize3Alignment2>:2 array_s3_a2;      // 7: 0x5CF8B70D
-    // TODO: vector of unions
+    vector<UnionSize8Aligned4> vector_union;         // 8: 0x2B768C31
 };
 
 struct Sandwich6 {

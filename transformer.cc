@@ -234,7 +234,7 @@ public:
         tmp.element_size,
         0
       );
-      return TransformArray(coded_array, position);
+      return TransformArray(coded_array, position, tmp.array_size);
     }
     case fidl::kFidlTypeString:
       return TransformString(position);
@@ -282,13 +282,12 @@ no_transform_just_copy:
 
       // Copy fields without coding tables.
       if (!src_field.type) {
-        uint32_t dst_size =
+        uint32_t dst_field_size =
           src_field.offset /*.padding_offset*/ + (src_start_of_struct - current_position.src_inline_offset);
-        src_dst.Copy(current_position, dst_size);
-        current_position.dst_inline_offset += dst_size;
+        src_dst.Copy(current_position, dst_field_size);
+        current_position.dst_inline_offset += dst_field_size;
         continue;
       }
-
 
       assert(src_field.alt_field);
       const auto& dst_field = *src_field.alt_field;
@@ -422,20 +421,26 @@ no_transform_just_copy:
     }
 
     // Viewing vector's data as an array.
+    uint32_t element_padding =
+      FIDL_ELEM_ALIGN(coded_vector.element_size) - coded_vector.element_size;
     const auto vector_data_as_coded_array = fidl::FidlCodedArrayNew(
       coded_vector.element,
       num_elements,
       coded_vector.element_size,
-      FIDL_ELEM_ALIGN(coded_vector.element_size) - coded_vector.element_size
+      element_padding
     );
+
+    // Calculate vector size.
+    uint32_t vector_size = FIDL_ALIGN(
+      num_elements * (coded_vector.element_size + element_padding));
 
     // Transform elements.
     zx_status_t status = TransformArray(vector_data_as_coded_array, Position{
       .src_inline_offset = position.src_out_of_line_offset,
-      .src_out_of_line_offset = 123456789, // TODO: position.src_out_of_line_offset + total_elements_size
+      .src_out_of_line_offset = 123456789, // TODO: position.src_out_of_line_offset + vector_size
       .dst_inline_offset = position.dst_out_of_line_offset,
-      .dst_out_of_line_offset = 123456789, // TODO: position.dst_out_of_line_offset + total_elements_size
-    });
+      .dst_out_of_line_offset = 123456789, // TODO: position.dst_out_of_line_offset + vector_size
+    }, vector_size);
     if (status != ZX_OK) {
       return status;
     }
@@ -445,10 +450,8 @@ no_transform_just_copy:
   }
 
   zx_status_t TransformArray(const fidl::FidlCodedArrayNew& coded_array,
-                             const Position& position) {
-      // Calculate array size.
-      uint32_t array_size = FIDL_ALIGN(coded_array.element_count *
-                                       (coded_array.element_size + coded_array.element_padding));
+                             const Position& position,
+                             uint32_t array_size) {
 
     // Fast path for elements without coding tables (e.g. strings).
     if (!coded_array.element) {

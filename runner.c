@@ -573,6 +573,52 @@ uint8_t sandwich6_case7_expected_output[] = {
     0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
 };
 
+uint8_t sandwich6_case8_input[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0x31, 0x8c, 0x76, 0x2b, // UnionWithVector.ordinal (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.ordinal (padding)
+    0x0f, 0x00, 0x00, 0x00, // UnionWithVector.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0x01, 0x00, 0x00, 0x00, // vector<UnionSize8Aligned4>.size (start of Sandwich6.union.data)
+    0x00, 0x00, 0x00, 0x00, // vector<UnionSize8Aligned4>.size (padding)
+
+    0xdb, 0xf0, 0xc2, 0x7f, // UnionSize8Aligned4.ordinal (first element, outer vector)
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.ordinal (padding)
+    0x0f, 0x00, 0x00, 0x00, // UnionSize8Aligned4.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.env.presence [cont.]
+
+    0xa1, 0xa2, 0xa3, 0xa4, // UnionSize8Aligned4.data
+    0xcc, 0xcc, 0xcc, 0xcc, // UnionSize8Aligned4.data (padding)
+};
+
+uint8_t sandwich6_case8_expected_output[] = {
+    0x01, 0x02, 0x03, 0x04, // Sandwich6.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.before (padding)
+
+    0x08, 0x00, 0x00, 0x00, // UnionWithVector.tag (start of Sandwich6.union)
+    0x00, 0x00, 0x00, 0x00, // UnionWithVector.tag (padding)
+    0x01, 0x00, 0x00, 0x00, // vector<UnionWithVector>.size (outer vector)
+    0x00, 0x00, 0x00, 0x00, // vector<UnionWithVector>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionWithVector.env.presence [cont.]
+
+    0x05, 0x06, 0x07, 0x08, // Sandwich6.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
+
+    0xa1, 0xa2, 0xa3, 0xa4, // UnionSize8Aligned4.data
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.data (padding)
+};
+
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
                      const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes,
@@ -721,6 +767,15 @@ bool test_sandwich6_case7(const char** out_error_msg) {
     );
 }
 
+bool test_sandwich6_case8(const char** out_error_msg) {
+    return run_single_test(
+        &v1_example_Sandwich6Table,
+        sandwich6_case8_input, sizeof(sandwich6_case8_input),
+        sandwich6_case8_expected_output, sizeof(sandwich6_case8_expected_output),
+        out_error_msg
+    );
+}
+
 #define RUN(TEST_FUNC)                              \
     {                                               \
         const char* error_msg = nullptr;            \
@@ -752,5 +807,6 @@ int main() {
     RUN(test_sandwich6_case5)
     RUN(test_sandwich6_case6)
     RUN(test_sandwich6_case7)
+    RUN(test_sandwich6_case8)
     return 0;
 }
