@@ -589,6 +589,8 @@ uint8_t sandwich6_case8_input[] = {
 
     0x01, 0x00, 0x00, 0x00, // vector<UnionSize8Aligned4>.size (start of Sandwich6.union.data)
     0x00, 0x00, 0x00, 0x00, // vector<UnionSize8Aligned4>.size (padding)
+    0xff, 0xff, 0xff, 0xff, // vector<UnionSize8Aligned4>.presence
+    0xff, 0xff, 0xff, 0xff, // vector<UnionSize8Aligned4>.presence [cont.]
 
     0xdb, 0xf0, 0xc2, 0x7f, // UnionSize8Aligned4.ordinal (first element, outer vector)
     0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.ordinal (padding)
@@ -597,8 +599,15 @@ uint8_t sandwich6_case8_input[] = {
     0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.env.presence
     0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.env.presence [cont.]
 
-    0xa1, 0xa2, 0xa3, 0xa4, // UnionSize8Aligned4.data
-    0xcc, 0xcc, 0xcc, 0xcc, // UnionSize8Aligned4.data (padding)
+    0xdb, 0xf0, 0xc2, 0x7f, // UnionSize8Aligned4.tag, i.e. Sandwich1.union
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.padding
+    0x08, 0x00, 0x00, 0x00, // UnionSize8Aligned4.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.presence [cont.]
+
+    0x09, 0x0a, 0x0b, 0x0c, // UnionSize8Aligned4.data, i.e. Sandwich1.union.data
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.data (padding)
 };
 
 uint8_t sandwich6_case8_expected_output[] = {
@@ -615,8 +624,8 @@ uint8_t sandwich6_case8_expected_output[] = {
     0x05, 0x06, 0x07, 0x08, // Sandwich6.after
     0x00, 0x00, 0x00, 0x00, // Sandwich6.after (padding)
 
-    0xa1, 0xa2, 0xa3, 0xa4, // UnionSize8Aligned4.data
-    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.data (padding)
+    0x02, 0x00, 0x00, 0x00, // UnionSize8Aligned4.tag, i.e. Sandwich1.union
+    0x09, 0x0a, 0x0b, 0x0c, // UnionSize8Aligned4.data
 };
 
 bool run_single_test(const fidl_type_t* src_type,

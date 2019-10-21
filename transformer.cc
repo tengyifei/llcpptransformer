@@ -227,14 +227,12 @@ public:
     case fidl::kFidlTypeUnion:
       return TransformUnion(*type, position);
     case fidl::kFidlTypeArray: {
-      const auto& tmp = type->coded_array;
-      const auto coded_array = fidl::FidlCodedArrayNew(
-        tmp.element,
-        tmp.array_size / tmp.element_size,
-        tmp.element_size,
-        0
-      );
-      return TransformArray(coded_array, position, tmp.array_size);
+      auto src_coded_array = fidl::FidlCodedArrayNew(type->coded_array);
+      auto dst_coded_array = fidl::FidlCodedArrayNew(*type->coded_array.alt_type);
+      src_coded_array.alt_type = &dst_coded_array;
+      dst_coded_array.alt_type = &src_coded_array;
+      uint32_t dst_array_size = type->coded_array.alt_type->array_size;
+      return TransformArray(src_coded_array, position, dst_array_size);
     }
     case fidl::kFidlTypeString:
       return TransformString(position);
@@ -285,7 +283,7 @@ no_transform_just_copy:
         uint32_t dst_field_size =
           src_field.offset /*.padding_offset*/ + (src_start_of_struct - current_position.src_inline_offset);
         src_dst.Copy(current_position, dst_field_size);
-        current_position.dst_inline_offset += dst_field_size;
+        current_position = current_position.IncreaseInlineOffset(dst_field_size);
         continue;
       }
 
@@ -294,11 +292,13 @@ no_transform_just_copy:
 
       // Pad between fields (if needed).
       if (current_position.dst_inline_offset < dst_field.offset) {
-        uint32_t size = dst_field.offset - current_position.dst_inline_offset;
-        src_dst.Pad(current_position, size);
+        uint32_t padding_size = dst_field.offset - current_position.dst_inline_offset;
+        src_dst.Pad(current_position, padding_size);
+        current_position = current_position.IncreaseInlineOffset(padding_size);
       }
 
       // Set current position before transforming field.
+      // TODO: We shouldn't need those if we kept track of everything perfectly.
       current_position.src_inline_offset = src_field.offset;
       current_position.dst_inline_offset = dst_field.offset;
 
@@ -307,8 +307,8 @@ no_transform_just_copy:
           current_position.src_inline_offset + InlineSize(src_field.type, WireFormat::kV1NoEe);
       uint32_t dst_next_field_offset =
           current_position.dst_inline_offset + InlineSize(dst_field.type, WireFormat::kOld);
-      uint32_t dst_size = dst_next_field_offset - dst_field.offset;
-      if (zx_status_t status = Transform(src_field.type, current_position, dst_size);
+      uint32_t dst_field_size = dst_next_field_offset - dst_field.offset;
+      if (zx_status_t status = Transform(src_field.type, current_position, dst_field_size);
           status != ZX_OK) {
         return status;
       }
@@ -394,18 +394,27 @@ no_transform_just_copy:
   }
 
   zx_status_t TransformString(const Position& position) {
+    static const auto string_as_coded_vector_alt_type = fidl::FidlCodedVector(
+      nullptr /* element */,
+      0 /*max count, unused */,
+      1 /* element_size */,
+      fidl::FidlNullability::kNullable /* being lax, we do not check constraints */,
+      nullptr
+    );
     static const auto string_as_coded_vector = fidl::FidlCodedVector(
       nullptr /* element */,
       0 /*max count, unused */,
       1 /* element_size */,
       fidl::FidlNullability::kNullable /* being lax, we do not check constraints */,
-      nullptr /* alt_type, unused */
+      &string_as_coded_vector_alt_type
     );
     return TransformVector(string_as_coded_vector, position);
   }
 
-  zx_status_t TransformVector(const fidl::FidlCodedVector& coded_vector,
+  zx_status_t TransformVector(const fidl::FidlCodedVector& src_coded_vector,
                               const Position& position) {
+    const fidl::FidlCodedVector& dst_coded_vector = *src_coded_vector.alt_type;
+
     // Read number of elements in vectors.
     auto num_elements = *src_dst.Read<uint32_t>(position);
 
@@ -420,28 +429,42 @@ no_transform_just_copy:
       return ZX_OK;
     }
 
-    // Viewing vector's data as an array.
-    uint32_t element_padding =
-      FIDL_ELEM_ALIGN(coded_vector.element_size) - coded_vector.element_size;
-    const auto vector_data_as_coded_array = fidl::FidlCodedArrayNew(
-      coded_vector.element,
+    // Viewing vectors data as arrays.
+    uint32_t src_element_padding =
+      FIDL_ELEM_ALIGN(src_coded_vector.element_size) - src_coded_vector.element_size;
+    uint32_t dst_element_padding =
+      FIDL_ELEM_ALIGN(dst_coded_vector.element_size) - dst_coded_vector.element_size;
+    auto src_vector_data_as_coded_array = fidl::FidlCodedArrayNew(
+      src_coded_vector.element,
       num_elements,
-      coded_vector.element_size,
-      element_padding
+      src_coded_vector.element_size,
+      src_element_padding
     );
+    auto dst_vector_data_as_coded_array = fidl::FidlCodedArrayNew(
+      dst_coded_vector.element,
+      num_elements,
+      dst_coded_vector.element_size,
+      dst_element_padding
+    );
+    src_vector_data_as_coded_array.alt_type = &dst_vector_data_as_coded_array;
+    dst_vector_data_as_coded_array.alt_type = &src_vector_data_as_coded_array;
 
     // Calculate vector size.
-    uint32_t vector_size = FIDL_ALIGN(
-      num_elements * (coded_vector.element_size + element_padding));
+    uint32_t src_vector_size = FIDL_ALIGN(
+      num_elements * (src_coded_vector.element_size + src_element_padding));
+    uint32_t dst_vector_size = FIDL_ALIGN(
+      num_elements * (dst_coded_vector.element_size + dst_element_padding));
 
     // Transform elements.
-    zx_status_t status = TransformArray(vector_data_as_coded_array, Position{
+    auto vector_data_position = Position{
       .src_inline_offset = position.src_out_of_line_offset,
-      .src_out_of_line_offset = 123456789, // TODO: position.src_out_of_line_offset + vector_size
+      .src_out_of_line_offset = position.src_out_of_line_offset + src_vector_size,
       .dst_inline_offset = position.dst_out_of_line_offset,
-      .dst_out_of_line_offset = 123456789, // TODO: position.dst_out_of_line_offset + vector_size
-    }, vector_size);
-    if (status != ZX_OK) {
+      .dst_out_of_line_offset = position.dst_out_of_line_offset + dst_vector_size
+    };
+    if (zx_status_t status = TransformArray(src_vector_data_as_coded_array, vector_data_position,
+                                            dst_vector_size);
+        status != ZX_OK) {
       return status;
     }
 
@@ -449,35 +472,42 @@ no_transform_just_copy:
     return ZX_OK;
   }
 
-  zx_status_t TransformArray(const fidl::FidlCodedArrayNew& coded_array,
+  zx_status_t TransformArray(const fidl::FidlCodedArrayNew& src_coded_array,
                              const Position& position,
-                             uint32_t array_size) {
+                             uint32_t dst_array_size) {
 
     // Fast path for elements without coding tables (e.g. strings).
-    if (!coded_array.element) {
-      src_dst.Copy(position, array_size);
+    if (!src_coded_array.element) {
+      src_dst.Copy(position, dst_array_size);
       return ZX_OK;
     }
 
+    const auto& dst_coded_array = *src_coded_array.alt_type;
+    assert(src_coded_array.element_count == dst_coded_array.element_count);
+
     // Slow path otherwise.
     auto element_position = position;
-    for (uint32_t i = 0; i < coded_array.element_count; i++) {
-      if (zx_status_t status = Transform(coded_array.element, element_position,
-                                         coded_array.element_size);
+    for (uint32_t i = 0; i < src_coded_array.element_count; i++) {
+      if (zx_status_t status = Transform(src_coded_array.element, element_position,
+                                         dst_coded_array.element_size);
           status != ZX_OK) {
         return status;
       }
 
       // Pad end of an element.
-      auto padding_position = element_position.IncreaseInlineOffset(coded_array.element_size);
-      src_dst.Pad(padding_position, coded_array.element_padding);
+      auto padding_position = element_position.
+        IncreaseSrcInlineOffset(src_coded_array.element_size).
+        IncreaseDstInlineOffset(dst_coded_array.element_size);
+      src_dst.Pad(padding_position, dst_coded_array.element_padding);
       
-      element_position = padding_position.IncreaseInlineOffset(coded_array.element_padding);
+      element_position = padding_position.
+        IncreaseSrcInlineOffset(src_coded_array.element_padding).
+        IncreaseDstInlineOffset(dst_coded_array.element_padding);
     }
 
     // Pad end of elements.
-    uint32_t padding = array_size + position.src_inline_offset
-                                  - element_position.src_inline_offset;
+    uint32_t padding = dst_array_size + position.dst_inline_offset
+                                      - element_position.dst_inline_offset;
     src_dst.Pad(element_position, padding);
 
     return ZX_OK;

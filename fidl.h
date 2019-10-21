@@ -670,9 +670,10 @@ struct FidlCodedArray {
   const fidl_type* const element;
   const uint32_t array_size;
   const uint32_t element_size;
+  const FidlCodedArray* alt_type;
 
-  constexpr FidlCodedArray(const fidl_type* element, uint32_t array_size, uint32_t element_size, const FidlCodedArray* unused)
-      : element(element), array_size(array_size), element_size(element_size) {}
+  constexpr FidlCodedArray(const fidl_type* element, uint32_t array_size, uint32_t element_size, const FidlCodedArray* alt_type)
+      : element(element), array_size(array_size), element_size(element_size), alt_type(alt_type) {}
 };
 
 // TODO(fxb/???): Switch to using this more ergonomic coding table.
@@ -682,10 +683,19 @@ struct FidlCodedArrayNew {
   const uint32_t element_size;
   const uint32_t element_padding;
 
+  // Set post construction for now.
+  FidlCodedArrayNew* alt_type = nullptr;
+
   constexpr FidlCodedArrayNew(const fidl_type* element, uint32_t element_count,
                               uint32_t element_size, uint32_t element_padding)
       : element(element), element_count(element_count),
-        element_size(element_size), element_padding(element_padding) {}
+        element_size(element_size), element_padding(element_padding){}
+
+  constexpr FidlCodedArrayNew(const FidlCodedArray& coded_array)
+      : element(coded_array.element),
+        element_count(coded_array.array_size / coded_array.element_size),
+        element_size(coded_array.element_size),
+        element_padding(0) {}
 };
 
 // Note: must keep in sync with fidlc types.h HandleSubtype.
@@ -744,10 +754,12 @@ struct FidlCodedVector {
   const uint32_t max_count;
   const uint32_t element_size;
   const FidlNullability nullable;
+  const FidlCodedVector* alt_type;
 
   constexpr FidlCodedVector(const fidl_type* element, uint32_t max_count, uint32_t element_size,
-                            FidlNullability nullable, const FidlCodedVector* unused)
-      : element(element), max_count(max_count), element_size(element_size), nullable(nullable) {}
+                            FidlNullability nullable, const FidlCodedVector* alt_type)
+      : element(element), max_count(max_count), element_size(element_size), nullable(nullable),
+        alt_type(alt_type) {}
 };
 
 }  // namespace fidl

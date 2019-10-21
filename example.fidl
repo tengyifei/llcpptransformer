@@ -96,3 +96,5 @@ struct Sandwich6 {
     UnionWithVector union;
     uint32 after;
 };
+
+// TODO: simple struct examples without any union, e.g. struct{uint8;uint32;uint8;uint16;uint64;}
