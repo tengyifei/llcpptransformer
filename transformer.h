@@ -11,13 +11,26 @@
 
 // __BEGIN_CDECLS
 
-// works on encoded messages
-// on the wire xunions get converted to static unions
-// out buffer should be of at least the size of type->format2->(size + max_out_of_line)
-zx_status_t fidl_transform_xunion_to_union(const fidl_type_t* type,
-                                           const void* in_bytes, uint32_t in_num_bytes,
-                                           void* out_bytes, uint32_t* out_num_bytes,
-                                           const char** out_error_msg);
+// Available transformations.
+enum FidlTransformation {
+    // No-op transformation.
+    NONE = 0,
+
+    // In the v1 wire format, static-unions are encoded as flexible-unions.
+    //
+    // Performing this transformation will inline all static-unions into their
+    // container (including their data which will move from out-of-line to
+    // inline).
+    V1_TO_OLD = 1,
+};
+
+// Transforms an encoded FIDL buffer from one wire format to another. See the
+// `Trasnformation` enum for supported transformations.
+zx_status_t fidl_transform(FidlTransformation transformation,
+                           const fidl_type_t* type,
+                           const void* src_bytes, uint32_t src_num_bytes,
+                           void* dst_bytes, uint32_t* dst_num_bytes,
+                           const char** out_error_msg);
 
 // __END_CDECLS
 

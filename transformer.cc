@@ -177,15 +177,13 @@ private:
   uint32_t dst_highest_offset_ = 0;
 };
 
-class Transformer final {
+class TransformerBase {
 public:
-  Transformer(const uint8_t* src_bytes, const uint32_t src_num_bytes,
-              uint8_t* dst_bytes, uint32_t* dst_num_bytes,
-              const char** out_error_msg)
-    : src_dst(src_bytes, src_num_bytes, dst_bytes, dst_num_bytes),
-      out_error_msg_(out_error_msg) {}
+  TransformerBase(SrcDst* src_dst, const char** out_error_msg)
+    : src_dst(src_dst), out_error_msg_(out_error_msg) {}
+  virtual ~TransformerBase() = default;
 
-  zx_status_t RunOnTopLevelStruct(const fidl_type_t* type) {
+  zx_status_t TransformTopLevelStruct(const fidl_type_t* type) {
     if (type->type_tag != fidl::kFidlTypeStruct) {
       return Fail(ZX_ERR_INVALID_ARGS, "only top-level structs supported");
     }
@@ -204,7 +202,7 @@ public:
     return ZX_OK;
   }
 
- private:
+protected:
   zx_status_t Transform(const fidl_type_t* type,
                         const Position& position,
                         const uint32_t dst_size) {
@@ -268,18 +266,118 @@ public:
     return ZX_ERR_BAD_STATE;
 
 no_transform_just_copy:
-    src_dst.Copy(position, dst_size);
+    src_dst->Copy(position, dst_size);
     return ZX_OK;
   }
 
+  virtual zx_status_t TransformStructPointer(
+    const fidl::FidlCodedStruct& src_coded_struct,
+    const fidl::FidlCodedStruct& dst_coded_struct,
+    const Position& position) = 0;
+
+  virtual zx_status_t TransformStruct(
+    const fidl::FidlCodedStruct& src_coded_struct,
+    const fidl::FidlCodedStruct& dst_coded_struct,
+    const Position& position,
+    uint32_t dst_size) = 0;
+
+  virtual zx_status_t TransformUnion(
+    const fidl::FidlCodedUnion& src_coded_union,
+    const fidl::FidlCodedUnion& dst_coded_union,
+    const Position& position) = 0;
+
+  virtual zx_status_t TransformString(
+    const Position& position) = 0;
+
+  virtual zx_status_t TransformVector(
+    const fidl::FidlCodedVector& src_coded_vector,
+    const fidl::FidlCodedVector& dst_coded_vector,
+    const Position& position) = 0;
+
+  virtual zx_status_t TransformArray(
+    const fidl::FidlCodedArrayNew& src_coded_array,
+    const fidl::FidlCodedArrayNew& dst_coded_array,
+    const Position& position,
+    uint32_t dst_array_size) = 0;
+
+  inline zx_status_t Fail(zx_status_t status, const char* error_msg) {
+    *out_error_msg_ = error_msg;
+    return status;
+  }
+
+  SrcDst* src_dst;
+
+private:
+  const char** out_error_msg_;
+};
+
+class Unsupported final : public TransformerBase {
+public:
+  Unsupported(const char** out_error_msg) : TransformerBase(nullptr, out_error_msg) {}
+
+protected:
+  zx_status_t TransformStructPointer(
+    const fidl::FidlCodedStruct& src_coded_struct,
+    const fidl::FidlCodedStruct& dst_coded_struct,
+    const Position& position) {
+    assert(false && "unreachable");
+    return ZX_ERR_BAD_STATE;
+  }
+
+  zx_status_t TransformStruct(
+    const fidl::FidlCodedStruct& src_coded_struct,
+    const fidl::FidlCodedStruct& dst_coded_struct,
+    const Position& position,
+    uint32_t dst_size) {
+    return Fail(ZX_ERR_INVALID_ARGS, "unsupported transformation");
+  }
+
+  zx_status_t TransformUnion(
+    const fidl::FidlCodedUnion& src_coded_union,
+    const fidl::FidlCodedUnion& dst_coded_union,
+    const Position& position) {
+    assert(false && "unreachable");
+    return ZX_ERR_BAD_STATE;
+  }
+
+  zx_status_t TransformString(
+    const Position& position) {
+    assert(false && "unreachable");
+    return ZX_ERR_BAD_STATE;
+  }
+
+  zx_status_t TransformVector(
+    const fidl::FidlCodedVector& src_coded_vector,
+    const fidl::FidlCodedVector& dst_coded_vector,
+    const Position& position) {
+    assert(false && "unreachable");
+    return ZX_ERR_BAD_STATE;
+  }
+
+  zx_status_t TransformArray(
+    const fidl::FidlCodedArrayNew& src_coded_array,
+    const fidl::FidlCodedArrayNew& dst_coded_array,
+    const Position& position,
+    uint32_t dst_array_size) {
+    assert(false && "unreachable");
+    return ZX_ERR_BAD_STATE;
+  }
+};
+
+class V1ToOld final : public TransformerBase {
+public:
+  V1ToOld(SrcDst* src_dst, const char** out_error_msg)
+    : TransformerBase(src_dst, out_error_msg) {}
+
+ private:
   zx_status_t TransformStructPointer(const fidl::FidlCodedStruct& src_coded_struct,
                                      const fidl::FidlCodedStruct& dst_coded_struct,
                                      const Position& position) {
     // Read presence.
-    auto presence = *src_dst.Read<uint64_t>(position);
+    auto presence = *src_dst->Read<uint64_t>(position);
 
     // Copy presence.
-    src_dst.Copy(position, 8);
+    src_dst->Copy(position, 8);
 
     // Early exit when absent.
     if (presence != FIDL_ALLOC_PRESENT) {
@@ -309,7 +407,7 @@ no_transform_just_copy:
 
     // Copy structs without any coded fields, and done.
     if (src_coded_struct.field_count == 0) {
-      src_dst.Copy(position, dst_size);
+      src_dst->Copy(position, dst_size);
       return ZX_OK;
     }
 
@@ -328,7 +426,7 @@ no_transform_just_copy:
       if (!src_field.type) {
         uint32_t dst_field_size =
           src_field.offset /*.padding_offset*/ + (src_start_of_struct - current_position.src_inline_offset);
-        src_dst.Copy(current_position, dst_field_size);
+        src_dst->Copy(current_position, dst_field_size);
         current_position = current_position.IncreaseInlineOffset(dst_field_size);
         continue;
       }
@@ -339,7 +437,7 @@ no_transform_just_copy:
       // Pad between fields (if needed).
       if (current_position.dst_inline_offset < dst_field.offset) {
         uint32_t padding_size = dst_field.offset - current_position.dst_inline_offset;
-        src_dst.Pad(current_position, padding_size);
+        src_dst->Pad(current_position, padding_size);
         current_position = current_position.IncreaseInlineOffset(padding_size);
       }
 
@@ -367,7 +465,7 @@ no_transform_just_copy:
     // Pad end (if needed).
     if (current_position.dst_inline_offset < dst_end_of_src_struct) {
       uint32_t size = dst_end_of_src_struct - current_position.dst_inline_offset;
-      src_dst.Pad(current_position, size);
+      src_dst->Pad(current_position, size);
     }
 
     // Done.
@@ -380,7 +478,7 @@ no_transform_just_copy:
     assert(src_coded_union.field_count == dst_coded_union.field_count);
 
     // Read: flexible-union ordinal.
-    auto src_xunion = src_dst.Read<const fidl_xunion_t>(position);
+    auto src_xunion = src_dst->Read<const fidl_xunion_t>(position);
     uint32_t xunion_ordinal = src_xunion->tag;
 
     // Retrieve: flexible-union field (or variant).
@@ -406,10 +504,10 @@ no_transform_just_copy:
     // Write: static-union tag, and pad (if needed).
     switch (dst_coded_union.data_offset) {
     case 4:
-      src_dst.Write(position, src_field_index);
+      src_dst->Write(position, src_field_index);
       break;
     case 8:
-      src_dst.Write(position, static_cast<uint64_t>(src_field_index));
+      src_dst->Write(position, static_cast<uint64_t>(src_field_index));
       break;
     default:
       assert(false && "static-union data offset can only be 4 or 8");
@@ -431,7 +529,7 @@ no_transform_just_copy:
     // Pad after static-union data.
     auto field_padding_position = field_position.IncreaseDstInlineOffset(
       dst_field_size - dst_field.padding);
-    src_dst.Pad(field_padding_position, dst_field.padding);
+    src_dst->Pad(field_padding_position, dst_field.padding);
 
     // Done.
     return ZX_OK;
@@ -451,13 +549,13 @@ no_transform_just_copy:
                               const fidl::FidlCodedVector& dst_coded_vector,
                               const Position& position) {
     // Read number of elements in vectors.
-    auto num_elements = *src_dst.Read<uint32_t>(position);
+    auto num_elements = *src_dst->Read<uint32_t>(position);
 
     // Read presence.
-    auto presence = *src_dst.Read<uint64_t>(position.IncreaseSrcInlineOffset(8));
+    auto presence = *src_dst->Read<uint64_t>(position.IncreaseSrcInlineOffset(8));
 
     // Copy vector header.
-    src_dst.Copy(position, 16);
+    src_dst->Copy(position, 16);
 
     // Early exit on nullable vectors.
     if (presence != FIDL_ALLOC_PRESENT) {
@@ -513,7 +611,7 @@ no_transform_just_copy:
 
     // Fast path for elements without coding tables (e.g. strings).
     if (!src_coded_array.element) {
-      src_dst.Copy(position, dst_array_size);
+      src_dst->Copy(position, dst_array_size);
       return ZX_OK;
     }
 
@@ -530,7 +628,7 @@ no_transform_just_copy:
       auto padding_position = element_position.
         IncreaseSrcInlineOffset(src_coded_array.element_size).
         IncreaseDstInlineOffset(dst_coded_array.element_size);
-      src_dst.Pad(padding_position, dst_coded_array.element_padding);
+      src_dst->Pad(padding_position, dst_coded_array.element_padding);
       
       element_position = padding_position.
         IncreaseSrcInlineOffset(src_coded_array.element_padding).
@@ -540,30 +638,29 @@ no_transform_just_copy:
     // Pad end of elements.
     uint32_t padding = dst_array_size + position.dst_inline_offset
                                       - element_position.dst_inline_offset;
-    src_dst.Pad(element_position, padding);
+    src_dst->Pad(element_position, padding);
 
     return ZX_OK;
   }
-
-  inline zx_status_t Fail(zx_status_t status, const char* error_msg) {
-    *out_error_msg_ = error_msg;
-    return status;
-  }
-
-  SrcDst src_dst;
-  const char** out_error_msg_;
 };
 
 }  // namespace
 
-zx_status_t fidl_transform_xunion_to_union(const fidl_type_t* type,
-                                           const void* in_bytes, uint32_t in_num_bytes,
-                                           void* out_bytes, uint32_t* out_num_bytes,
-                                           const char** out_error_msg) {
-  auto transformer = Transformer(
-    static_cast<const uint8_t*>(in_bytes), in_num_bytes,
-    static_cast<uint8_t*>(out_bytes), out_num_bytes,
-    out_error_msg
-  );
-  return transformer.RunOnTopLevelStruct(type);
+zx_status_t fidl_transform(FidlTransformation transformation,
+                           const fidl_type_t* type,
+                           const void* src_bytes, uint32_t src_num_bytes,
+                           void* dst_bytes, uint32_t* dst_num_bytes,
+                           const char** out_error_msg) {
+  if (transformation == FidlTransformation::NONE) {
+    return ZX_OK;
+  }
+  auto src_dst = SrcDst(
+    static_cast<const uint8_t*>(src_bytes), src_num_bytes,
+    static_cast<uint8_t*>(dst_bytes), dst_num_bytes);
+  switch (transformation) {
+  case FidlTransformation::V1_TO_OLD:
+    return V1ToOld(&src_dst, out_error_msg).TransformTopLevelStruct(type);
+  default:
+    return Unsupported(out_error_msg).TransformTopLevelStruct(type);
+  }
 }
