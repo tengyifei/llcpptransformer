@@ -42,7 +42,7 @@ namespace {
 
 enum struct WireFormat {
   kOld,
-  kV1NoEe,
+  kV1,
 };
 
 uint32_t InlineSize(const fidl_type_t* type, WireFormat wire_format) {
@@ -66,7 +66,7 @@ uint32_t InlineSize(const fidl_type_t* type, WireFormat wire_format) {
       switch (wire_format) {
       case WireFormat::kOld:
         return type->coded_union.size;
-      case WireFormat::kV1NoEe:
+      case WireFormat::kV1:
         return 24; // xunion
       }
     case fidl::kFidlTypeArray:
@@ -304,7 +304,7 @@ no_transform_just_copy:
 
       // Transform field.
       uint32_t src_next_field_offset =
-          current_position.src_inline_offset + InlineSize(src_field.type, WireFormat::kV1NoEe);
+          current_position.src_inline_offset + InlineSize(src_field.type, WireFormat::kV1);
       uint32_t dst_next_field_offset =
           current_position.dst_inline_offset + InlineSize(dst_field.type, WireFormat::kOld);
       uint32_t dst_field_size = dst_next_field_offset - dst_field.offset;
