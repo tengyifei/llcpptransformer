@@ -646,19 +646,18 @@ public:
 
 }  // namespace
 
-zx_status_t fidl_transform(FidlTransformation transformation,
+zx_status_t fidl_transform(fidl_transformation_t transformation,
                            const fidl_type_t* type,
-                           const void* src_bytes, uint32_t src_num_bytes,
-                           void* dst_bytes, uint32_t* dst_num_bytes,
+                           const void* src_bytes, void* dst_bytes,
+                           uint32_t src_num_bytes, uint32_t* dst_num_bytes,
                            const char** out_error_msg) {
-  if (transformation == FidlTransformation::NONE) {
-    return ZX_OK;
-  }
   auto src_dst = SrcDst(
     static_cast<const uint8_t*>(src_bytes), src_num_bytes,
     static_cast<uint8_t*>(dst_bytes), dst_num_bytes);
   switch (transformation) {
-  case FidlTransformation::V1_TO_OLD:
+  case FIDL_TRANSFORMATION_NONE:
+    return ZX_OK;
+  case FIDL_TRANSFORMATION_V1_TO_OLD:
     return V1ToOld(&src_dst, out_error_msg).TransformTopLevelStruct(type);
   default:
     return Unsupported(out_error_msg).TransformTopLevelStruct(type);

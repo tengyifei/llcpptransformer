@@ -12,24 +12,30 @@
 // __BEGIN_CDECLS
 
 // Available transformations.
-enum FidlTransformation {
-    // No-op transformation.
-    NONE = 0,
+//
+// Note: in order to avoid any padding in `fidl_transform` invocations, we
+// define this enum as a `uint64_t`.
+typedef uint64_t fidl_transformation_t;
 
-    // In the v1 wire format, static-unions are encoded as flexible-unions.
-    //
-    // Performing this transformation will inline all static-unions into their
-    // container (including their data which will move from out-of-line to
-    // inline).
-    V1_TO_OLD = 1,
-};
+// No-op transformation.
+#define FIDL_TRANSFORMATION_NONE ((fidl_transformation_t)0u)
 
-// Transforms an encoded FIDL buffer from one wire format to another. See the
-// `Trasnformation` enum for supported transformations.
-zx_status_t fidl_transform(FidlTransformation transformation,
+// In the v1 wire format, static-unions are encoded as flexible-unions.
+//
+// Performing this transformation will inline all static-unions into their
+// container (including their data which will move from out-of-line to
+// inline).
+//
+// See also `fidl_transform`.
+#define FIDL_TRANSFORMATION_V1_TO_OLD ((fidl_transformation_t)1u)
+
+// Transforms an encoded FIDL buffer from one wire format to another.
+//
+// See also `fidl_transformation_t` and `FIDL_TRANSFORMATION_...` constants.
+zx_status_t fidl_transform(fidl_transformation_t transformation,
                            const fidl_type_t* type,
-                           const void* src_bytes, uint32_t src_num_bytes,
-                           void* dst_bytes, uint32_t* dst_num_bytes,
+                           const void* src_bytes, void* dst_bytes,
+                           uint32_t src_num_bytes, uint32_t* dst_num_bytes,
                            const char** out_error_msg);
 
 // __END_CDECLS

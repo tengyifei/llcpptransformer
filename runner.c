@@ -685,10 +685,10 @@ bool run_single_test(const fidl_type_t* src_type,
     memset(actual_dst_bytes, 0xcc /* poison */, ZX_CHANNEL_MAX_MSG_BYTES);
 
     zx_status_t status = fidl_transform(
-        FidlTransformation::V1_TO_OLD,
+        FIDL_TRANSFORMATION_V1_TO_OLD,
         src_type,
-        src_bytes, src_num_bytes,
-        actual_dst_bytes, &actual_dst_num_bytes,
+        src_bytes, actual_dst_bytes,
+        src_num_bytes, &actual_dst_num_bytes,
         out_error_msg);
     if (status != ZX_OK) {
         return false;
