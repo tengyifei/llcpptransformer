@@ -186,11 +186,13 @@ public:
       out_error_msg_(out_error_msg) {}
 
   zx_status_t RunOnTopLevelStruct(const fidl_type_t* type) {
-    assert(type->type_tag == fidl::kFidlTypeStruct && "only top-level structs supported");
-    const fidl::FidlCodedStruct& src_coded_struct = type->coded_struct;
-    const fidl::FidlCodedStruct& dst_coded_struct = *src_coded_struct.alt_type;
+    if (type->type_tag != fidl::kFidlTypeStruct) {
+      return Fail(ZX_ERR_INVALID_ARGS, "only top-level structs supported");
+    }
 
-    zx_status_t status = TransformStruct(type->coded_struct, Position{
+    const auto& src_coded_struct = type->coded_struct;
+    const auto& dst_coded_struct = *src_coded_struct.alt_type;
+    zx_status_t status = TransformStruct(src_coded_struct, dst_coded_struct, Position{
       .src_inline_offset = 0,
       .src_out_of_line_offset = src_coded_struct.size,
       .dst_inline_offset = 0,
@@ -222,22 +224,37 @@ public:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
 
-    case fidl::kFidlTypeStruct:
-      return TransformStruct(type->coded_struct, position, dst_size);
-    case fidl::kFidlTypeUnion:
-      return TransformUnion(*type, position);
+    case fidl::kFidlTypeStruct: {
+      const auto& src_coded_struct = type->coded_struct;
+      const auto& dst_coded_struct = *src_coded_struct.alt_type;
+      return TransformStruct(src_coded_struct, dst_coded_struct, position, dst_size);
+    }
+    case fidl::kFidlTypeUnion: {
+      const auto& src_coded_union = type->coded_union;
+      const auto& dst_coded_union = *src_coded_union.alt_type;
+      return TransformUnion(src_coded_union, dst_coded_union, position);
+    }
     case fidl::kFidlTypeArray: {
-      auto src_coded_array = fidl::FidlCodedArrayNew(type->coded_array);
-      auto dst_coded_array = fidl::FidlCodedArrayNew(*type->coded_array.alt_type);
-      src_coded_array.alt_type = &dst_coded_array;
-      dst_coded_array.alt_type = &src_coded_array;
+      const auto convert = [](const fidl::FidlCodedArray& coded_array) {
+        return fidl::FidlCodedArrayNew(
+          coded_array.element,
+          coded_array.array_size / coded_array.element_size,
+          coded_array.element_size,
+          0,
+          nullptr /* alt_type unused, we provide both src and dst */);
+      };
+      auto src_coded_array = convert(type->coded_array);
+      auto dst_coded_array = convert(*type->coded_array.alt_type);
       uint32_t dst_array_size = type->coded_array.alt_type->array_size;
-      return TransformArray(src_coded_array, position, dst_array_size);
+      return TransformArray(src_coded_array, dst_coded_array, position, dst_array_size);
     }
     case fidl::kFidlTypeString:
       return TransformString(position);
-    case fidl::kFidlTypeVector:
-      return TransformVector(type->coded_vector, position);
+    case fidl::kFidlTypeVector: {
+      const auto& src_coded_vector = type->coded_vector;
+      const auto& dst_coded_vector = *src_coded_vector.alt_type;
+      return TransformVector(src_coded_vector, dst_coded_vector, position);
+    }
     case fidl::kFidlTypeTable:
       assert(false && "TODO!");
       return ZX_ERR_BAD_STATE;
@@ -254,7 +271,8 @@ no_transform_just_copy:
   }
 
   zx_status_t TransformStruct(const fidl::FidlCodedStruct& src_coded_struct,
-                              Position current_position,
+                              const fidl::FidlCodedStruct& dst_coded_struct,
+                              const Position& position,
                               uint32_t dst_size) {
     // Note: we cannot use dst_coded_struct.size, and must instead rely on
     // the provided dst_size since this struct could be placed in an alignment
@@ -262,16 +280,15 @@ no_transform_just_copy:
 
     // Copy structs without any coded fields, and done.
     if (src_coded_struct.field_count == 0) {
-      src_dst.Copy(current_position, dst_size);
+      src_dst.Copy(position, dst_size);
       return ZX_OK;
     }
 
-    const uint32_t src_start_of_struct = current_position.src_inline_offset;
+    const uint32_t src_start_of_struct = position.src_inline_offset;
+    const uint32_t dst_start_of_struct = position.dst_inline_offset;
+    const uint32_t dst_end_of_src_struct = position.dst_inline_offset + dst_size;
 
-    const fidl::FidlCodedStruct& dst_coded_struct = *src_coded_struct.alt_type;
-    const uint32_t dst_start_of_struct = current_position.dst_inline_offset;
-    const uint32_t dst_end_of_src_struct = current_position.dst_inline_offset + dst_size;
-
+    auto current_position = position;
     for (uint32_t src_field_index = 0;
          src_field_index < src_coded_struct.field_count;
          src_field_index++) {
@@ -328,10 +345,9 @@ no_transform_just_copy:
     return ZX_OK;
   }
 
-  zx_status_t TransformUnion(const fidl_type_t& type, const Position& position) {
-    assert(type.type_tag == fidl::kFidlTypeUnion);
-    const fidl::FidlCodedUnion& src_coded_union = type.coded_union;
-    const fidl::FidlCodedUnion& dst_coded_union = *type.coded_union.alt_type;
+  zx_status_t TransformUnion(const fidl::FidlCodedUnion& src_coded_union,
+                             const fidl::FidlCodedUnion& dst_coded_union,
+                             const Position& position) {
     assert(src_coded_union.field_count == dst_coded_union.field_count);
 
     // Read: flexible-union ordinal.
@@ -353,8 +369,7 @@ no_transform_just_copy:
       }
     }
     if (!src_field_found) {
-      SetError("ordinal has no corresponding variant");
-      return ZX_ERR_BAD_STATE;
+      return Fail(ZX_ERR_BAD_STATE, "ordinal has no corresponding variant");
     }
 
     const fidl::FidlUnionField& dst_field = dst_coded_union.fields[src_field_index];
@@ -394,27 +409,18 @@ no_transform_just_copy:
   }
 
   zx_status_t TransformString(const Position& position) {
-    static const auto string_as_coded_vector_alt_type = fidl::FidlCodedVector(
-      nullptr /* element */,
-      0 /*max count, unused */,
-      1 /* element_size */,
-      fidl::FidlNullability::kNullable /* being lax, we do not check constraints */,
-      nullptr
-    );
     static const auto string_as_coded_vector = fidl::FidlCodedVector(
       nullptr /* element */,
       0 /*max count, unused */,
       1 /* element_size */,
       fidl::FidlNullability::kNullable /* being lax, we do not check constraints */,
-      &string_as_coded_vector_alt_type
-    );
-    return TransformVector(string_as_coded_vector, position);
+      nullptr /* alt_type unused, we provide both src and dst */);
+    return TransformVector(string_as_coded_vector, string_as_coded_vector, position);
   }
 
   zx_status_t TransformVector(const fidl::FidlCodedVector& src_coded_vector,
+                              const fidl::FidlCodedVector& dst_coded_vector,
                               const Position& position) {
-    const fidl::FidlCodedVector& dst_coded_vector = *src_coded_vector.alt_type;
-
     // Read number of elements in vectors.
     auto num_elements = *src_dst.Read<uint32_t>(position);
 
@@ -434,20 +440,16 @@ no_transform_just_copy:
       FIDL_ELEM_ALIGN(src_coded_vector.element_size) - src_coded_vector.element_size;
     uint32_t dst_element_padding =
       FIDL_ELEM_ALIGN(dst_coded_vector.element_size) - dst_coded_vector.element_size;
-    auto src_vector_data_as_coded_array = fidl::FidlCodedArrayNew(
-      src_coded_vector.element,
-      num_elements,
-      src_coded_vector.element_size,
-      src_element_padding
-    );
-    auto dst_vector_data_as_coded_array = fidl::FidlCodedArrayNew(
-      dst_coded_vector.element,
-      num_elements,
-      dst_coded_vector.element_size,
-      dst_element_padding
-    );
-    src_vector_data_as_coded_array.alt_type = &dst_vector_data_as_coded_array;
-    dst_vector_data_as_coded_array.alt_type = &src_vector_data_as_coded_array;
+    const auto convert = [&](const fidl::FidlCodedVector& coded_vector, uint32_t element_padding) {
+      return fidl::FidlCodedArrayNew(
+        coded_vector.element,
+        num_elements,
+        coded_vector.element_size,
+        element_padding,
+        nullptr /* alt_type unused, we provide both src and dst */);
+    };
+    const auto src_vector_data_as_coded_array = convert(src_coded_vector, src_element_padding);
+    const auto dst_vector_data_as_coded_array = convert(dst_coded_vector, dst_element_padding);
 
     // Calculate vector size.
     uint32_t src_vector_size = FIDL_ALIGN(
@@ -462,7 +464,9 @@ no_transform_just_copy:
       .dst_inline_offset = position.dst_out_of_line_offset,
       .dst_out_of_line_offset = position.dst_out_of_line_offset + dst_vector_size
     };
-    if (zx_status_t status = TransformArray(src_vector_data_as_coded_array, vector_data_position,
+    if (zx_status_t status = TransformArray(src_vector_data_as_coded_array,
+                                            dst_vector_data_as_coded_array,
+                                            vector_data_position,
                                             dst_vector_size);
         status != ZX_OK) {
       return status;
@@ -473,17 +477,16 @@ no_transform_just_copy:
   }
 
   zx_status_t TransformArray(const fidl::FidlCodedArrayNew& src_coded_array,
+                             const fidl::FidlCodedArrayNew& dst_coded_array,
                              const Position& position,
                              uint32_t dst_array_size) {
+    assert(src_coded_array.element_count == dst_coded_array.element_count);
 
     // Fast path for elements without coding tables (e.g. strings).
     if (!src_coded_array.element) {
       src_dst.Copy(position, dst_array_size);
       return ZX_OK;
     }
-
-    const auto& dst_coded_array = *src_coded_array.alt_type;
-    assert(src_coded_array.element_count == dst_coded_array.element_count);
 
     // Slow path otherwise.
     auto element_position = position;
@@ -513,8 +516,9 @@ no_transform_just_copy:
     return ZX_OK;
   }
 
-  void SetError(const char* error_msg) {
+  inline zx_status_t Fail(zx_status_t status, const char* error_msg) {
     *out_error_msg_ = error_msg;
+    return status;
   }
 
   SrcDst src_dst;

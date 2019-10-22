@@ -44,6 +44,7 @@ typedef int32_t zx_status_t;
 
 #define ZX_OK (0)
 #define ZX_ERR_BAD_STATE (-20)
+#define ZX_ERR_INVALID_ARGS (-10)
 
 #define FIDL_MAX_SIZE UINT32_MAX
 
@@ -682,20 +683,14 @@ struct FidlCodedArrayNew {
   const uint32_t element_count;
   const uint32_t element_size;
   const uint32_t element_padding;
-
-  // Set post construction for now.
-  FidlCodedArrayNew* alt_type = nullptr;
+  const FidlCodedArrayNew* alt_type;
 
   constexpr FidlCodedArrayNew(const fidl_type* element, uint32_t element_count,
-                              uint32_t element_size, uint32_t element_padding)
+                              uint32_t element_size, uint32_t element_padding,
+                              const FidlCodedArrayNew* alt_type)
       : element(element), element_count(element_count),
-        element_size(element_size), element_padding(element_padding){}
-
-  constexpr FidlCodedArrayNew(const FidlCodedArray& coded_array)
-      : element(coded_array.element),
-        element_count(coded_array.array_size / coded_array.element_size),
-        element_size(coded_array.element_size),
-        element_padding(0) {}
+        element_size(element_size), element_padding(element_padding),
+        alt_type(alt_type) {}
 };
 
 // Note: must keep in sync with fidlc types.h HandleSubtype.
