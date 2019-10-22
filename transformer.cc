@@ -218,12 +218,14 @@ public:
     case fidl::kFidlTypeBits:
     case fidl::kFidlTypeHandle:
       goto no_transform_just_copy;
-
-    case fidl::kFidlTypeStructPointer:
+    case fidl::kFidlTypeStructPointer: {
+      const auto& src_coded_struct = *type->coded_struct_pointer.struct_type;
+      const auto& dst_coded_struct = *src_coded_struct.alt_type;
+      return TransformStructPointer(src_coded_struct, dst_coded_struct, position);
+    }
     case fidl::kFidlTypeUnionPointer:
-      assert(false && "TODO!");
+      assert(false && "nullable unions are no longer supported");
       return ZX_ERR_BAD_STATE;
-
     case fidl::kFidlTypeStruct: {
       const auto& src_coded_struct = type->coded_struct;
       const auto& dst_coded_struct = *src_coded_struct.alt_type;
@@ -268,6 +270,33 @@ public:
 no_transform_just_copy:
     src_dst.Copy(position, dst_size);
     return ZX_OK;
+  }
+
+  zx_status_t TransformStructPointer(const fidl::FidlCodedStruct& src_coded_struct,
+                                     const fidl::FidlCodedStruct& dst_coded_struct,
+                                     const Position& position) {
+    // Read presence.
+    auto presence = *src_dst.Read<uint64_t>(position);
+
+    // Copy presence.
+    src_dst.Copy(position, 8);
+
+    // Early exit when absent.
+    if (presence != FIDL_ALLOC_PRESENT) {
+      return ZX_OK;
+    }
+
+    // Transform struct.
+    uint32_t aligned_src_size = FIDL_ALIGN(src_coded_struct.size);
+    uint32_t aligned_dst_size = FIDL_ALIGN(dst_coded_struct.size);
+    const auto struct_position = Position{
+      .src_inline_offset = position.src_out_of_line_offset,
+      .src_out_of_line_offset = position.src_out_of_line_offset + aligned_src_size,
+      .dst_inline_offset = position.dst_out_of_line_offset,
+      .dst_out_of_line_offset = position.dst_out_of_line_offset + aligned_dst_size,
+    };
+    return TransformStruct(src_coded_struct, dst_coded_struct,
+                           struct_position, aligned_dst_size);
   }
 
   zx_status_t TransformStruct(const fidl::FidlCodedStruct& src_coded_struct,
@@ -316,8 +345,8 @@ no_transform_just_copy:
 
       // Set current position before transforming field.
       // TODO: We shouldn't need those if we kept track of everything perfectly.
-      current_position.src_inline_offset = src_field.offset;
-      current_position.dst_inline_offset = dst_field.offset;
+      current_position.src_inline_offset = src_start_of_struct + src_field.offset;
+      current_position.dst_inline_offset = dst_start_of_struct + dst_field.offset;
 
       // Transform field.
       uint32_t src_next_field_offset =

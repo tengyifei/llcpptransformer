@@ -97,4 +97,11 @@ struct Sandwich6 {
     uint32 after;
 };
 
+struct Sandwich7 {
+    uint32 before;
+    Sandwich1? opt_sandwich1;
+    uint32 after;
+};
+
 // TODO: simple struct examples without any union, e.g. struct{uint8;uint32;uint8;uint16;uint64;}
+// TODO: struct{opt_struct_size4;opt_struct_size4;} to check alignment of secondary objects

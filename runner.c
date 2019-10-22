@@ -621,6 +621,61 @@ uint8_t sandwich6_case8_expected_output[] = {
     0x09, 0x0a, 0x0b, 0x0c, // UnionSize8Aligned4.data
 };
 
+uint8_t sandwich7_case1_input[] = {
+    0x11, 0x12, 0x13, 0x14, // Sandwich7.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.before (padding)
+    0xff, 0xff, 0xff, 0xff, // Sandwich7.opt_sandwich1.presence
+    0xff, 0xff, 0xff, 0xff, // Sandwich7.opt_sandwich1.presence [cont.]
+    0x21, 0x22, 0x23, 0x24, // Sandwich7.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.after (padding)
+
+    0x01, 0x02, 0x03, 0x04, // Sandwich1.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich1.before (padding)
+    0xdb, 0xf0, 0xc2, 0x7f, // UnionSize8Aligned4.tag, i.e. Sandwich1.union
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.padding
+    0x08, 0x00, 0x00, 0x00, // UnionSize8Aligned4.env.num_bytes
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.env.num_handle
+    0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.env.presence
+    0xff, 0xff, 0xff, 0xff, // UnionSize8Aligned4.presence [cont.]
+    0x05, 0x06, 0x07, 0x08, // Sandwich1.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich1.after (padding)
+
+    0x09, 0x0a, 0x0b, 0x0c, // UnionSize8Aligned4.data, i.e. Sandwich1.union.data
+    0x00, 0x00, 0x00, 0x00, // UnionSize8Aligned4.data (padding)
+};
+
+uint8_t sandwich7_case1_expected_output[] = {
+    0x11, 0x12, 0x13, 0x14, // Sandwich7.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.before (padding)
+    0xff, 0xff, 0xff, 0xff, // Sandwich7.opt_sandwich1.presence
+    0xff, 0xff, 0xff, 0xff, // Sandwich7.opt_sandwich1.presence [cont.]
+    0x21, 0x22, 0x23, 0x24, // Sandwich7.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.after (padding)
+
+    0x01, 0x02, 0x03, 0x04, // Sandwich1.before
+    0x02, 0x00, 0x00, 0x00, // UnionSize8Aligned4.tag, i.e. Sandwich1.union
+    0x09, 0x0a, 0x0b, 0x0c, // UnionSize8Aligned4.data
+    0x05, 0x06, 0x07, 0x08, // Sandwich1.after
+};
+
+uint8_t sandwich7_case2_input[] = {
+    0x11, 0x12, 0x13, 0x14, // Sandwich7.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.before (padding)
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.opt_sandwich1.preabsentsence
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.opt_sandwich1.absent [cont.]
+    0x21, 0x22, 0x23, 0x24, // Sandwich7.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.after (padding)
+};
+
+uint8_t sandwich7_case2_expected_output[] = {
+    0x11, 0x12, 0x13, 0x14, // Sandwich7.before
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.before (padding)
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.opt_sandwich1.absent
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.opt_sandwich1.absent [cont.]
+    0x21, 0x22, 0x23, 0x24, // Sandwich7.after
+    0x00, 0x00, 0x00, 0x00, // Sandwich7.after (padding)
+};
+
 bool run_single_test(const fidl_type_t* src_type,
                      const uint8_t* src_bytes, uint32_t src_num_bytes,
                      const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes,
@@ -778,6 +833,24 @@ bool test_sandwich6_case8(const char** out_error_msg) {
     );
 }
 
+bool test_sandwich7_case1(const char** out_error_msg) {
+    return run_single_test(
+        &v1_example_Sandwich7Table,
+        sandwich7_case1_input, sizeof(sandwich7_case1_input),
+        sandwich7_case1_expected_output, sizeof(sandwich7_case1_expected_output),
+        out_error_msg
+    );
+}
+
+bool test_sandwich7_case2(const char** out_error_msg) {
+    return run_single_test(
+        &v1_example_Sandwich7Table,
+        sandwich7_case2_input, sizeof(sandwich7_case2_input),
+        sandwich7_case2_expected_output, sizeof(sandwich7_case2_expected_output),
+        out_error_msg
+    );
+}
+
 #define RUN(TEST_FUNC)                              \
     {                                               \
         const char* error_msg = nullptr;            \
@@ -810,5 +883,7 @@ int main() {
     RUN(test_sandwich6_case6)
     RUN(test_sandwich6_case7)
     RUN(test_sandwich6_case8)
+    RUN(test_sandwich7_case1)
+    RUN(test_sandwich7_case2)
     return 0;
 }

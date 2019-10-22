@@ -21,7 +21,9 @@ extern const fidl_type_t example_UnionSize24Alignement8Table;
 extern const fidl_type_t example_UnionOfUnionTable;
 extern const fidl_type_t example_Sandwich5Table;
 extern const fidl_type_t example_Sandwich3Table;
+extern const fidl_type_t example_Sandwich7Table;
 
+static const fidl_type_t Pointer17example_Sandwich1Table = fidl_type_t(::fidl::FidlCodedStructPointer(&example_Sandwich1Table.coded_struct));
 
 extern inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable5uint8Table_alt;
 static const fidl_type_t Vector4294967295nonnullable5uint8Table = fidl_type_t(::fidl::FidlCodedVector(nullptr, 4294967295u, 1u, ::fidl::kNonnullable, Vector4294967295nonnullable5uint8Table_alt));
@@ -169,6 +171,15 @@ static const ::fidl::FidlStructField Fields17example_Sandwich3[] = {
 extern inline const ::fidl::FidlCodedStruct* const example_Sandwich3Table_alt;
 const fidl_type_t example_Sandwich3Table = fidl_type_t(::fidl::FidlCodedStruct(Fields17example_Sandwich3, 3u, 40u, "example/Sandwich3", example_Sandwich3Table_alt));
 
+extern inline const ::fidl::FidlStructField* const Fields17example_Sandwich7_field1_alt_field;
+static const ::fidl::FidlStructField Fields17example_Sandwich7[] = {
+    ::fidl::FidlStructField(nullptr, 4u, 4u),
+    ::fidl::FidlStructField(&Pointer17example_Sandwich1Table, 8u, 0u, Fields17example_Sandwich7_field1_alt_field),
+    ::fidl::FidlStructField(nullptr, 20u, 4u)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_Sandwich7Table_alt;
+const fidl_type_t example_Sandwich7Table = fidl_type_t(::fidl::FidlCodedStruct(Fields17example_Sandwich7, 3u, 24u, "example/Sandwich7", example_Sandwich7Table_alt));
+
 // v1
 
 extern const fidl_type_t v1_example_UnionSize8Aligned4Table;
@@ -186,7 +197,9 @@ extern const fidl_type_t v1_example_UnionSize24Alignement8Table;
 extern const fidl_type_t v1_example_UnionOfUnionTable;
 extern const fidl_type_t v1_example_Sandwich5Table;
 extern const fidl_type_t v1_example_Sandwich3Table;
+extern const fidl_type_t v1_example_Sandwich7Table;
 
+static const fidl_type_t v1_Pointer20v1_example_Sandwich1Table = fidl_type_t(::fidl::FidlCodedStructPointer(&v1_example_Sandwich1Table.coded_struct));
 
 extern inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable8v1_uint8Table_alt;
 static const fidl_type_t v1_Vector4294967295nonnullable8v1_uint8Table = fidl_type_t(::fidl::FidlCodedVector(nullptr, 4294967295u, 1u, ::fidl::kNonnullable, v1_Vector4294967295nonnullable8v1_uint8Table_alt));
@@ -340,6 +353,15 @@ static const ::fidl::FidlStructField Fields20v1_example_Sandwich3[] = {
 extern inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich3Table_alt;
 const fidl_type_t v1_example_Sandwich3Table = fidl_type_t(::fidl::FidlCodedStruct(Fields20v1_example_Sandwich3, 3u, 40u, "example/Sandwich3", v1_example_Sandwich3Table_alt));
 
+extern inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich7_field1_alt_field;
+static const ::fidl::FidlStructField Fields20v1_example_Sandwich7[] = {
+    ::fidl::FidlStructField(nullptr, 4u, 4u),
+    ::fidl::FidlStructField(&v1_Pointer20v1_example_Sandwich1Table, 8u, 0u, Fields20v1_example_Sandwich7_field1_alt_field),
+    ::fidl::FidlStructField(nullptr, 20u, 4u)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich7Table_alt;
+const fidl_type_t v1_example_Sandwich7Table = fidl_type_t(::fidl::FidlCodedStruct(Fields20v1_example_Sandwich7, 3u, 24u, "example/Sandwich7", v1_example_Sandwich7Table_alt));
+
 // old <-> v1 mappings
 
 inline const ::fidl::FidlCodedStruct* const example_Sandwich1Table_alt = &v1_example_Sandwich1Table.coded_struct;
@@ -377,6 +399,12 @@ inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich6Table_alt = &exa
 
 inline const ::fidl::FidlStructField* const Fields17example_Sandwich6_field1_alt_field = &Fields20v1_example_Sandwich6[1];
 inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich6_field1_alt_field = &Fields17example_Sandwich6[1];
+
+inline const ::fidl::FidlCodedStruct* const example_Sandwich7Table_alt = &v1_example_Sandwich7Table.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich7Table_alt = &example_Sandwich7Table.coded_struct;
+
+inline const ::fidl::FidlStructField* const Fields17example_Sandwich7_field1_alt_field = &Fields20v1_example_Sandwich7[1];
+inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich7_field1_alt_field = &Fields17example_Sandwich7[1];
 
 inline const ::fidl::FidlCodedStruct* const example_StructSize16Alignement8Table_alt = &v1_example_StructSize16Alignement8Table.coded_struct;
 inline const ::fidl::FidlCodedStruct* const v1_example_StructSize16Alignement8Table_alt = &example_StructSize16Alignement8Table.coded_struct;
