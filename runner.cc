@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <csignal>
 #include <cstring>
 
 #include "transformer.h"
@@ -715,7 +716,7 @@ uint8_t sandwich7_case2_old[] = {
     0x00, 0x00, 0x00, 0x00,  // Sandwich7.after (padding)
 };
 
-bool run_fidl_transform(const fidl_type_t* src_type,
+bool run_fidl_transform(fidl_transformation_t transformation, const fidl_type_t* src_type,
                         const uint8_t* src_bytes, uint32_t src_num_bytes,
                         const uint8_t* expected_dst_bytes, uint32_t expected_dst_num_bytes) {
   BEGIN_HELPER;
@@ -724,7 +725,7 @@ bool run_fidl_transform(const fidl_type_t* src_type,
   uint32_t actual_dst_num_bytes;
   memset(actual_dst_bytes, 0xcc /* poison */, ZX_CHANNEL_MAX_MSG_BYTES);
 
-  zx_status_t status = fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
+  zx_status_t status = fidl_transform(transformation,
                                       src_type,
                                       src_bytes, actual_dst_bytes,
                                       src_num_bytes, &actual_dst_num_bytes,
@@ -739,10 +740,16 @@ bool run_fidl_transform(const fidl_type_t* src_type,
 bool sandwich1() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich1Table,
       sandwich1_case1_v1, sizeof(sandwich1_case1_v1),
       sandwich1_case1_old, sizeof(sandwich1_case1_old)));
+
+//   raise(SIGINT);
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_OLD_TO_V1,
+      &example_Sandwich1Table,
+      sandwich1_case1_old, sizeof(sandwich1_case1_old),
+      sandwich1_case1_v1, sizeof(sandwich1_case1_v1)));
 
   END_TEST;
 }
@@ -750,10 +757,15 @@ bool sandwich1() {
 bool sandwich2() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich2Table,
       sandwich2_case1_v1, sizeof(sandwich2_case1_v1),
       sandwich2_case1_old, sizeof(sandwich2_case1_old)));
+
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_OLD_TO_V1,
+      &example_Sandwich2Table,
+      sandwich2_case1_old, sizeof(sandwich2_case1_old),
+      sandwich2_case1_v1, sizeof(sandwich2_case1_v1)));
 
   END_TEST;
 }
@@ -761,7 +773,7 @@ bool sandwich2() {
 bool sandwich3() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich3Table,
       sandwich3_case1_v1, sizeof(sandwich3_case1_v1),
       sandwich3_case1_old, sizeof(sandwich3_case1_old)));
@@ -772,7 +784,7 @@ bool sandwich3() {
 bool sandwich4() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich4Table,
       sandwich4_case1_v1, sizeof(sandwich4_case1_v1),
       sandwich4_case1_old, sizeof(sandwich4_case1_old)));
@@ -783,7 +795,7 @@ bool sandwich4() {
 bool sandwich5_case1() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich5Table,
       sandwich5_case1_v1, sizeof(sandwich5_case1_v1),
       sandwich5_case1_old, sizeof(sandwich5_case1_old)));
@@ -794,7 +806,7 @@ bool sandwich5_case1() {
 bool sandwich5_case2() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich5Table,
       sandwich5_case2_v1, sizeof(sandwich5_case2_v1),
       sandwich5_case2_old, sizeof(sandwich5_case2_old)));
@@ -805,7 +817,7 @@ bool sandwich5_case2() {
 bool sandwich6_case1() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case1_v1, sizeof(sandwich6_case1_v1),
       sandwich6_case1_old, sizeof(sandwich6_case1_old)));
@@ -816,7 +828,7 @@ bool sandwich6_case1() {
 bool sandwich6_case1_absent_vector() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case1_absent_vector_v1, sizeof(sandwich6_case1_absent_vector_v1),
       sandwich6_case1_absent_vector_old, sizeof(sandwich6_case1_absent_vector_old)));
@@ -827,7 +839,7 @@ bool sandwich6_case1_absent_vector() {
 bool sandwich6_case2() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case2_v1, sizeof(sandwich6_case2_v1),
       sandwich6_case2_old, sizeof(sandwich6_case2_old)));
@@ -838,7 +850,7 @@ bool sandwich6_case2() {
 bool sandwich6_case3() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case3_v1, sizeof(sandwich6_case3_v1),
       sandwich6_case3_old, sizeof(sandwich6_case3_old)));
@@ -849,7 +861,7 @@ bool sandwich6_case3() {
 bool sandwich6_case4() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case4_v1, sizeof(sandwich6_case4_v1),
       sandwich6_case4_old, sizeof(sandwich6_case4_old)));
@@ -860,7 +872,7 @@ bool sandwich6_case4() {
 bool sandwich6_case5() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case5_v1, sizeof(sandwich6_case5_v1),
       sandwich6_case5_old, sizeof(sandwich6_case5_old)));
@@ -871,7 +883,7 @@ bool sandwich6_case5() {
 bool sandwich6_case6() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case6_v1, sizeof(sandwich6_case6_v1),
       sandwich6_case6_old, sizeof(sandwich6_case6_old)));
@@ -882,7 +894,7 @@ bool sandwich6_case6() {
 bool sandwich6_case7() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case7_v1, sizeof(sandwich6_case7_v1),
       sandwich6_case7_old, sizeof(sandwich6_case7_old)));
@@ -893,7 +905,7 @@ bool sandwich6_case7() {
 bool sandwich6_case8() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich6Table,
       sandwich6_case8_v1, sizeof(sandwich6_case8_v1),
       sandwich6_case8_old, sizeof(sandwich6_case8_old)));
@@ -904,7 +916,7 @@ bool sandwich6_case8() {
 bool sandwich7_case1() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich7Table,
       sandwich7_case1_v1, sizeof(sandwich7_case1_v1),
       sandwich7_case1_old, sizeof(sandwich7_case1_old)));
@@ -915,7 +927,7 @@ bool sandwich7_case1() {
 bool sandwich7_case2() {
   BEGIN_TEST;
 
-  ASSERT_TRUE(run_fidl_transform(
+  ASSERT_TRUE(run_fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
       &v1_example_Sandwich7Table,
       sandwich7_case2_v1, sizeof(sandwich7_case2_v1),
       sandwich7_case2_old, sizeof(sandwich7_case2_old)));

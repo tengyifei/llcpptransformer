@@ -511,9 +511,10 @@ inline bool AddOutOfLine(uint32_t offset, uint32_t size, uint32_t* out_offset) {
 
 struct FidlStructField {
   const fidl_type* type;
-  // If |type| is not nullptr, |offset| stores the offset of the struct member.
-  // Otherwise, |offset| stores the offset of the padding.
-  uint32_t offset;
+  union {
+    uint32_t offset;  // If |type| is non-null (i.e. this field is a non-primitive type)
+    uint32_t padding_offset;  // If |type| is null (i.e. this field is a primitive type)
+  };
   uint8_t padding;
   const FidlStructField* alt_field;
 

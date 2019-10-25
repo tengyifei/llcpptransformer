@@ -69,6 +69,12 @@ struct Sandwich5 {
     uint32 after;
 };
 
+struct Sandwich8 {
+    uint64 before;
+    UnionOfUnion union_of_union;
+    uint32 after;
+};
+
 struct StructSize3Alignment1 {
     array<uint8>:3 three_bytes;
 };

@@ -31,6 +31,8 @@ typedef uint64_t fidl_transformation_t;
 // See also `fidl_transform`.
 #define FIDL_TRANSFORMATION_V1_TO_OLD ((fidl_transformation_t)1u)
 
+#define FIDL_TRANSFORMATION_OLD_TO_V1 ((fidl_transformation_t)2u)
+
 // Transforms an encoded FIDL buffer from one wire format to another.
 //
 // Starting from the root of the encoded objects present in the |src_bytes|

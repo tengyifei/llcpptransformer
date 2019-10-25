@@ -1,5 +1,5 @@
 main: clean
-	g++ -g -o main transformer.cc runner.c fidl.cc -std=c++17
+	clang++ -g -O0 -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -o main transformer.cc runner.cc fidl.cc -std=c++17
 
 clean:
 	rm -f *.o
