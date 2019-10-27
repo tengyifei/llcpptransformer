@@ -63,14 +63,10 @@ union UnionOfUnion {
     UnionSize24Alignement8 size24aligned8; // 0x06722D1F
 };
 
+// TODO(apang): Test out-of-line objects (for size computation of xunion envelope)
+
 struct Sandwich5 {
     uint32 before;
-    UnionOfUnion union_of_union;
-    uint32 after;
-};
-
-struct Sandwich8 {
-    uint64 before;
     UnionOfUnion union_of_union;
     uint32 after;
 };
@@ -108,6 +104,14 @@ struct Sandwich7 {
     Sandwich1? opt_sandwich1;
     uint32 after;
 };
+
+// Same as Sandwich5, except "before" is uint64 instead of uint32, so there's no padding before the union.
+struct Sandwich8 {
+    uint64 before;
+    UnionOfUnion union_of_union;
+    uint32 after;
+};
+
 
 // TODO: simple struct examples without any union, e.g. struct{uint8;uint32;uint8;uint16;uint64;}
 // TODO: struct{opt_struct_size4;opt_struct_size4;} to check alignment of secondary objects
