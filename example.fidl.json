@@ -11,8 +11,8 @@
     {
       "name": "example/StructSize16Alignement8",
       "location": {
-        "filename": "../llcpptransformer/example.fidl",
-        "line": 11,
+        "filename": "example.fidl",
+        "line": 16,
         "column": 8
       },
       "anonymous": false,
@@ -24,15 +24,23 @@
           },
           "name": "f1",
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 12,
+            "filename": "example.fidl",
+            "line": 17,
             "column": 12
           },
           "size": 8,
           "max_out_of_line": 0,
           "alignment": 8,
           "offset": 0,
-          "max_handles": 0
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 0
+          }
         },
         {
           "type": {
@@ -41,28 +49,54 @@
           },
           "name": "f2",
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 13,
+            "filename": "example.fidl",
+            "line": 18,
             "column": 12
           },
           "size": 8,
           "max_out_of_line": 0,
           "alignment": 8,
           "offset": 8,
-          "max_handles": 0
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
         }
       ],
       "size": 16,
       "max_out_of_line": 0,
       "alignment": 8,
       "max_handles": 0,
-      "has_padding": false
+      "has_padding": false,
+      "type_shape_old": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false
+      }
     },
     {
       "name": "example/Sandwich1",
       "location": {
-        "filename": "../llcpptransformer/example.fidl",
-        "line": 20,
+        "filename": "example.fidl",
+        "line": 28,
         "column": 8
       },
       "anonymous": false,
@@ -74,15 +108,23 @@
           },
           "name": "before",
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 21,
+            "filename": "example.fidl",
+            "line": 29,
             "column": 11
           },
           "size": 4,
           "max_out_of_line": 0,
           "alignment": 4,
           "offset": 0,
-          "max_handles": 0
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
         },
         {
           "type": {
@@ -92,15 +134,23 @@
           },
           "name": "union",
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 22,
+            "filename": "example.fidl",
+            "line": 30,
             "column": 23
           },
           "size": 8,
           "max_out_of_line": 0,
           "alignment": 4,
           "offset": 4,
-          "max_handles": 0
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 4,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
         },
         {
           "type": {
@@ -109,28 +159,54 @@
           },
           "name": "after",
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 23,
+            "filename": "example.fidl",
+            "line": 31,
             "column": 11
           },
           "size": 4,
           "max_out_of_line": 0,
           "alignment": 4,
           "offset": 12,
-          "max_handles": 0
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 12,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
         }
       ],
       "size": 16,
       "max_out_of_line": 0,
       "alignment": 4,
       "max_handles": 0,
-      "has_padding": false
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 16,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
     },
     {
       "name": "example/Sandwich2",
       "location": {
-        "filename": "../llcpptransformer/example.fidl",
-        "line": 26,
+        "filename": "example.fidl",
+        "line": 34,
         "column": 8
       },
       "anonymous": false,
@@ -142,125 +218,906 @@
           },
           "name": "before",
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 27,
-            "column": 11
-          },
-          "size": 4,
-          "max_out_of_line": 0,
-          "alignment": 4,
-          "offset": 0,
-          "max_handles": 0
-        },
-        {
-          "type": {
-            "kind": "identifier",
-            "identifier": "example/UnionSize16Aligned4",
-            "nullable": false
-          },
-          "name": "union",
-          "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 28,
-            "column": 24
-          },
-          "size": 12,
-          "max_out_of_line": 0,
-          "alignment": 4,
-          "offset": 4,
-          "max_handles": 0
-        },
-        {
-          "type": {
-            "kind": "primitive",
-            "subtype": "uint32"
-          },
-          "name": "after",
-          "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 29,
-            "column": 11
-          },
-          "size": 4,
-          "max_out_of_line": 0,
-          "alignment": 4,
-          "offset": 16,
-          "max_handles": 0
-        }
-      ],
-      "size": 20,
-      "max_out_of_line": 0,
-      "alignment": 4,
-      "max_handles": 0,
-      "has_padding": true
-    },
-    {
-      "name": "example/Sandwich3",
-      "location": {
-        "filename": "../llcpptransformer/example.fidl",
-        "line": 32,
-        "column": 8
-      },
-      "anonymous": false,
-      "members": [
-        {
-          "type": {
-            "kind": "primitive",
-            "subtype": "uint32"
-          },
-          "name": "before",
-          "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 33,
-            "column": 11
-          },
-          "size": 4,
-          "max_out_of_line": 0,
-          "alignment": 4,
-          "offset": 0,
-          "max_handles": 0
-        },
-        {
-          "type": {
-            "kind": "identifier",
-            "identifier": "example/UnionSize16Aligned4",
-            "nullable": false
-          },
-          "name": "union",
-          "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 34,
-            "column": 24
-          },
-          "size": 12,
-          "max_out_of_line": 0,
-          "alignment": 4,
-          "offset": 4,
-          "max_handles": 0
-        },
-        {
-          "type": {
-            "kind": "primitive",
-            "subtype": "uint32"
-          },
-          "name": "after",
-          "location": {
-            "filename": "../llcpptransformer/example.fidl",
+            "filename": "example.fidl",
             "line": 35,
             "column": 11
           },
           "size": 4,
           "max_out_of_line": 0,
           "alignment": 4,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionSize16Aligned4",
+            "nullable": false
+          },
+          "name": "union",
+          "location": {
+            "filename": "example.fidl",
+            "line": 36,
+            "column": 24
+          },
+          "size": 12,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 4,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 4,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "example.fidl",
+            "line": 37,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
           "offset": 16,
-          "max_handles": 0
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 16,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
         }
       ],
       "size": 20,
       "max_out_of_line": 0,
       "alignment": 4,
       "max_handles": 0,
-      "has_padding": true
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 20,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/Sandwich3",
+      "location": {
+        "filename": "example.fidl",
+        "line": 40,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "example.fidl",
+            "line": 41,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionSize24Alignement8",
+            "nullable": false
+          },
+          "name": "union",
+          "location": {
+            "filename": "example.fidl",
+            "line": 42,
+            "column": 27
+          },
+          "size": 24,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "example.fidl",
+            "line": 43,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 32,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 32,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
+        }
+      ],
+      "size": 40,
+      "max_out_of_line": 0,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 16,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/Sandwich4",
+      "location": {
+        "filename": "example.fidl",
+        "line": 53,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "example.fidl",
+            "line": 54,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionSize36Alignment4",
+            "nullable": false
+          },
+          "name": "union",
+          "location": {
+            "filename": "example.fidl",
+            "line": 55,
+            "column": 27
+          },
+          "size": 36,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 4,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 4,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "example.fidl",
+            "line": 56,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 40,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 40,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
+        }
+      ],
+      "size": 44,
+      "max_out_of_line": 0,
+      "alignment": 4,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 44,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 32,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/Sandwich5",
+      "location": {
+        "filename": "example.fidl",
+        "line": 68,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "example.fidl",
+            "line": 69,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionOfUnion",
+            "nullable": false
+          },
+          "name": "union_of_union",
+          "location": {
+            "filename": "example.fidl",
+            "line": 70,
+            "column": 18
+          },
+          "size": 32,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "example.fidl",
+            "line": 71,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 40,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 40,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
+        }
+      ],
+      "size": 48,
+      "max_out_of_line": 0,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 48,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 40,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/StructSize3Alignment1",
+      "location": {
+        "filename": "example.fidl",
+        "line": 74,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "array",
+            "element_type": {
+              "kind": "primitive",
+              "subtype": "uint8"
+            },
+            "element_count": 3
+          },
+          "name": "three_bytes",
+          "location": {
+            "filename": "example.fidl",
+            "line": 75,
+            "column": 20
+          },
+          "size": 3,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 0
+          }
+        }
+      ],
+      "size": 3,
+      "max_out_of_line": 0,
+      "alignment": 1,
+      "max_handles": 0,
+      "has_padding": false,
+      "type_shape_old": {
+        "inline_size": 3,
+        "alignment": 1,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 3,
+        "alignment": 1,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/StructSize3Alignment2",
+      "location": {
+        "filename": "example.fidl",
+        "line": 78,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint16"
+          },
+          "name": "f1",
+          "location": {
+            "filename": "example.fidl",
+            "line": 79,
+            "column": 12
+          },
+          "size": 2,
+          "max_out_of_line": 0,
+          "alignment": 2,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "name": "f2",
+          "location": {
+            "filename": "example.fidl",
+            "line": 80,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 2,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 2,
+            "padding": 1
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 2,
+            "padding": 1
+          }
+        }
+      ],
+      "size": 4,
+      "max_out_of_line": 0,
+      "alignment": 2,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 4,
+        "alignment": 2,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 4,
+        "alignment": 2,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/Sandwich6",
+      "location": {
+        "filename": "example.fidl",
+        "line": 96,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "example.fidl",
+            "line": 97,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionWithVector",
+            "nullable": false
+          },
+          "name": "union",
+          "location": {
+            "filename": "example.fidl",
+            "line": 98,
+            "column": 21
+          },
+          "size": 24,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 4294967295,
+          "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "example.fidl",
+            "line": 99,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 32,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 32,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
+        }
+      ],
+      "size": 40,
+      "max_out_of_line": 4294967295,
+      "alignment": 8,
+      "max_handles": 4294967295,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 3,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/Sandwich7",
+      "location": {
+        "filename": "example.fidl",
+        "line": 102,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "example.fidl",
+            "line": 103,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/Sandwich1",
+            "nullable": true
+          },
+          "name": "opt_sandwich1",
+          "location": {
+            "filename": "example.fidl",
+            "line": 104,
+            "column": 16
+          },
+          "size": 8,
+          "max_out_of_line": 16,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "example.fidl",
+            "line": 105,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 16,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 16,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 16,
+            "padding": 4
+          }
+        }
+      ],
+      "size": 24,
+      "max_out_of_line": 16,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 16,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 48,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/Sandwich8",
+      "location": {
+        "filename": "example.fidl",
+        "line": 109,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint64"
+          },
+          "name": "before",
+          "location": {
+            "filename": "example.fidl",
+            "line": 110,
+            "column": 12
+          },
+          "size": 8,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionOfUnion",
+            "nullable": false
+          },
+          "name": "union_of_union",
+          "location": {
+            "filename": "example.fidl",
+            "line": 111,
+            "column": 18
+          },
+          "size": 32,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 8,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "example.fidl",
+            "line": 112,
+            "column": 12
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 40,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 40,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
+        }
+      ],
+      "size": 48,
+      "max_out_of_line": 0,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 48,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 40,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
     }
   ],
   "table_declarations": [],
@@ -268,11 +1125,45 @@
     {
       "name": "example/UnionSize8Aligned4",
       "location": {
-        "filename": "../llcpptransformer/example.fidl",
+        "filename": "example.fidl",
         "line": 3,
         "column": 7
       },
       "members": [
+        {
+          "name": "unused1",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 964920088,
+          "location": {
+            "filename": "example.fidl",
+            "line": 4,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
+        {
+          "name": "unused2",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1734933826,
+          "location": {
+            "filename": "example.fidl",
+            "line": 5,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
         {
           "name": "variant",
           "type": {
@@ -281,8 +1172,8 @@
           },
           "xunion_ordinal": 2143482075,
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 4,
+            "filename": "example.fidl",
+            "line": 6,
             "column": 12
           },
           "size": 4,
@@ -294,16 +1185,85 @@
       "size": 8,
       "max_out_of_line": 0,
       "alignment": 4,
-      "max_handles": 0
+      "max_handles": 0,
+      "type_shape_old": {
+        "inline_size": 8,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
     },
     {
       "name": "example/UnionSize16Aligned4",
       "location": {
-        "filename": "../llcpptransformer/example.fidl",
-        "line": 7,
+        "filename": "example.fidl",
+        "line": 9,
         "column": 7
       },
       "members": [
+        {
+          "name": "unused1",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1136806121,
+          "location": {
+            "filename": "example.fidl",
+            "line": 10,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
+        {
+          "name": "unused2",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1657784343,
+          "location": {
+            "filename": "example.fidl",
+            "line": 11,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
+        {
+          "name": "unused3",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1244121714,
+          "location": {
+            "filename": "example.fidl",
+            "line": 12,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
         {
           "name": "variant",
           "type": {
@@ -316,8 +1276,8 @@
           },
           "xunion_ordinal": 550622143,
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 8,
+            "filename": "example.fidl",
+            "line": 13,
             "column": 20
           },
           "size": 6,
@@ -329,16 +1289,85 @@
       "size": 12,
       "max_out_of_line": 0,
       "alignment": 4,
-      "max_handles": 0
+      "max_handles": 0,
+      "type_shape_old": {
+        "inline_size": 12,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
     },
     {
       "name": "example/UnionSize24Alignement8",
       "location": {
-        "filename": "../llcpptransformer/example.fidl",
-        "line": 16,
+        "filename": "example.fidl",
+        "line": 21,
         "column": 7
       },
       "members": [
+        {
+          "name": "unused1",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 621982873,
+          "location": {
+            "filename": "example.fidl",
+            "line": 22,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 8
+        },
+        {
+          "name": "unused2",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1544195805,
+          "location": {
+            "filename": "example.fidl",
+            "line": 23,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 8
+        },
+        {
+          "name": "unused3",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1885474715,
+          "location": {
+            "filename": "example.fidl",
+            "line": 24,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 8
+        },
         {
           "name": "variant",
           "type": {
@@ -348,8 +1377,8 @@
           },
           "xunion_ordinal": 872699291,
           "location": {
-            "filename": "../llcpptransformer/example.fidl",
-            "line": 17,
+            "filename": "example.fidl",
+            "line": 25,
             "column": 29
           },
           "size": 16,
@@ -361,7 +1390,451 @@
       "size": 24,
       "max_out_of_line": 0,
       "alignment": 8,
-      "max_handles": 0
+      "max_handles": 0,
+      "type_shape_old": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 16,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/UnionSize36Alignment4",
+      "location": {
+        "filename": "example.fidl",
+        "line": 46,
+        "column": 7
+      },
+      "members": [
+        {
+          "name": "unused1",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1946634093,
+          "location": {
+            "filename": "example.fidl",
+            "line": 47,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
+        {
+          "name": "unused2",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 627860762,
+          "location": {
+            "filename": "example.fidl",
+            "line": 48,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
+        {
+          "name": "unused3",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 79574741,
+          "location": {
+            "filename": "example.fidl",
+            "line": 49,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        },
+        {
+          "name": "variant",
+          "type": {
+            "kind": "array",
+            "element_type": {
+              "kind": "primitive",
+              "subtype": "uint8"
+            },
+            "element_count": 32
+          },
+          "xunion_ordinal": 1581322265,
+          "location": {
+            "filename": "example.fidl",
+            "line": 50,
+            "column": 21
+          },
+          "size": 32,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 4
+        }
+      ],
+      "size": 36,
+      "max_out_of_line": 0,
+      "alignment": 4,
+      "max_handles": 0,
+      "type_shape_old": {
+        "inline_size": 36,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 32,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/UnionOfUnion",
+      "location": {
+        "filename": "example.fidl",
+        "line": 59,
+        "column": 7
+      },
+      "members": [
+        {
+          "name": "unused",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 1201318480,
+          "location": {
+            "filename": "example.fidl",
+            "line": 60,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 8
+        },
+        {
+          "name": "size8aligned4",
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionSize8Aligned4",
+            "nullable": false
+          },
+          "xunion_ordinal": 548068704,
+          "location": {
+            "filename": "example.fidl",
+            "line": 61,
+            "column": 24
+          },
+          "size": 8,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 8
+        },
+        {
+          "name": "size16aligned4",
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionSize16Aligned4",
+            "nullable": false
+          },
+          "xunion_ordinal": 762734029,
+          "location": {
+            "filename": "example.fidl",
+            "line": 62,
+            "column": 25
+          },
+          "size": 12,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 8
+        },
+        {
+          "name": "size24aligned8",
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionSize24Alignement8",
+            "nullable": false
+          },
+          "xunion_ordinal": 108145951,
+          "location": {
+            "filename": "example.fidl",
+            "line": 63,
+            "column": 28
+          },
+          "size": 24,
+          "max_out_of_line": 0,
+          "alignment": 8,
+          "offset": 8
+        }
+      ],
+      "size": 32,
+      "max_out_of_line": 0,
+      "alignment": 8,
+      "max_handles": 0,
+      "type_shape_old": {
+        "inline_size": 32,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 40,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
+    },
+    {
+      "name": "example/UnionWithVector",
+      "location": {
+        "filename": "example.fidl",
+        "line": 83,
+        "column": 7
+      },
+      "members": [
+        {
+          "name": "unused",
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint8"
+          },
+          "xunion_ordinal": 124309599,
+          "location": {
+            "filename": "example.fidl",
+            "line": 85,
+            "column": 11
+          },
+          "size": 1,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 8
+        },
+        {
+          "name": "vector_of_uint8",
+          "type": {
+            "kind": "vector",
+            "element_type": {
+              "kind": "primitive",
+              "subtype": "uint8"
+            },
+            "nullable": false
+          },
+          "xunion_ordinal": 2042875053,
+          "location": {
+            "filename": "example.fidl",
+            "line": 86,
+            "column": 19
+          },
+          "size": 16,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8
+        },
+        {
+          "name": "string",
+          "type": {
+            "kind": "string",
+            "nullable": false
+          },
+          "xunion_ordinal": 993084216,
+          "location": {
+            "filename": "example.fidl",
+            "line": 87,
+            "column": 12
+          },
+          "size": 16,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8
+        },
+        {
+          "name": "vector_s3_a1",
+          "type": {
+            "kind": "vector",
+            "element_type": {
+              "kind": "identifier",
+              "identifier": "example/StructSize3Alignment1",
+              "nullable": false
+            },
+            "nullable": false
+          },
+          "xunion_ordinal": 1270955228,
+          "location": {
+            "filename": "example.fidl",
+            "line": 88,
+            "column": 35
+          },
+          "size": 16,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8
+        },
+        {
+          "name": "vector_s3_a2",
+          "type": {
+            "kind": "vector",
+            "element_type": {
+              "kind": "identifier",
+              "identifier": "example/StructSize3Alignment2",
+              "nullable": false
+            },
+            "nullable": false
+          },
+          "xunion_ordinal": 487107132,
+          "location": {
+            "filename": "example.fidl",
+            "line": 89,
+            "column": 35
+          },
+          "size": 16,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8
+        },
+        {
+          "name": "handles",
+          "type": {
+            "kind": "vector",
+            "element_type": {
+              "kind": "handle",
+              "subtype": "handle",
+              "nullable": false
+            },
+            "nullable": false
+          },
+          "xunion_ordinal": 1193192054,
+          "location": {
+            "filename": "example.fidl",
+            "line": 90,
+            "column": 20
+          },
+          "size": 16,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8
+        },
+        {
+          "name": "array_s3_a1",
+          "type": {
+            "kind": "array",
+            "element_type": {
+              "kind": "identifier",
+              "identifier": "example/StructSize3Alignment1",
+              "nullable": false
+            },
+            "element_count": 2
+          },
+          "xunion_ordinal": 1587587088,
+          "location": {
+            "filename": "example.fidl",
+            "line": 91,
+            "column": 36
+          },
+          "size": 6,
+          "max_out_of_line": 0,
+          "alignment": 1,
+          "offset": 8
+        },
+        {
+          "name": "array_s3_a2",
+          "type": {
+            "kind": "array",
+            "element_type": {
+              "kind": "identifier",
+              "identifier": "example/StructSize3Alignment2",
+              "nullable": false
+            },
+            "element_count": 2
+          },
+          "xunion_ordinal": 1559803661,
+          "location": {
+            "filename": "example.fidl",
+            "line": 92,
+            "column": 36
+          },
+          "size": 8,
+          "max_out_of_line": 0,
+          "alignment": 2,
+          "offset": 8
+        },
+        {
+          "name": "vector_union",
+          "type": {
+            "kind": "vector",
+            "element_type": {
+              "kind": "identifier",
+              "identifier": "example/UnionSize8Aligned4",
+              "nullable": false
+            },
+            "nullable": false
+          },
+          "xunion_ordinal": 729189425,
+          "location": {
+            "filename": "example.fidl",
+            "line": 93,
+            "column": 32
+          },
+          "size": 16,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8
+        }
+      ],
+      "size": 24,
+      "max_out_of_line": 4294967295,
+      "alignment": 8,
+      "max_handles": 4294967295,
+      "type_shape_old": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 3,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false
+      }
     }
   ],
   "xunion_declarations": [],
@@ -369,19 +1842,39 @@
   "declaration_order": [
     "example/UnionSize8Aligned4",
     "example/Sandwich1",
+    "example/UnionSize36Alignment4",
+    "example/Sandwich4",
     "example/UnionSize16Aligned4",
-    "example/Sandwich3",
     "example/Sandwich2",
+    "example/StructSize3Alignment2",
+    "example/StructSize3Alignment1",
+    "example/UnionWithVector",
+    "example/Sandwich6",
     "example/StructSize16Alignement8",
-    "example/UnionSize24Alignement8"
+    "example/UnionSize24Alignement8",
+    "example/UnionOfUnion",
+    "example/Sandwich8",
+    "example/Sandwich5",
+    "example/Sandwich3",
+    "example/Sandwich7"
   ],
   "declarations": {
     "example/StructSize16Alignement8": "struct",
     "example/Sandwich1": "struct",
     "example/Sandwich2": "struct",
     "example/Sandwich3": "struct",
+    "example/Sandwich4": "struct",
+    "example/Sandwich5": "struct",
+    "example/StructSize3Alignment1": "struct",
+    "example/StructSize3Alignment2": "struct",
+    "example/Sandwich6": "struct",
+    "example/Sandwich7": "struct",
+    "example/Sandwich8": "struct",
     "example/UnionSize8Aligned4": "union",
     "example/UnionSize16Aligned4": "union",
-    "example/UnionSize24Alignement8": "union"
+    "example/UnionSize24Alignement8": "union",
+    "example/UnionSize36Alignment4": "union",
+    "example/UnionOfUnion": "union",
+    "example/UnionWithVector": "union"
   }
 }
