@@ -112,6 +112,23 @@ struct Sandwich8 {
     uint32 after;
 };
 
+struct Regression1 {
+    uint8 f1;
+    uint32 f2;
+    uint8 f3;
+    uint16 f4;
+    uint64 f5;
+    uint8 f6;
+};
+
+struct Regression2 {
+    Regression1 head;
+    uint8 f6;
+};
+
+struct Regression3 {
+    Regression2? opt_value;
+};
 
 // TODO: simple struct examples without any union, e.g. struct{uint8;uint32;uint8;uint16;uint64;}
 // TODO: struct{opt_struct_size4;opt_struct_size4;} to check alignment of secondary objects

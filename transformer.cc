@@ -2,9 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <cstddef>
 #include <cstring>
 #include <cstdio>
 #include <cassert>
+#include <optional>
 
 #include "transformer.h"
 
@@ -43,6 +45,34 @@ struct TraversalResult {
   uint32_t handle_count = 0u;
 };
 
+// const fidl_type_t* AltType(const fidl_type_t* type) {
+//   if (!type) {
+//     return nullptr;
+//   }
+
+//   switch (type->type_tag) {
+//     case fidl::kFidlTypePrimitive:
+//     case fidl::kFidlTypeEnum:
+//     case fidl::kFidlTypeBits:
+//     case fidl::kFidlTypeStructPointer:
+//     case fidl::kFidlTypeUnionPointer:
+//     case fidl::kFidlTypeString:
+//     case fidl::kFidlTypeXUnion:
+//     case fidl::kFidlTypeHandle:
+//     case fidl::kFidlTypeTable:
+//       return type;
+//     case fidl::kFidlTypeVector:
+//       // TODO(apang): Need alt_type that refers to fidl_type_t, and e.g. alt_vector that refers to
+//       return fidl_type(type->coded_vector.alt_type);
+//     case fidl::kFidlTypeStruct:
+//       return type->coded_struct.alt_type;
+//     case fidl::kFidlTypeUnion:
+//       return type->coded_union.alt_type;
+//     case fidl::kFidlTypeArray:
+//       return type->coded_array.alt_type;
+//   }
+// }
+
 uint32_t AlignedInlineSize(const fidl_type_t* type, WireFormat wire_format) {
   if (!type) {
     // For integral types (i.e. primitive, enum, bits).
@@ -73,7 +103,43 @@ uint32_t AlignedInlineSize(const fidl_type_t* type, WireFormat wire_format) {
     case fidl::kFidlTypeXUnion:
       return 24;
     case fidl::kFidlTypeHandle:
+      return 8;
     case fidl::kFidlTypeTable:
+      return 16;
+    default:
+      assert(false && "TODO!");
+      return 0;
+  }
+}
+
+uint32_t AlignedAltInlineSize(const fidl_type_t* type) {
+  if (!type) {
+    // For integral types (i.e. primitive, enum, bits).
+    return 8;
+  }
+  switch (type->type_tag) {
+    case fidl::kFidlTypePrimitive:
+    case fidl::kFidlTypeEnum:
+    case fidl::kFidlTypeBits:
+      assert(false && "bug: should not get called");
+    case fidl::kFidlTypeStructPointer:
+    case fidl::kFidlTypeUnionPointer:
+      return 8;
+    case fidl::kFidlTypeVector:
+    case fidl::kFidlTypeString:
+      return 16;
+    case fidl::kFidlTypeStruct:
+      return type->coded_struct.alt_type->size;
+    case fidl::kFidlTypeUnion:
+      return type->coded_union.alt_type->size;
+    case fidl::kFidlTypeArray:
+      return type->coded_array.alt_type->array_size;
+    case fidl::kFidlTypeXUnion:
+      return 24;
+    case fidl::kFidlTypeHandle:
+      return 8;
+    case fidl::kFidlTypeTable:
+      return 16;
     default:
       assert(false && "TODO!");
       return 0;
@@ -92,7 +158,19 @@ struct Position {
     return IncreaseSrcInlineOffset(increase).IncreaseDstInlineOffset(increase);
   }
 
+  [[nodiscard]] inline Position IncreaseOutOfLineOffset(uint32_t increase) const {
+    return IncreaseSrcOutOfLineOffset(increase).IncreaseDstOutOfLineOffset(increase);
+  }
+
   [[nodiscard]] inline Position IncreaseSrcInlineOffset(uint32_t increase) const {
+    return Position(
+        src_inline_offset + increase,
+        src_out_of_line_offset,
+        dst_inline_offset,
+        dst_out_of_line_offset);
+  }
+
+  [[nodiscard]] inline Position IncreaseSrcOutOfLineOffset(uint32_t increase) const {
     return Position(
         src_inline_offset + increase,
         src_out_of_line_offset,
@@ -133,6 +211,7 @@ class SrcDst final {
 
   ~SrcDst() { *out_dst_num_bytes_ = dst_max_offset_; }
 
+  // TODO(apang): Change |position| arg to src_offset
   template <typename T>  // TODO: restrict T should be pointer type
   [[nodiscard]] const T* Read(const Position& position) const {
     uint32_t size = sizeof(T);
@@ -143,6 +222,7 @@ class SrcDst final {
     return reinterpret_cast<const T*>(src_bytes_ + position.src_inline_offset);
   }
 
+  // Rename to CopyInline?
   [[nodiscard]] bool Copy(const Position& position, uint32_t size) {
     if (!(position.src_inline_offset + size <= src_num_bytes_)) {
       return false;
@@ -267,9 +347,11 @@ class TransformerBase {
         return TransformVector(src_coded_vector, dst_coded_vector, position, out_traversal_result);
       }
       case fidl::kFidlTypeTable:
-      case fidl::kFidlTypeXUnion:
         assert(false && "TODO(apang)");
         // fallthrough until implemented
+      case fidl::kFidlTypeXUnion: {
+        return TransformXUnion(type->coded_xunion, position, out_traversal_result);
+      }
       default:
         return ZX_ERR_BAD_STATE;
     }
@@ -484,6 +566,97 @@ class TransformerBase {
     return TransformVector(string_as_coded_vector, string_as_coded_vector, position, out_traversal_result);
   }
 
+  zx_status_t TransformEnvelope(const std::optional<const fidl_type_t*> optional_type, const Position& position, TraversalResult *out_traversal_result) {
+    auto envelope = src_dst->Read<const fidl_envelope_t>(position);
+
+    if (envelope->presence == FIDL_ALLOC_ABSENT) {
+      src_dst->Copy(position, sizeof(fidl_envelope_t));
+      return ZX_OK;
+    }
+
+    if (!optional_type) {
+      // Unknown type, so we don't know what type of data the envelope contains.
+      src_dst->Copy(Position{position.src_out_of_line_offset,
+                             position.src_out_of_line_offset + envelope->num_bytes,
+                             position.dst_out_of_line_offset,
+                             position.dst_out_of_line_offset + envelope->num_bytes},
+                    envelope->num_bytes);
+      return ZX_OK;
+    }
+
+    auto type = *optional_type;
+    const uint32_t alt_field_size = AlignedAltInlineSize(type);
+    Position data_position =
+        Position{position.src_out_of_line_offset,
+                 position.src_out_of_line_offset + envelope->num_bytes,
+                 position.dst_out_of_line_offset,
+                 position.dst_out_of_line_offset + alt_field_size};
+    zx_status_t result = Transform(type, data_position, alt_field_size, out_traversal_result);
+    if (result != ZX_OK) {
+      return result;
+    }
+
+    out_traversal_result->out_of_line_size += alt_field_size;
+    out_traversal_result->handle_count += envelope->num_handles;
+
+    return ZX_OK;
+  }
+
+  zx_status_t TransformXUnion(const fidl::FidlCodedXUnion &coded_xunion,
+                              const Position &position,
+                              TraversalResult *out_traversal_result) {
+    auto xunion = src_dst->Read<const fidl_xunion_t>(position);
+    src_dst->Copy(position, sizeof(fidl_xunion_t));
+
+    const fidl::FidlXUnionField *field = nullptr;
+    for (uint32_t i = 0; i < coded_xunion.field_count; i++) {
+      const fidl::FidlXUnionField *candidate_field = coded_xunion.fields + i;
+      if (candidate_field->ordinal == xunion->tag) {
+        field = candidate_field;
+        break;
+      }
+    }
+
+    const Position envelope_position = position.IncreaseInlineOffset(offsetof(fidl_xunion_t, envelope));
+
+    std::optional<const fidl_type_t*> field_type;
+    if (field == nullptr) {
+      // Unknown ordinal.
+    } else {
+      field_type = field->type;
+    }
+
+    return TransformEnvelope(field_type, envelope_position, out_traversal_result);
+  }
+
+  zx_status_t TransformTable(const fidl::FidlCodedTable &coded_table,
+                             const Position &position,
+                             TraversalResult *out_traversal_result) {
+    auto table = src_dst->Read<const fidl_table_t>(position);
+    src_dst->Copy(position, sizeof(fidl_table_t));
+
+    // TODO(apang): What if coded_table.field_count != table.envelopes.size? (both greater than & less than)
+
+    for(uint32_t i = 0; i < coded_table.field_count; i++) {
+      const fidl::FidlTableField& field = coded_table.fields[i];
+      assert(field.ordinal == i);
+
+      // TODO(apang): What about reserved fields? Need to skip over them.
+
+      auto envelope_position = Position{
+        position.src_out_of_line_offset + i * static_cast<uint32_t>(sizeof(fidl_envelope_t)),
+        0,
+        0,
+        0,
+      };
+
+      zx_status_t status = TransformEnvelope(std::make_optional(field.type), envelope_position, out_traversal_result);
+      if (status != ZX_OK) {
+        return status;
+      }
+    }
+  }
+
   zx_status_t TransformArray(const fidl::FidlCodedArrayNew& src_coded_array,
                              const fidl::FidlCodedArrayNew& dst_coded_array,
                              const Position& position, uint32_t dst_array_size, TraversalResult* out_traversal_result) {
@@ -581,7 +754,6 @@ class V1ToOld final : public TransformerBase {
       default:
         return Fail(ZX_ERR_BAD_STATE, "xunion envelope presence neither FIDL_ALLOC_PRESENT nor FIDL_ALLOC_ABSENT");
     }
-
 
     // Retrieve: flexible-union field (or variant).
     bool src_field_found = false;
