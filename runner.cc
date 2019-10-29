@@ -720,6 +720,190 @@ uint8_t sandwich7_case2_old[] = {
     0x00, 0x00, 0x00, 0x00,  // Sandwich7.after (padding)
 };
 
+uint8_t table_nofields_v1_and_old[] = {
+    0x00, 0x00, 0x00, 0x00,  // Table_NoFields.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_NoFields.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+};
+
+uint8_t table_tworeservedfields_v1_and_old[] = {
+    0x00, 0x00, 0x00, 0x00,  // Table_TwoReservedFields.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_TwoReservedFields.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+};
+
+uint8_t table_structwithreservedsandwich_v1_and_old[] = {
+    0x03, 0x00, 0x00, 0x00,  // Table_StructWithReservedSandwich.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_StructWithReservedSandwich.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_bytes  0x10
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_bytes  0x30
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence [cont.]
+    0x09, 0x0A, 0x0B, 0x00,  // StructSize3Alignment1 data (3 bytes) + padding (1 byte)  0x40
+    0x00, 0x00, 0x00, 0x00,  // StructSize3Alignment1 padding [cont.]
+    0x19, 0x1A, 0x1B, 0x00,  // StructSize3Alignment1 data (3 bytes) + padding (1 byte)
+    0x00, 0x00, 0x00, 0x00,  // StructSize3Alignment1 padding [cont.]
+};
+
+uint8_t table_structwithuint32sandwich_v1_and_old[] = {
+    0x04, 0x00, 0x00, 0x00,  // Table_StructWithUint32Sandwich.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_StructWithUint32Sandwich.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_bytes  0x10
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_bytes  0x30
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[3].num_bytes  0x40
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[3].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[3].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[3].presence [cont.]
+    0x01, 0x02, 0x03, 0x04,  // i  0x50
+    0x00, 0x00, 0x00, 0x00,  // i padding
+    0x09, 0x0A, 0x0B, 0x00,  // StructSize3Alignment1 data (3 bytes) + padding (1 byte)
+    0x00, 0x00, 0x00, 0x00,  // StructSize3Alignment1 padding [cont.]
+    0x19, 0x1A, 0x1B, 0x00,  // StructSize3Alignment1 data (3 bytes) + padding (1 byte)  0x60
+    0x00, 0x00, 0x00, 0x00,  // StructSize3Alignment1 padding [cont.]
+    0x0A, 0x0B, 0x0C, 0x0D,  // i2
+    0x00, 0x00, 0x00, 0x00,  // i2 padding
+};
+
+uint8_t table_unionwithvector_reservedsandwich_v1[] = {
+    0x02, 0x00, 0x00, 0x00,  // Table_UnionWithVector_ReservedSandwich.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_UnionWithVector_ReservedSandwich.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_bytes  0x10
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence [cont.]
+    0x30, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
+    0x38, 0x43, 0x31, 0x3B,  // UnionWithVector.xunion.ordinal (string)  0x30
+    0x00, 0x00, 0x00, 0x00,  // UnionWithVector.xunion.padding
+    0x18, 0x00, 0x00, 0x00,  // UnionWithVector.xunion.envelope.size
+    0x00, 0x00, 0x00, 0x00,  // UnionWithVector.xunion.envelope.size [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // UnionWithVector.xunion.envelope.presence  0x40
+    0xFF, 0xFF, 0xFF, 0xFF,  // UnionWithVector.xunion.envelope.presence [cont.]
+    0x05, 0x00, 0x00, 0x00,  // string.size
+    0x00, 0x00, 0x00, 0x00,  // string.size [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence  0x50
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence [cont.]
+    0x68, 0x65, 0x6c, 0x6c,  // "hello"
+    0x6f, 0x00, 0x00, 0x00,  // "hello" [cont.] and padding
+};
+
+uint8_t table_unionwithvector_reservedsandwich_old[] = {
+    0x02, 0x00, 0x00, 0x00,  // Table_UnionWithVector_ReservedSandwich.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_UnionWithVector_ReservedSandwich.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_bytes  0x10
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence [cont.]
+    0x30, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
+    0x02, 0x00, 0x00, 0x00,  // UnionWithVector.tag (string)  0x30
+    0x00, 0x00, 0x00, 0x00,  // UnionWithVector.tag padding
+    0x05, 0x00, 0x00, 0x00,  // string.size
+    0x00, 0x00, 0x00, 0x00,  // string.size [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence  0x40
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence [cont.]
+    0x68, 0x65, 0x6c, 0x6c,  // "hello"  0x50
+    0x6f, 0x00, 0x00, 0x00,  // "hello" [cont.] and padding
+};
+
+uint8_t table_unionwithvector_structsandwich_v1[] = {
+    0x03, 0x00, 0x00, 0x00,  // Table_UnionWithVector_StructSandwich.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_UnionWithVector_StructSandwich.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_bytes  0x10
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence [cont.]
+    0x30, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_bytes  0x30
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence [cont.]
+    0x01, 0x02, 0x03, 0x00,  // s1.three_bytes and padding  0x40
+    0x00, 0x00, 0x00, 0x00,  // s1 padding
+    0x38, 0x43, 0x31, 0x3B,  // UnionWithVector.xunion.ordinal (string)
+    0x00, 0x00, 0x00, 0x00,  // UnionWithVector.xunion.padding
+    0x18, 0x00, 0x00, 0x00,  // UnionWithVector.xunion.envelope.size  0x50
+    0x00, 0x00, 0x00, 0x00,  // UnionWithVector.xunion.envelope.size [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // UnionWithVector.xunion.envelope.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // UnionWithVector.xunion.envelope.presence [cont.]
+    0x05, 0x00, 0x00, 0x00,  // string.size  0x60
+    0x00, 0x00, 0x00, 0x00,  // string.size [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence [cont.]
+    0x68, 0x65, 0x6c, 0x6c,  // "hello"  0x70
+    0x6f, 0x00, 0x00, 0x00,  // "hello" [cont.] and padding
+    0x04, 0x05, 0x06, 0x00,  // s2.three_bytes and padding  0x80
+    0x00, 0x00, 0x00, 0x00,  // s2 padding
+};
+
+uint8_t table_unionwithvector_structsandwich_old[] = {
+    0x03, 0x00, 0x00, 0x00,  // Table_UnionWithVector_StructSandwich.vector<envelope>.size
+    0x00, 0x00, 0x00, 0x00,  // [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // Table_UnionWithVector_StructSandwich.vector<envelope>.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_bytes  0x10
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence [cont.]
+    0x30, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
+    0x08, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_bytes  0x30
+    0x00, 0x00, 0x00, 0x00,  // vector<envelope>[2].num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[2].presence [cont.]
+    0x01, 0x02, 0x03, 0x00,  // s1.three_bytes and padding  0x40
+    0x00, 0x00, 0x00, 0x00,  // s1 padding
+    0x02, 0x00, 0x00, 0x00,  // UnionWithVector.tag (string)
+    0x00, 0x00, 0x00, 0x00,  // UnionWithVector.tag padding
+    0x05, 0x00, 0x00, 0x00,  // string.size  0x50
+    0x00, 0x00, 0x00, 0x00,  // string.size [cont.]
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // string.presence [cont.]
+    0x68, 0x65, 0x6c, 0x6c,  // "hello"  0x60
+    0x6f, 0x00, 0x00, 0x00,  // "hello" [cont.] and padding
+    0x04, 0x05, 0x06, 0x00,  // s2.three_bytes and padding  0x70
+    0x00, 0x00, 0x00, 0x00,  // s2 padding
+};
+
 bool run_fidl_transform(const fidl_type_t *v1_type,
                         const fidl_type_t *old_type,
                         const uint8_t *v1_bytes,
@@ -733,11 +917,16 @@ bool run_fidl_transform(const fidl_type_t *v1_type,
     uint32_t actual_old_num_bytes;
     memset(actual_old_bytes, 0xcc /* poison */, ZX_CHANNEL_MAX_MSG_BYTES);
 
+    const char* error = nullptr;
     zx_status_t status = fidl_transform(FIDL_TRANSFORMATION_V1_TO_OLD,
                                         v1_type,
                                         v1_bytes, actual_old_bytes,
                                         v1_num_bytes, &actual_old_num_bytes,
-                                        nullptr);
+                                        &error);
+    if (error) {
+        printf("ERROR: %s\n", error);
+    }
+
     ASSERT_EQ(status, ZX_OK);
     ASSERT_TRUE(cmp_payload(actual_old_bytes, actual_old_num_bytes,
                             old_bytes, old_num_bytes));
@@ -748,11 +937,16 @@ bool run_fidl_transform(const fidl_type_t *v1_type,
     uint32_t actual_v1_num_bytes;
     memset(actual_v1_bytes, 0xcc /* poison */, ZX_CHANNEL_MAX_MSG_BYTES);
 
+    const char* error = nullptr;
     zx_status_t status = fidl_transform(FIDL_TRANSFORMATION_OLD_TO_V1,
                                         old_type,
                                         old_bytes, actual_v1_bytes,
                                         old_num_bytes, &actual_v1_num_bytes,
-                                        nullptr);
+                                        &error);
+    if (error) {
+        printf("ERROR: %s\n", error);
+    }
+
     ASSERT_EQ(status, ZX_OK);
     ASSERT_TRUE(cmp_payload(actual_v1_bytes, actual_v1_num_bytes,
                             v1_bytes, v1_num_bytes));
@@ -965,6 +1159,48 @@ bool sandwich7_case2() {
   END_TEST;
 }
 
+#define DO_TEST(old_coding_table, v1_coding_table, old_bytes, v1_bytes) \
+  BEGIN_TEST; \
+  ASSERT_TRUE(run_fidl_transform( \
+      &v1_coding_table, \
+      &old_coding_table, \
+      v1_bytes, sizeof(v1_bytes), \
+      old_bytes, sizeof(old_bytes))); \
+  END_TEST;
+
+#define DO_TABLE_TEST(coding_table, old_bytes, v1_bytes) \
+{ \
+    fidl::FidlStructField field(&coding_table, 0u, 0u, &field); \
+    fidl::FidlCodedStruct coded_struct(&field, 1, 16, coding_table.coded_table.name, &coded_struct); \
+    fidl_type coded_struct_type(coded_struct); \
+    \
+    DO_TEST(coded_struct_type, coded_struct_type, old_bytes, v1_bytes); \
+}
+
+bool table_nofields() {
+    DO_TABLE_TEST(example_Table_NoFieldsTable, table_nofields_v1_and_old, table_nofields_v1_and_old);
+}
+
+bool table_tworeservedfields() {
+    DO_TABLE_TEST(example_Table_TwoReservedFieldsTable, table_tworeservedfields_v1_and_old, table_tworeservedfields_v1_and_old);
+}
+
+bool table_structwithreservedsandwich() {
+    DO_TABLE_TEST(example_Table_StructWithReservedSandwichTable, table_structwithreservedsandwich_v1_and_old, table_structwithreservedsandwich_v1_and_old);
+}
+
+bool table_structwithuint32sandwich() {
+    DO_TABLE_TEST(example_Table_StructWithUint32SandwichTable, table_structwithuint32sandwich_v1_and_old, table_structwithuint32sandwich_v1_and_old);
+}
+
+bool table_unionwithvector_reservedsandwich() {
+    DO_TABLE_TEST(example_Table_UnionWithVector_ReservedSandwichTable, table_unionwithvector_reservedsandwich_old, table_unionwithvector_reservedsandwich_v1);
+}
+
+bool table_unionwithvector_structsandwich() {
+    DO_TABLE_TEST(example_Table_UnionWithVector_StructSandwichTable, table_unionwithvector_structsandwich_old, table_unionwithvector_structsandwich_v1);
+}
+
 BEGIN_TEST_CASE(transformer_v1_to_old)
 RUN_TEST(sandwich1)
 RUN_TEST(sandwich2)
@@ -983,4 +1219,10 @@ RUN_TEST(sandwich6_case7)
 RUN_TEST(sandwich6_case8)
 RUN_TEST(sandwich7_case1)
 RUN_TEST(sandwich7_case2)
+RUN_TEST(table_nofields)
+RUN_TEST(table_tworeservedfields)
+RUN_TEST(table_structwithreservedsandwich)
+RUN_TEST(table_structwithuint32sandwich)
+RUN_TEST(table_unionwithvector_reservedsandwich)
+RUN_TEST(table_unionwithvector_structsandwich)
 END_TEST_CASE(transformer_v1_to_old)

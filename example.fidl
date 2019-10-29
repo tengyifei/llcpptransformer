@@ -130,5 +130,41 @@ struct Regression3 {
     Regression2? opt_value;
 };
 
+table Table_NoFields {
+};
+
+table Table_TwoReservedFields {
+    1: reserved;
+    2: reserved;
+};
+
+table Table_StructWithReservedSandwich {
+    1: reserved;
+    2: StructSize3Alignment1 s1;
+    3: StructSize3Alignment1 s2;
+    4: reserved;
+};
+
+table Table_StructWithUint32Sandwich {
+    1: uint32 i;
+    2: StructSize3Alignment1 s1;
+    3: StructSize3Alignment1 s2;
+    4: uint32 i2;
+};
+
+table Table_UnionWithVector_ReservedSandwich {
+    1: reserved;
+    2: UnionWithVector uv;
+    3: reserved;
+};
+
+table Table_UnionWithVector_StructSandwich {
+    1: StructSize3Alignment1 s1;
+    2: UnionWithVector uv;
+    3: StructSize3Alignment1 s2;
+};
+
+// TODO(apang): Union containing a table (to test out-of-line sizing)
+
 // TODO: simple struct examples without any union, e.g. struct{uint8;uint32;uint8;uint16;uint64;}
 // TODO: struct{opt_struct_size4;opt_struct_size4;} to check alignment of secondary objects
