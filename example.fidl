@@ -123,7 +123,7 @@ struct Regression1 {
 
 struct Regression2 {
     Regression1 head;
-    uint8 f6;
+    uint8 f7;
 };
 
 struct Regression3 {
@@ -162,6 +162,19 @@ table Table_UnionWithVector_StructSandwich {
     1: StructSize3Alignment1 s1;
     2: UnionWithVector uv;
     3: StructSize3Alignment1 s2;
+};
+
+xunion XUnionWithStruct {
+    StructSize3Alignment1 s;
+};
+
+xunion XUnionWithXUnion {
+    XUnionWithStruct xu;
+};
+
+xunion XUnionWithUnions {
+    UnionSize8Aligned4 u1;
+    UnionSize16Aligned4 u2;
 };
 
 // TODO(apang): Union containing a table (to test out-of-line sizing)

@@ -43,6 +43,13 @@ enum struct WireFormat {
 struct TraversalResult {
   uint32_t out_of_line_size = 0u;
   uint32_t handle_count = 0u;
+
+  TraversalResult& operator+=(const TraversalResult rhs) {
+    out_of_line_size += rhs.out_of_line_size;
+    handle_count += rhs.handle_count;
+
+    return *this;
+  }
 };
 
 // const fidl_type_t* AltType(const fidl_type_t* type) {
@@ -163,6 +170,10 @@ struct Position {
 
   [[nodiscard]] inline Position IncreaseOutOfLineOffset(uint32_t increase) const {
     return IncreaseSrcOutOfLineOffset(increase).IncreaseDstOutOfLineOffset(increase);
+  }
+
+  [[nodiscard]] inline Position IncreaseSrcOffsets(uint32_t increase) const {
+    return IncreaseSrcInlineOffset(increase).IncreaseSrcOutOfLineOffset(increase);
   }
 
   [[nodiscard]] inline Position IncreaseSrcInlineOffset(uint32_t increase) const {
@@ -473,7 +484,9 @@ class TransformerBase {
       uint32_t dst_next_field_offset =
           current_position.dst_inline_offset + AlignedInlineSize(dst_field.type, To());
       uint32_t dst_field_size = dst_next_field_offset - dst_field.offset;
-      if (zx_status_t status = Transform(src_field.type, current_position, dst_field_size, out_traversal_result);
+
+      TraversalResult traversal_result;
+      if (zx_status_t status = Transform(src_field.type, current_position, dst_field_size, &traversal_result);
           status != ZX_OK) {
         return status;
       }
@@ -481,9 +494,15 @@ class TransformerBase {
       // Update current position for next iteration.
       current_position.src_inline_offset = src_next_field_offset;
       current_position.dst_inline_offset = dst_next_field_offset;
+
+      if (traversal_result.out_of_line_size) {
+        // current_position = current_position.IncreaseSrcOffsets(traversal_result.out_of_line_size).IncreaseDstInlineOffset(traversal_result.out_of_line_size).IncreaseDstOutOfLineOffset(traversal_result.out_of_line_size);
+      }
+
+      *out_traversal_result += traversal_result;
     }
 
-    current_position.Print();
+    // current_position.Print();
 
     printf("dst_end_of_struct: %u, src_coded_struct.size: %u, dst_coded_struct.size: %u\n", dst_end_of_struct, src_coded_struct.size, dst_coded_struct.size);
 
@@ -625,14 +644,20 @@ class TransformerBase {
       }
     }
 
-    const Position envelope_position = position.IncreaseInlineOffset(offsetof(fidl_xunion_t, envelope));
-
     std::optional<const fidl_type_t*> field_type;
     if (field == nullptr) {
       // Unknown ordinal.
     } else {
       field_type = field->type;
     }
+
+    const Position envelope_position = // position.IncreaseInlineOffset(offsetof(fidl_xunion_t, envelope)).IncreaseOutOfLineOffset(offsetof(fidl_xunion_t, envelope));
+      {
+        position.src_inline_offset + static_cast<uint32_t>(offsetof(fidl_xunion_t, envelope)),
+        position.src_out_of_line_offset,
+        position.dst_inline_offset + static_cast<uint32_t>(offsetof(fidl_xunion_t, envelope)),
+        position.dst_out_of_line_offset,
+      };
 
     return TransformEnvelope(field_type, envelope_position, out_traversal_result);
   }
@@ -650,7 +675,6 @@ class TransformerBase {
     const uint32_t envelopes_vector_size = table->envelopes.count * static_cast<uint32_t>(sizeof(fidl_envelope_t));
     src_dst->Copy(envelopes_vector_position, envelopes_vector_size);
 
-    // XXX something is up here
     uint32_t src_envelope_data_offset = envelopes_vector_size;
     uint32_t dst_envelope_data_offset = src_envelope_data_offset;
 

@@ -904,6 +904,74 @@ uint8_t table_unionwithvector_structsandwich_old[] = {
     0x00, 0x00, 0x00, 0x00,  // s2 padding
 };
 
+uint8_t xunionwithstruct_old_and_v1[] = {
+    0x0B, 0xC4, 0xB0, 0x04,  // XUnionWithStruct.xunion.ordinal
+    0x00, 0x00, 0x00, 0x00,  // XUnionWithStruct.xunion.ordinal padding
+    0x08, 0x00, 0x00, 0x00,  // XUnionWithStruct.xunion.envelope.num_bytes
+    0x00, 0x00, 0x00, 0x00,  // XUnionWithStruct.xunion.envelope.num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // XUnionWithStruct.xunion.envelope.presence  0x10
+    0xFF, 0xFF, 0xFF, 0xFF,  // XUnionWithStruct.xunion.envelope.presence [cont.]
+    0x01, 0x02, 0x03, 0x00,  // s and padding
+    0x00, 0x00, 0x00, 0x00,  // padding [cont.]
+};
+
+uint8_t xunionwithunknownordinal_old_and_v1[] = {
+    0xBA, 0x5E, 0xBA, 0x11,  // XUnionWithStruct.xunion.ordinal
+    0x00, 0x00, 0x00, 0x00,  // XUnionWithStruct.xunion.ordinal padding
+    0x10, 0x00, 0x00, 0x00,  // XUnionWithStruct.xunion.envelope.num_bytes
+    0x00, 0x00, 0x00, 0x00,  // XUnionWithStruct.xunion.envelope.num_handles
+    0xFF, 0xFF, 0xFF, 0xFF,  // XUnionWithStruct.xunion.envelope.presence  0x10
+    0xFF, 0xFF, 0xFF, 0xFF,  // XUnionWithStruct.xunion.envelope.presence [cont.]
+    0x01, 0x02, 0x03, 0x04,  // random data
+    0x05, 0x06, 0x07, 0x08,  // random data [cont.]
+    0x09, 0x0A, 0x0B, 0x0C,  // random data  0x20
+    0x0D, 0x0E, 0x0E, 0x0F,  // random data [cont.]
+};
+
+uint8_t regression1_old_and_v1[] = {
+    0x01, 0x00, 0x00, 0x00,  // f1 and padding
+    0x02, 0x00, 0x00, 0x00,  // f2 and padding
+    0x03, 0x00, 0x04, 0x00,  // f3, f3 padding and f4
+    0x00, 0x00, 0x00, 0x00,  // f4 padding
+    0x05, 0x00, 0x00, 0x00,  // f5
+    0x00, 0x00, 0x00, 0x00,  // f5
+    0x06, 0x00, 0x00, 0x00,  // f6 and padding
+    0x00, 0x00, 0x00, 0x00,  // f6 padding
+};
+
+uint8_t regression2_old_and_v1[] = {
+    0x01, 0x00, 0x00, 0x00,  // f1 and padding
+    0x02, 0x00, 0x00, 0x00,  // f2 and padding
+    0x03, 0x00, 0x04, 0x00,  // f3, f3 padding and f4
+    0x00, 0x00, 0x00, 0x00,  // f4 padding
+    0x05, 0x00, 0x00, 0x00,  // f5
+    0x00, 0x00, 0x00, 0x00,  // f5
+    0x06, 0x00, 0x00, 0x00,  // f6 and padding
+    0x00, 0x00, 0x00, 0x00,  // f6 padding
+    0x07, 0x00, 0x00, 0x00,  // f7 and padding
+    0x00, 0x00, 0x00, 0x00,  // f7 padding
+};
+
+uint8_t regression3_absent_old_and_v1[] = {
+    0x00, 0x00, 0x00, 0x00,  // opt_value.absence
+    0x00, 0x00, 0x00, 0x00,  // opt_value.absence [cont.]
+};
+
+uint8_t regression3_present_old_and_v1[] = {
+    0xFF, 0xFF, 0xFF, 0xFF,  // opt_value.presence
+    0xFF, 0xFF, 0xFF, 0xFF,  // opt_value.presence [cont.]
+    0x01, 0x00, 0x00, 0x00,  // f1 and padding
+    0x02, 0x00, 0x00, 0x00,  // f2 and padding
+    0x03, 0x00, 0x04, 0x00,  // f3, f3 padding and f4
+    0x00, 0x00, 0x00, 0x00,  // f4 padding
+    0x05, 0x00, 0x00, 0x00,  // f5
+    0x00, 0x00, 0x00, 0x00,  // f5
+    0x06, 0x00, 0x00, 0x00,  // f6 and padding
+    0x00, 0x00, 0x00, 0x00,  // f6 padding
+    0x07, 0x00, 0x00, 0x00,  // f7 and padding
+    0x00, 0x00, 0x00, 0x00,  // f7 padding
+};
+
 bool run_fidl_transform(const fidl_type_t *v1_type,
                         const fidl_type_t *old_type,
                         const uint8_t *v1_bytes,
@@ -1159,6 +1227,54 @@ bool sandwich7_case2() {
   END_TEST;
 }
 
+bool regression1() {
+  BEGIN_TEST;
+
+  ASSERT_TRUE(run_fidl_transform(
+      &v1_example_Regression1Table,
+      &example_Regression1Table,
+      regression1_old_and_v1, sizeof(regression1_old_and_v1),
+      regression1_old_and_v1, sizeof(regression1_old_and_v1)));
+
+  END_TEST;
+}
+
+bool regression2() {
+  BEGIN_TEST;
+
+  ASSERT_TRUE(run_fidl_transform(
+      &v1_example_Regression2Table,
+      &example_Regression2Table,
+      regression2_old_and_v1, sizeof(regression2_old_and_v1),
+      regression2_old_and_v1, sizeof(regression2_old_and_v1)));
+
+  END_TEST;
+}
+
+bool regression3_absent() {
+  BEGIN_TEST;
+
+  ASSERT_TRUE(run_fidl_transform(
+      &v1_example_Regression3Table,
+      &example_Regression3Table,
+      regression3_absent_old_and_v1, sizeof(regression3_absent_old_and_v1),
+      regression3_absent_old_and_v1, sizeof(regression3_absent_old_and_v1)));
+
+  END_TEST;
+}
+
+bool regression3_present() {
+  BEGIN_TEST;
+
+  ASSERT_TRUE(run_fidl_transform(
+      &v1_example_Regression3Table,
+      &example_Regression3Table,
+      regression3_present_old_and_v1, sizeof(regression3_present_old_and_v1),
+      regression3_present_old_and_v1, sizeof(regression3_present_old_and_v1)));
+
+  END_TEST;
+}
+
 #define DO_TEST(old_coding_table, v1_coding_table, old_bytes, v1_bytes) \
   BEGIN_TEST; \
   ASSERT_TRUE(run_fidl_transform( \
@@ -1168,15 +1284,18 @@ bool sandwich7_case2() {
       old_bytes, sizeof(old_bytes))); \
   END_TEST;
 
-#define DO_TABLE_TEST(coding_table, old_bytes, v1_bytes) \
+#define DO_X_TEST(coding_table, size, old_bytes, v1_bytes) \
 { \
     printf("    Will start: %s\n", #coding_table); \
     fidl::FidlStructField field(&coding_table, 0u, 0u, &field); \
-    fidl::FidlCodedStruct coded_struct(&field, 1, 16, coding_table.coded_table.name, &coded_struct); \
+    fidl::FidlCodedStruct coded_struct(&field, 1, size, coding_table.coded_table.name, &coded_struct); \
     fidl_type coded_struct_type(coded_struct); \
     \
     DO_TEST(coded_struct_type, coded_struct_type, old_bytes, v1_bytes); \
 }
+
+#define DO_TABLE_TEST(coding_table, old_bytes, v1_bytes) DO_X_TEST(coding_table, 16, old_bytes, v1_bytes)
+#define DO_XUNION_TEST(coding_table, old_bytes, v1_bytes) DO_X_TEST(coding_table, 24, old_bytes, v1_bytes)
 
 bool table_nofields() {
     DO_TABLE_TEST(example_Table_NoFieldsTable, table_nofields_v1_and_old, table_nofields_v1_and_old);
@@ -1202,6 +1321,14 @@ bool table_unionwithvector_structsandwich() {
     DO_TABLE_TEST(example_Table_UnionWithVector_StructSandwichTable, table_unionwithvector_structsandwich_old, table_unionwithvector_structsandwich_v1);
 }
 
+bool xunionwithstruct() {
+    DO_XUNION_TEST(example_XUnionWithStructTable, xunionwithstruct_old_and_v1, xunionwithstruct_old_and_v1);
+}
+
+bool xunionwithunknownordinal() {
+    DO_XUNION_TEST(example_XUnionWithStructTable, xunionwithunknownordinal_old_and_v1, xunionwithunknownordinal_old_and_v1);
+}
+
 BEGIN_TEST_CASE(transformer_v1_to_old)
 RUN_TEST(sandwich1)
 RUN_TEST(sandwich2)
@@ -1220,10 +1347,16 @@ RUN_TEST(sandwich6_case7)
 RUN_TEST(sandwich6_case8)
 RUN_TEST(sandwich7_case1)
 RUN_TEST(sandwich7_case2)
+RUN_TEST(regression1)
+RUN_TEST(regression2)
+RUN_TEST(regression3_absent)
+RUN_TEST(regression3_present)
 RUN_TEST(table_nofields)
 RUN_TEST(table_tworeservedfields)
 RUN_TEST(table_structwithreservedsandwich)
 RUN_TEST(table_structwithuint32sandwich)
 RUN_TEST(table_unionwithvector_reservedsandwich)
 RUN_TEST(table_unionwithvector_structsandwich)
+RUN_TEST(xunionwithstruct)
+RUN_TEST(xunionwithunknownordinal)
 END_TEST_CASE(transformer_v1_to_old)
