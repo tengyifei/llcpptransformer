@@ -34,6 +34,12 @@ extern const fidl_type_t example_UnionOfUnionTable;
 extern const fidl_type_t example_Sandwich8Table;
 extern const fidl_type_t example_Sandwich5Table;
 extern const fidl_type_t example_Sandwich3Table;
+extern const fidl_type_t example_Size5Alignment4Table;
+extern const fidl_type_t example_Size5Alignment4VectorTable;
+extern const fidl_type_t example_Size5Alignment4ArrayTable;
+extern const fidl_type_t example_Size5Alignment1Table;
+extern const fidl_type_t example_Size5Alignment1VectorTable;
+extern const fidl_type_t example_Size5Alignment1ArrayTable;
 extern const fidl_type_t example_Sandwich7Table;
 extern const fidl_type_t example_Regression3Table;
 extern const fidl_type_t example_Regression1Table;
@@ -66,6 +72,18 @@ static const fidl_type_t Array8_29example_StructSize3Alignment2Table = fidl_type
 
 extern inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable26example_UnionSize8Aligned4Table_alt;
 static const fidl_type_t Vector4294967295nonnullable26example_UnionSize8Aligned4Table = fidl_type_t(::fidl::FidlCodedVector(&example_UnionSize8Aligned4Table, 4294967295u, 8u, ::fidl::kNonnullable, Vector4294967295nonnullable26example_UnionSize8Aligned4Table_alt));
+
+extern inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable23example_Size5Alignment4Table_alt;
+static const fidl_type_t Vector4294967295nonnullable23example_Size5Alignment4Table = fidl_type_t(::fidl::FidlCodedVector(&example_Size5Alignment4Table, 4294967295u, 8u, ::fidl::kNonnullable, Vector4294967295nonnullable23example_Size5Alignment4Table_alt));
+
+extern inline const ::fidl::FidlCodedArray* const Array24_23example_Size5Alignment4Table_alt;
+static const fidl_type_t Array24_23example_Size5Alignment4Table = fidl_type_t(::fidl::FidlCodedArray(&example_Size5Alignment4Table, 24u, 8u, Array24_23example_Size5Alignment4Table_alt));
+
+extern inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable23example_Size5Alignment1Table_alt;
+static const fidl_type_t Vector4294967295nonnullable23example_Size5Alignment1Table = fidl_type_t(::fidl::FidlCodedVector(&example_Size5Alignment1Table, 4294967295u, 5u, ::fidl::kNonnullable, Vector4294967295nonnullable23example_Size5Alignment1Table_alt));
+
+extern inline const ::fidl::FidlCodedArray* const Array15_23example_Size5Alignment1Table_alt;
+static const fidl_type_t Array15_23example_Size5Alignment1Table = fidl_type_t(::fidl::FidlCodedArray(&example_Size5Alignment1Table, 15u, 5u, Array15_23example_Size5Alignment1Table_alt));
 
 
 static const ::fidl::FidlUnionField Fields26example_UnionSize8Aligned4[] = {
@@ -260,6 +278,44 @@ static const ::fidl::FidlStructField Fields17example_Sandwich3[] = {
 extern inline const ::fidl::FidlCodedStruct* const example_Sandwich3Table_alt;
 const fidl_type_t example_Sandwich3Table = fidl_type_t(::fidl::FidlCodedStruct(Fields17example_Sandwich3, 3u, 40u, "example/Sandwich3", example_Sandwich3Table_alt));
 
+static const ::fidl::FidlStructField Fields23example_Size5Alignment4[] = {
+    ::fidl::FidlStructField(nullptr, 5u, 3u)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_Size5Alignment4Table_alt;
+const fidl_type_t example_Size5Alignment4Table = fidl_type_t(::fidl::FidlCodedStruct(Fields23example_Size5Alignment4, 1u, 8u, "example/Size5Alignment4", example_Size5Alignment4Table_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields29example_Size5Alignment4Vector_field0_alt_field;
+static const ::fidl::FidlStructField Fields29example_Size5Alignment4Vector[] = {
+    ::fidl::FidlStructField(&Vector4294967295nonnullable23example_Size5Alignment4Table, 0u, 0u, Fields29example_Size5Alignment4Vector_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_Size5Alignment4VectorTable_alt;
+const fidl_type_t example_Size5Alignment4VectorTable = fidl_type_t(::fidl::FidlCodedStruct(Fields29example_Size5Alignment4Vector, 1u, 16u, "example/Size5Alignment4Vector", example_Size5Alignment4VectorTable_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields28example_Size5Alignment4Array_field0_alt_field;
+static const ::fidl::FidlStructField Fields28example_Size5Alignment4Array[] = {
+    ::fidl::FidlStructField(&Array24_23example_Size5Alignment4Table, 0u, 0u, Fields28example_Size5Alignment4Array_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_Size5Alignment4ArrayTable_alt;
+const fidl_type_t example_Size5Alignment4ArrayTable = fidl_type_t(::fidl::FidlCodedStruct(Fields28example_Size5Alignment4Array, 1u, 24u, "example/Size5Alignment4Array", example_Size5Alignment4ArrayTable_alt));
+
+static const ::fidl::FidlStructField Fields23example_Size5Alignment1[] = {};
+extern inline const ::fidl::FidlCodedStruct* const example_Size5Alignment1Table_alt;
+const fidl_type_t example_Size5Alignment1Table = fidl_type_t(::fidl::FidlCodedStruct(Fields23example_Size5Alignment1, 0u, 5u, "example/Size5Alignment1", example_Size5Alignment1Table_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields29example_Size5Alignment1Vector_field0_alt_field;
+static const ::fidl::FidlStructField Fields29example_Size5Alignment1Vector[] = {
+    ::fidl::FidlStructField(&Vector4294967295nonnullable23example_Size5Alignment1Table, 0u, 0u, Fields29example_Size5Alignment1Vector_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_Size5Alignment1VectorTable_alt;
+const fidl_type_t example_Size5Alignment1VectorTable = fidl_type_t(::fidl::FidlCodedStruct(Fields29example_Size5Alignment1Vector, 1u, 16u, "example/Size5Alignment1Vector", example_Size5Alignment1VectorTable_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields28example_Size5Alignment1Array_field0_alt_field;
+static const ::fidl::FidlStructField Fields28example_Size5Alignment1Array[] = {
+    ::fidl::FidlStructField(&Array15_23example_Size5Alignment1Table, 0u, 0u, Fields28example_Size5Alignment1Array_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const example_Size5Alignment1ArrayTable_alt;
+const fidl_type_t example_Size5Alignment1ArrayTable = fidl_type_t(::fidl::FidlCodedStruct(Fields28example_Size5Alignment1Array, 1u, 15u, "example/Size5Alignment1Array", example_Size5Alignment1ArrayTable_alt));
+
 extern inline const ::fidl::FidlStructField* const Fields17example_Sandwich7_field1_alt_field;
 static const ::fidl::FidlStructField Fields17example_Sandwich7[] = {
     ::fidl::FidlStructField(nullptr, 4u, 4u),
@@ -323,6 +379,12 @@ extern const fidl_type_t v1_example_UnionOfUnionTable;
 extern const fidl_type_t v1_example_Sandwich8Table;
 extern const fidl_type_t v1_example_Sandwich5Table;
 extern const fidl_type_t v1_example_Sandwich3Table;
+extern const fidl_type_t v1_example_Size5Alignment4Table;
+extern const fidl_type_t v1_example_Size5Alignment4VectorTable;
+extern const fidl_type_t v1_example_Size5Alignment4ArrayTable;
+extern const fidl_type_t v1_example_Size5Alignment1Table;
+extern const fidl_type_t v1_example_Size5Alignment1VectorTable;
+extern const fidl_type_t v1_example_Size5Alignment1ArrayTable;
 extern const fidl_type_t v1_example_Sandwich7Table;
 extern const fidl_type_t v1_example_Regression3Table;
 extern const fidl_type_t v1_example_Regression1Table;
@@ -355,6 +417,18 @@ static const fidl_type_t v1_Array8_32v1_example_StructSize3Alignment2Table = fid
 
 extern inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable29v1_example_UnionSize8Aligned4Table_alt;
 static const fidl_type_t v1_Vector4294967295nonnullable29v1_example_UnionSize8Aligned4Table = fidl_type_t(::fidl::FidlCodedVector(&v1_example_UnionSize8Aligned4Table, 4294967295u, 24u, ::fidl::kNonnullable, v1_Vector4294967295nonnullable29v1_example_UnionSize8Aligned4Table_alt));
+
+extern inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable26v1_example_Size5Alignment4Table_alt;
+static const fidl_type_t v1_Vector4294967295nonnullable26v1_example_Size5Alignment4Table = fidl_type_t(::fidl::FidlCodedVector(&v1_example_Size5Alignment4Table, 4294967295u, 8u, ::fidl::kNonnullable, v1_Vector4294967295nonnullable26v1_example_Size5Alignment4Table_alt));
+
+extern inline const ::fidl::FidlCodedArray* const v1_Array24_26v1_example_Size5Alignment4Table_alt;
+static const fidl_type_t v1_Array24_26v1_example_Size5Alignment4Table = fidl_type_t(::fidl::FidlCodedArray(&v1_example_Size5Alignment4Table, 24u, 8u, v1_Array24_26v1_example_Size5Alignment4Table_alt));
+
+extern inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable26v1_example_Size5Alignment1Table_alt;
+static const fidl_type_t v1_Vector4294967295nonnullable26v1_example_Size5Alignment1Table = fidl_type_t(::fidl::FidlCodedVector(&v1_example_Size5Alignment1Table, 4294967295u, 5u, ::fidl::kNonnullable, v1_Vector4294967295nonnullable26v1_example_Size5Alignment1Table_alt));
+
+extern inline const ::fidl::FidlCodedArray* const v1_Array15_26v1_example_Size5Alignment1Table_alt;
+static const fidl_type_t v1_Array15_26v1_example_Size5Alignment1Table = fidl_type_t(::fidl::FidlCodedArray(&v1_example_Size5Alignment1Table, 15u, 5u, v1_Array15_26v1_example_Size5Alignment1Table_alt));
 
 
 static const ::fidl::FidlUnionField Fields29v1_example_UnionSize8Aligned4[] = {
@@ -555,6 +629,44 @@ static const ::fidl::FidlStructField Fields20v1_example_Sandwich3[] = {
 extern inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich3Table_alt;
 const fidl_type_t v1_example_Sandwich3Table = fidl_type_t(::fidl::FidlCodedStruct(Fields20v1_example_Sandwich3, 3u, 40u, "example/Sandwich3", v1_example_Sandwich3Table_alt));
 
+static const ::fidl::FidlStructField Fields26v1_example_Size5Alignment4[] = {
+    ::fidl::FidlStructField(nullptr, 5u, 3u)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment4Table_alt;
+const fidl_type_t v1_example_Size5Alignment4Table = fidl_type_t(::fidl::FidlCodedStruct(Fields26v1_example_Size5Alignment4, 1u, 8u, "example/Size5Alignment4", v1_example_Size5Alignment4Table_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields32v1_example_Size5Alignment4Vector_field0_alt_field;
+static const ::fidl::FidlStructField Fields32v1_example_Size5Alignment4Vector[] = {
+    ::fidl::FidlStructField(&v1_Vector4294967295nonnullable26v1_example_Size5Alignment4Table, 0u, 0u, Fields32v1_example_Size5Alignment4Vector_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment4VectorTable_alt;
+const fidl_type_t v1_example_Size5Alignment4VectorTable = fidl_type_t(::fidl::FidlCodedStruct(Fields32v1_example_Size5Alignment4Vector, 1u, 16u, "example/Size5Alignment4Vector", v1_example_Size5Alignment4VectorTable_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields31v1_example_Size5Alignment4Array_field0_alt_field;
+static const ::fidl::FidlStructField Fields31v1_example_Size5Alignment4Array[] = {
+    ::fidl::FidlStructField(&v1_Array24_26v1_example_Size5Alignment4Table, 0u, 0u, Fields31v1_example_Size5Alignment4Array_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment4ArrayTable_alt;
+const fidl_type_t v1_example_Size5Alignment4ArrayTable = fidl_type_t(::fidl::FidlCodedStruct(Fields31v1_example_Size5Alignment4Array, 1u, 24u, "example/Size5Alignment4Array", v1_example_Size5Alignment4ArrayTable_alt));
+
+static const ::fidl::FidlStructField Fields26v1_example_Size5Alignment1[] = {};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment1Table_alt;
+const fidl_type_t v1_example_Size5Alignment1Table = fidl_type_t(::fidl::FidlCodedStruct(Fields26v1_example_Size5Alignment1, 0u, 5u, "example/Size5Alignment1", v1_example_Size5Alignment1Table_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields32v1_example_Size5Alignment1Vector_field0_alt_field;
+static const ::fidl::FidlStructField Fields32v1_example_Size5Alignment1Vector[] = {
+    ::fidl::FidlStructField(&v1_Vector4294967295nonnullable26v1_example_Size5Alignment1Table, 0u, 0u, Fields32v1_example_Size5Alignment1Vector_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment1VectorTable_alt;
+const fidl_type_t v1_example_Size5Alignment1VectorTable = fidl_type_t(::fidl::FidlCodedStruct(Fields32v1_example_Size5Alignment1Vector, 1u, 16u, "example/Size5Alignment1Vector", v1_example_Size5Alignment1VectorTable_alt));
+
+extern inline const ::fidl::FidlStructField* const Fields31v1_example_Size5Alignment1Array_field0_alt_field;
+static const ::fidl::FidlStructField Fields31v1_example_Size5Alignment1Array[] = {
+    ::fidl::FidlStructField(&v1_Array15_26v1_example_Size5Alignment1Table, 0u, 0u, Fields31v1_example_Size5Alignment1Array_field0_alt_field)
+};
+extern inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment1ArrayTable_alt;
+const fidl_type_t v1_example_Size5Alignment1ArrayTable = fidl_type_t(::fidl::FidlCodedStruct(Fields31v1_example_Size5Alignment1Array, 1u, 15u, "example/Size5Alignment1Array", v1_example_Size5Alignment1ArrayTable_alt));
+
 extern inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich7_field1_alt_field;
 static const ::fidl::FidlStructField Fields20v1_example_Sandwich7[] = {
     ::fidl::FidlStructField(nullptr, 4u, 4u),
@@ -654,6 +766,38 @@ inline const ::fidl::FidlCodedStruct* const v1_example_Sandwich8Table_alt = &exa
 inline const ::fidl::FidlStructField* const Fields17example_Sandwich8_field1_alt_field = &Fields20v1_example_Sandwich8[0];
 inline const ::fidl::FidlStructField* const Fields20v1_example_Sandwich8_field1_alt_field = &Fields17example_Sandwich8[0];
 
+inline const ::fidl::FidlCodedStruct* const example_Size5Alignment1Table_alt = &v1_example_Size5Alignment1Table.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment1Table_alt = &example_Size5Alignment1Table.coded_struct;
+
+
+inline const ::fidl::FidlCodedStruct* const example_Size5Alignment1ArrayTable_alt = &v1_example_Size5Alignment1ArrayTable.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment1ArrayTable_alt = &example_Size5Alignment1ArrayTable.coded_struct;
+
+inline const ::fidl::FidlStructField* const Fields28example_Size5Alignment1Array_field0_alt_field = &Fields31v1_example_Size5Alignment1Array[0];
+inline const ::fidl::FidlStructField* const Fields31v1_example_Size5Alignment1Array_field0_alt_field = &Fields28example_Size5Alignment1Array[0];
+
+inline const ::fidl::FidlCodedStruct* const example_Size5Alignment1VectorTable_alt = &v1_example_Size5Alignment1VectorTable.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment1VectorTable_alt = &example_Size5Alignment1VectorTable.coded_struct;
+
+inline const ::fidl::FidlStructField* const Fields29example_Size5Alignment1Vector_field0_alt_field = &Fields32v1_example_Size5Alignment1Vector[0];
+inline const ::fidl::FidlStructField* const Fields32v1_example_Size5Alignment1Vector_field0_alt_field = &Fields29example_Size5Alignment1Vector[0];
+
+inline const ::fidl::FidlCodedStruct* const example_Size5Alignment4Table_alt = &v1_example_Size5Alignment4Table.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment4Table_alt = &example_Size5Alignment4Table.coded_struct;
+
+
+inline const ::fidl::FidlCodedStruct* const example_Size5Alignment4ArrayTable_alt = &v1_example_Size5Alignment4ArrayTable.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment4ArrayTable_alt = &example_Size5Alignment4ArrayTable.coded_struct;
+
+inline const ::fidl::FidlStructField* const Fields28example_Size5Alignment4Array_field0_alt_field = &Fields31v1_example_Size5Alignment4Array[0];
+inline const ::fidl::FidlStructField* const Fields31v1_example_Size5Alignment4Array_field0_alt_field = &Fields28example_Size5Alignment4Array[0];
+
+inline const ::fidl::FidlCodedStruct* const example_Size5Alignment4VectorTable_alt = &v1_example_Size5Alignment4VectorTable.coded_struct;
+inline const ::fidl::FidlCodedStruct* const v1_example_Size5Alignment4VectorTable_alt = &example_Size5Alignment4VectorTable.coded_struct;
+
+inline const ::fidl::FidlStructField* const Fields29example_Size5Alignment4Vector_field0_alt_field = &Fields32v1_example_Size5Alignment4Vector[0];
+inline const ::fidl::FidlStructField* const Fields32v1_example_Size5Alignment4Vector_field0_alt_field = &Fields29example_Size5Alignment4Vector[0];
+
 inline const ::fidl::FidlCodedStruct* const example_StructSize16Alignement8Table_alt = &v1_example_StructSize16Alignement8Table.coded_struct;
 inline const ::fidl::FidlCodedStruct* const v1_example_StructSize16Alignement8Table_alt = &example_StructSize16Alignement8Table.coded_struct;
 
@@ -704,5 +848,17 @@ inline const ::fidl::FidlCodedArray* const v1_Array8_32v1_example_StructSize3Ali
 
 inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable26example_UnionSize8Aligned4Table_alt = &v1_Vector4294967295nonnullable29v1_example_UnionSize8Aligned4Table.coded_vector;
 inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable29v1_example_UnionSize8Aligned4Table_alt = &Vector4294967295nonnullable26example_UnionSize8Aligned4Table.coded_vector;
+
+inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable23example_Size5Alignment4Table_alt = &v1_Vector4294967295nonnullable26v1_example_Size5Alignment4Table.coded_vector;
+inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable26v1_example_Size5Alignment4Table_alt = &Vector4294967295nonnullable23example_Size5Alignment4Table.coded_vector;
+
+inline const ::fidl::FidlCodedArray* const Array24_23example_Size5Alignment4Table_alt = &v1_Array24_26v1_example_Size5Alignment4Table.coded_array;
+inline const ::fidl::FidlCodedArray* const v1_Array24_26v1_example_Size5Alignment4Table_alt = &Array24_23example_Size5Alignment4Table.coded_array;
+
+inline const ::fidl::FidlCodedVector* Vector4294967295nonnullable23example_Size5Alignment1Table_alt = &v1_Vector4294967295nonnullable26v1_example_Size5Alignment1Table.coded_vector;
+inline const ::fidl::FidlCodedVector* v1_Vector4294967295nonnullable26v1_example_Size5Alignment1Table_alt = &Vector4294967295nonnullable23example_Size5Alignment1Table.coded_vector;
+
+inline const ::fidl::FidlCodedArray* const Array15_23example_Size5Alignment1Table_alt = &v1_Array15_26v1_example_Size5Alignment1Table.coded_array;
+inline const ::fidl::FidlCodedArray* const v1_Array15_26v1_example_Size5Alignment1Table_alt = &Array15_23example_Size5Alignment1Table.coded_array;
 
 } // extern "C"

@@ -43,12 +43,18 @@ enum struct WireFormat {
 struct TraversalResult {
   uint32_t out_of_line_size = 0u;
   uint32_t handle_count = 0u;
+  uint8_t max_alignment = 1u;  // either 1, 2, 4, or 8
 
   TraversalResult& operator+=(const TraversalResult rhs) {
     out_of_line_size += rhs.out_of_line_size;
     handle_count += rhs.handle_count;
 
     return *this;
+  }
+
+  void UpdateMaxAlignment(const uint8_t candidate_alignment) {
+    if (candidate_alignment > max_alignment)
+      max_alignment = candidate_alignment;
   }
 };
 
@@ -304,7 +310,7 @@ class TransformerBase {
 
     TraversalResult discarded_traversal_result;
     return TransformStruct(src_coded_struct, dst_coded_struct,
-                           start_position, dst_coded_struct.size, &discarded_traversal_result);
+                           start_position, FIDL_ALIGN(dst_coded_struct.size), &discarded_traversal_result);
   }
 
 // TODO(apang): Assume out_traversal_result is nonnull
@@ -453,10 +459,6 @@ class TransformerBase {
         src_dst->Copy(current_position, dst_field_size);
         current_position = current_position.IncreaseInlineOffset(dst_field_size);
 
-        // Pad the copied field if necessary.
-        // dst_field
-
-
         continue;
       }
 
@@ -538,25 +540,25 @@ class TransformerBase {
     }
 
     // Viewing vectors data as arrays.
-    uint32_t src_element_padding =
-        FIDL_ELEM_ALIGN(src_coded_vector.element_size) - src_coded_vector.element_size;
-    uint32_t dst_element_padding =
-        FIDL_ELEM_ALIGN(dst_coded_vector.element_size) - dst_coded_vector.element_size;
-    const auto convert = [&](const fidl::FidlCodedVector& coded_vector, uint32_t element_padding) {
+    // uint32_t src_element_padding =
+    //     FIDL_ELEM_ALIGN(src_coded_vector.element_size) - src_coded_vector.element_size;
+    // uint32_t dst_element_padding =
+    //     FIDL_ELEM_ALIGN(dst_coded_vector.element_size) - dst_coded_vector.element_size;
+    const auto convert = [&](const fidl::FidlCodedVector& coded_vector) {
       return fidl::FidlCodedArrayNew(coded_vector.element,
                                      src_vector.count,
                                      coded_vector.element_size,
-                                     element_padding,
+                                     0,
                                      nullptr /* alt_type unused, we provide both src and dst */);
     };
-    const auto src_vector_data_as_coded_array = convert(src_coded_vector, src_element_padding);
-    const auto dst_vector_data_as_coded_array = convert(dst_coded_vector, dst_element_padding);
+    const auto src_vector_data_as_coded_array = convert(src_coded_vector);
+    const auto dst_vector_data_as_coded_array = convert(dst_coded_vector);
 
     // Calculate vector size. They fit in uint32_t due to automatic bounds.
     uint32_t src_vector_size =
-        FIDL_ALIGN(static_cast<uint32_t>(src_vector.count * (src_coded_vector.element_size + src_element_padding)));
+        FIDL_ALIGN(static_cast<uint32_t>(src_vector.count * (src_coded_vector.element_size)));
     uint32_t dst_vector_size =
-        FIDL_ALIGN(static_cast<uint32_t>(src_vector.count * (dst_coded_vector.element_size + dst_element_padding)));
+        FIDL_ALIGN(static_cast<uint32_t>(src_vector.count * (dst_coded_vector.element_size)));
 
     // Transform elements.
     auto vector_data_position = Position{

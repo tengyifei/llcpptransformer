@@ -181,3 +181,28 @@ xunion XUnionWithUnions {
 
 // TODO: simple struct examples without any union, e.g. struct{uint8;uint32;uint8;uint16;uint64;}
 // TODO: struct{opt_struct_size4;opt_struct_size4;} to check alignment of secondary objects
+
+struct Size5Alignment1 {
+    array<uint8>:5 data;
+};
+
+struct Size5Alignment4 {
+    uint32 four;
+    uint8 one;
+};
+
+struct Size5Alignment1Vector {
+    vector<Size5Alignment1> v;
+};
+
+struct Size5Alignment4Vector {
+    vector<Size5Alignment4> v;
+};
+
+struct Size5Alignment1Array {
+    array<Size5Alignment1>:3 a;
+};
+
+struct Size5Alignment4Array {
+    array<Size5Alignment4>:3 a;
+};
