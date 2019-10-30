@@ -824,7 +824,7 @@ uint8_t table_unionwithvector_reservedsandwich_old[] = {
     0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
     0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence
     0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].presence [cont.]
-    0x30, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x20, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
     0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
     0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
     0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
@@ -882,7 +882,7 @@ uint8_t table_unionwithvector_structsandwich_old[] = {
     0x00, 0x00, 0x00, 0x00,  // vector<envelope>[0].num_handles
     0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence
     0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[0].presence [cont.]
-    0x30, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
+    0x20, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_bytes  0x20
     0x00, 0x00, 0x00, 0x00,  // vector<envelope>[1].num_handles
     0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence
     0xFF, 0xFF, 0xFF, 0xFF,  // vector<envelope>[1].presence [cont.]
@@ -1170,6 +1170,7 @@ bool sandwich7_case2() {
 
 #define DO_TABLE_TEST(coding_table, old_bytes, v1_bytes) \
 { \
+    printf("    Will start: %s\n", #coding_table); \
     fidl::FidlStructField field(&coding_table, 0u, 0u, &field); \
     fidl::FidlCodedStruct coded_struct(&field, 1, 16, coding_table.coded_table.name, &coded_struct); \
     fidl_type coded_struct_type(coded_struct); \

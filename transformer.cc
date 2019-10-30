@@ -568,9 +568,9 @@ class TransformerBase {
   }
 
   zx_status_t TransformEnvelope(const std::optional<const fidl_type_t*> optional_type, const Position& position, TraversalResult *out_traversal_result) {
-    auto envelope = src_dst->Read<const fidl_envelope_t>(position);
+    auto src_envelope = src_dst->Read<const fidl_envelope_t>(position);
 
-    if (envelope->presence == FIDL_ALLOC_ABSENT) {
+    if (src_envelope->presence == FIDL_ALLOC_ABSENT) {
       src_dst->Copy(position, sizeof(fidl_envelope_t));
       return ZX_OK;
     }
@@ -578,10 +578,10 @@ class TransformerBase {
     if (!optional_type) {
       // Unknown type, so we don't know what type of data the envelope contains.
       src_dst->Copy(Position{position.src_out_of_line_offset,
-                             position.src_out_of_line_offset + envelope->num_bytes,
+                             position.src_out_of_line_offset + src_envelope->num_bytes,
                              position.dst_out_of_line_offset,
-                             position.dst_out_of_line_offset + envelope->num_bytes},
-                    envelope->num_bytes);
+                             position.dst_out_of_line_offset + src_envelope->num_bytes},
+                    src_envelope->num_bytes);
       return ZX_OK;
     }
 
@@ -592,13 +592,20 @@ class TransformerBase {
                  position.src_out_of_line_offset + FIDL_ALIGN(AlignedInlineSize(type, From())),
                  position.dst_out_of_line_offset,
                  position.dst_out_of_line_offset + alt_field_size};
-    zx_status_t result = Transform(type, data_position, alt_field_size, out_traversal_result);
+    TraversalResult contents_traversal_result;
+    zx_status_t result = Transform(type, data_position, alt_field_size, &contents_traversal_result);
     if (result != ZX_OK) {
       return result;
     }
 
-    // out_traversal_result->out_of_line_size += alt_field_size;
-    // out_traversal_result->handle_count += envelope->num_handles;
+    const uint32_t dst_contents_size = alt_field_size + contents_traversal_result.out_of_line_size;
+
+    fidl_envelope_t dst_envelope = *src_envelope;
+    dst_envelope.num_bytes = dst_contents_size;
+    src_dst->Write(position, dst_envelope);
+
+    out_traversal_result->out_of_line_size += dst_contents_size;
+    out_traversal_result->handle_count += src_envelope->num_handles;
 
     return ZX_OK;
   }
@@ -647,6 +654,10 @@ class TransformerBase {
     uint32_t src_envelope_data_offset = envelopes_vector_size;
     uint32_t dst_envelope_data_offset = src_envelope_data_offset;
 
+    if (strcmp(coded_table.name, "example/Table_UnionWithVector_StructSandwich") == 0) {
+
+    }
+
     for(uint32_t i = 0, field_index = 0; i < table->envelopes.count; i++) {
       const fidl::FidlTableField& field = coded_table.fields[field_index];
 
@@ -681,7 +692,7 @@ class TransformerBase {
       }
 
       src_envelope_data_offset += envelopes_vector[i].num_bytes;
-      dst_envelope_data_offset += FIDL_ALIGN(AlignedAltInlineSize(field.type)) + envelope_traversal_result.out_of_line_size;
+      dst_envelope_data_offset += envelope_traversal_result.out_of_line_size;
       // src_envelope_data_offset += FIDL_ALIGN(AlignedInlineSize(field.type, From()));
       // dst_envelope_data_offset += FIDL_ALIGN(AlignedAltInlineSize(field.type));
 
