@@ -15,7 +15,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 
-#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINTF(FORMAT, ...)                                  \
   {                                                                \
@@ -111,6 +111,40 @@ uint32_t AlignedInlineSize(const fidl_type_t* type, WireFormat wire_format) {
   // treats switch() on enums as non-exhaustive without a default case.
   assert(false && "unexpected non-exhaustive switch on fidl::FidlTypeTag");
   return 0;
+}
+
+uint32_t AlignedAltInlineSize(const fidl_type_t* type) {	
+  if (!type) {	
+    // For integral types (i.e. primitive, enum, bits).	
+    return 8;	
+  }	
+  switch (type->type_tag) {	
+    case fidl::kFidlTypePrimitive:	
+    case fidl::kFidlTypeEnum:	
+    case fidl::kFidlTypeBits:	
+      return 8;	
+    case fidl::kFidlTypeStructPointer:	
+    case fidl::kFidlTypeUnionPointer:	
+      return 8;	
+    case fidl::kFidlTypeVector:	
+    case fidl::kFidlTypeString:	
+      return 16;	
+    case fidl::kFidlTypeStruct:	
+      return FIDL_ALIGN(type->coded_struct.alt_type->size);	
+    case fidl::kFidlTypeUnion:	
+      return FIDL_ALIGN(type->coded_union.alt_type->size);	
+    case fidl::kFidlTypeArray:	
+      return FIDL_ALIGN(type->coded_array.alt_type->array_size);	
+    case fidl::kFidlTypeXUnion:	
+      return 24;	
+    case fidl::kFidlTypeHandle:	
+      return 8;	
+    case fidl::kFidlTypeTable:	
+      return 16;	
+  }	
+
+  assert(false && "unexpected non-exhaustive switch on fidl::FidlTypeTag");	
+  return 0;	
 }
 
 struct Position {
@@ -535,7 +569,7 @@ class TransformerBase {
       return ZX_OK;
     }
 
-    const uint32_t alt_field_size = AlignedInlineSize(type, To());
+    const uint32_t alt_field_size = AlignedAltInlineSize(type);
     Position data_position =
         Position{position.src_out_of_line_offset,
                  position.src_out_of_line_offset + FIDL_ALIGN(AlignedInlineSize(type, From())),
