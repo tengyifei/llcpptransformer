@@ -181,9 +181,9 @@ class SrcDst final {
 
   // TODO(apang): Rename to CopyInline?
   void Copy(const Position& position, uint32_t size) {
-    assert(position.src_inline_offset + size <= src_num_bytes_);
     DEBUG_PRINTF("Copy) src_inline_offset: %d, dst_inline_offset: %d, size: %d\n",
         position.src_inline_offset, position.dst_inline_offset, size);
+    assert(position.src_inline_offset + size <= src_num_bytes_);
     memcpy(dst_bytes_ + position.dst_inline_offset, src_bytes_ + position.src_inline_offset, size);
     UpdateMaxOffset(position.dst_inline_offset + size);
   }
@@ -725,7 +725,19 @@ class V1ToOld final : public TransformerBase {
       return ZX_OK;
     }
 
-    return TransformUnion(src_coded_union, dst_coded_union, position, out_traversal_result);
+    src_dst->Write(position, FIDL_ALLOC_PRESENT);
+
+    uint32_t aligned_dst_size = FIDL_ALIGN(dst_coded_union.size);
+    const auto union_position = Position{
+        position.src_inline_offset,
+        position.src_out_of_line_offset,
+        position.dst_out_of_line_offset,
+        position.dst_out_of_line_offset + aligned_dst_size,
+    };
+
+    out_traversal_result->out_of_line_size += aligned_dst_size;
+
+    return TransformUnion(src_coded_union, dst_coded_union, union_position, out_traversal_result);
   }
 
   zx_status_t TransformUnion(const fidl::FidlCodedUnion& src_coded_union,
@@ -828,8 +840,15 @@ class OldToV1 final : public TransformerBase {
       return ZX_OK;
     }
 
-    // TODO
-    return ZX_OK;
+    uint32_t aligned_src_size = FIDL_ALIGN(src_coded_union.size);
+    const auto union_position = Position{
+        position.src_out_of_line_offset,
+        position.src_out_of_line_offset + aligned_src_size,
+        position.dst_inline_offset,
+        position.dst_out_of_line_offset,
+    };
+
+    return TransformUnion(src_coded_union, dst_coded_union, union_position, out_traversal_result);
   }
 
   zx_status_t TransformUnion(const fidl::FidlCodedUnion& src_coded_union,
