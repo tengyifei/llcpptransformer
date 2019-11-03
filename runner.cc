@@ -92,6 +92,61 @@ uint8_t sandwich1_case1_old[] = {
     0x05, 0x06, 0x07, 0x08,  // Sandwich1.after
 };
 
+uint8_t sandwich1_with_opt_union_present_v1[] = {
+    0x01, 0x02, 0x03, 0x04,  // Sandwich1WithOptUnion.before
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.before (padding)
+
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.tag, i.e. Sandwich1WithOptUnion.opt_union
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.padding
+    0x08, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.num_bytes
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.num_handle
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.presence (absent)
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.presence (absent) [cont.]
+
+    0x05, 0x06, 0x07, 0x08,  // Sandwich1WithOptUnion.after
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.after (padding)
+};
+
+uint8_t sandwich1_with_opt_union_present_old[] = {
+    0x01, 0x02, 0x03, 0x04,  // Sandwich1WithOptUnion.before
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.before (padding)
+
+    0xff, 0xff, 0xff, 0xff,  // Sandwich1WithOptUnion.opt_union (present)
+    0xff, 0xff, 0xff, 0xff,  // Sandwich1WithOptUnion.opt_union (present) [cont.]
+
+    0x05, 0x06, 0x07, 0x08,  // Sandwich1WithOptUnion.after
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.after (padding)
+
+    0x02, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.tag, i.e. Sandwich1WithOptUnion.opt_union
+    0x09, 0x0a, 0x0b, 0x0c,  // UnionSize8Aligned4.data
+};
+
+uint8_t sandwich1_with_opt_union_absent_v1[] = {
+    0x01, 0x02, 0x03, 0x04,  // Sandwich1WithOptUnion.before
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.before (padding)
+
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.tag, i.e. Sandwich1WithOptUnion.opt_union
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.padding
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.num_bytes
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.num_handle
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.presence (absent)
+    0x00, 0x00, 0x00, 0x00,  // UnionSize8Aligned4.env.presence (preabsentsent) [cont.]
+
+    0x05, 0x06, 0x07, 0x08,  // Sandwich1WithOptUnion.after
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.after (padding)
+};
+
+uint8_t sandwich1_with_opt_union_absent_old[] = {
+    0x01, 0x02, 0x03, 0x04,  // Sandwich1WithOptUnion.before
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.before (padding)
+
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.opt_union (absent)
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.opt_union (absent) [cont.]
+
+    0x05, 0x06, 0x07, 0x08,  // Sandwich1WithOptUnion.after
+    0x00, 0x00, 0x00, 0x00,  // Sandwich1WithOptUnion.after (padding)
+};
+
 uint8_t sandwich2_case1_v1[] = {
     0x01, 0x02, 0x03, 0x04,  // Sandwich2.before
     0x00, 0x00, 0x00, 0x00,  // Sandwich2.before (padding)
@@ -1075,6 +1130,30 @@ bool sandwich1() {
   END_TEST;
 }
 
+bool sandwich1_with_opt_union_present() {
+  BEGIN_TEST;
+
+  ASSERT_TRUE(run_fidl_transform(
+      &v1_example_Sandwich1WithOptUnionTable,
+      &example_Sandwich1WithOptUnionTable,
+      sandwich1_with_opt_union_present_v1, sizeof(sandwich1_with_opt_union_present_v1),
+      sandwich1_with_opt_union_present_old, sizeof(sandwich1_with_opt_union_present_old)));
+
+  END_TEST;
+}
+
+bool sandwich1_with_opt_union_absent() {
+  BEGIN_TEST;
+
+  ASSERT_TRUE(run_fidl_transform(
+      &v1_example_Sandwich1WithOptUnionTable,
+      &example_Sandwich1WithOptUnionTable,
+      sandwich1_with_opt_union_absent_v1, sizeof(sandwich1_with_opt_union_absent_v1),
+      sandwich1_with_opt_union_absent_old, sizeof(sandwich1_with_opt_union_absent_old)));
+
+  END_TEST;
+}
+
 bool sandwich2() {
   BEGIN_TEST;
 
@@ -1418,37 +1497,39 @@ bool xunionwithunknownordinal() {
 }
 
 BEGIN_TEST_CASE(transformer_v1_to_old)
-RUN_TEST(sandwich1)
-RUN_TEST(sandwich2)
-RUN_TEST(sandwich3)
-RUN_TEST(sandwich4)
-RUN_TEST(sandwich5_case1)
-RUN_TEST(sandwich5_case2)
-RUN_TEST(sandwich6_case1)
-RUN_TEST(sandwich6_case1_absent_vector)
-RUN_TEST(sandwich6_case2)
-RUN_TEST(sandwich6_case3)
-RUN_TEST(sandwich6_case4)
-RUN_TEST(sandwich6_case5)
-RUN_TEST(sandwich6_case6)
-RUN_TEST(sandwich6_case7)
-RUN_TEST(sandwich6_case8)
-RUN_TEST(sandwich7_case1)
-RUN_TEST(sandwich7_case2)
-RUN_TEST(regression1)
-RUN_TEST(regression2)
-RUN_TEST(regression3_absent)
-RUN_TEST(regression3_present)
-RUN_TEST(size5alignment1array)
-RUN_TEST(size5alignment4array)
-RUN_TEST(size5alignment1vector)
-RUN_TEST(size5alignment4vector)
-RUN_TEST(table_nofields)
-RUN_TEST(table_tworeservedfields)
-RUN_TEST(table_structwithreservedsandwich)
-RUN_TEST(table_structwithuint32sandwich)
-RUN_TEST(table_unionwithvector_reservedsandwich)
-RUN_TEST(table_unionwithvector_structsandwich)
-RUN_TEST(xunionwithstruct)
-RUN_TEST(xunionwithunknownordinal)
+// RUN_TEST(sandwich1)
+// RUN_TEST(sandwich1_with_opt_union_present)
+RUN_TEST(sandwich1_with_opt_union_absent)
+// RUN_TEST(sandwich2)
+// RUN_TEST(sandwich3)
+// RUN_TEST(sandwich4)
+// RUN_TEST(sandwich5_case1)
+// RUN_TEST(sandwich5_case2)
+// RUN_TEST(sandwich6_case1)
+// RUN_TEST(sandwich6_case1_absent_vector)
+// RUN_TEST(sandwich6_case2)
+// RUN_TEST(sandwich6_case3)
+// RUN_TEST(sandwich6_case4)
+// RUN_TEST(sandwich6_case5)
+// RUN_TEST(sandwich6_case6)
+// RUN_TEST(sandwich6_case7)
+// RUN_TEST(sandwich6_case8)
+// RUN_TEST(sandwich7_case1)
+// RUN_TEST(sandwich7_case2)
+// RUN_TEST(regression1)
+// RUN_TEST(regression2)
+// RUN_TEST(regression3_absent)
+// RUN_TEST(regression3_present)
+// RUN_TEST(size5alignment1array)
+// RUN_TEST(size5alignment4array)
+// RUN_TEST(size5alignment1vector)
+// RUN_TEST(size5alignment4vector)
+// RUN_TEST(table_nofields)
+// RUN_TEST(table_tworeservedfields)
+// RUN_TEST(table_structwithreservedsandwich)
+// RUN_TEST(table_structwithuint32sandwich)
+// RUN_TEST(table_unionwithvector_reservedsandwich)
+// RUN_TEST(table_unionwithvector_structsandwich)
+// RUN_TEST(xunionwithstruct)
+// RUN_TEST(xunionwithunknownordinal)
 END_TEST_CASE(transformer_v1_to_old)
