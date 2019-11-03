@@ -2,40 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <cstddef>
-#include <cstring>
-#include <cstdio>
-#include <cassert>
+#include <lib/fidl/internal.h>
+#include <lib/fidl/transformer.h>
 
-#include "transformer.h"
+#include <cassert>
+#include <cstring>
 
 // Disable warning about implicit fallthrough, since it's intentionally used a lot in this code, and
 // the switch()es end up being harder to read without it. Note that "#pragma GCC" works for both GCC
 // & Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-
-// #define DEBUG
-#ifdef DEBUG
-#define DEBUG_PRINTF(FORMAT, ...)                                  \
-  {                                                                \
-    printf(FORMAT, __VA_ARGS__);                                   \
-  }
-#define DEBUG_PRINT_POSITION(POSITION)                             \
-  {                                                                \
-    printf("Position: src_inline=%d -> dst_inline=%d\n",           \
-            POSITION.src_inline_offset,                            \
-            POSITION.dst_inline_offset);                           \
-    printf("          src_out_of_line=%d -> dst_out_of_line=%d\n", \
-            POSITION.src_out_of_line_offset,                       \
-            POSITION.dst_out_of_line_offset);                      \
-  }
-#else
-#define DEBUG_PRINTF(FORMAT, ...) { /* no debug */ }
-#define DEBUG_PRINT_POSITION(POSITION) { /* no debug */ }
-#endif
-
-// CODE BELOW GOES INTO: zircon/system/ulib/fidl/transformer.cc
 
 namespace {
 
@@ -113,38 +90,38 @@ uint32_t AlignedInlineSize(const fidl_type_t* type, WireFormat wire_format) {
   return 0;
 }
 
-uint32_t AlignedAltInlineSize(const fidl_type_t* type) {	
-  if (!type) {	
-    // For integral types (i.e. primitive, enum, bits).	
-    return 8;	
-  }	
-  switch (type->type_tag) {	
-    case fidl::kFidlTypePrimitive:	
-    case fidl::kFidlTypeEnum:	
-    case fidl::kFidlTypeBits:	
-      return 8;	
-    case fidl::kFidlTypeStructPointer:	
-    case fidl::kFidlTypeUnionPointer:	
-      return 8;	
-    case fidl::kFidlTypeVector:	
-    case fidl::kFidlTypeString:	
-      return 16;	
-    case fidl::kFidlTypeStruct:	
-      return FIDL_ALIGN(type->coded_struct.alt_type->size);	
-    case fidl::kFidlTypeUnion:	
-      return FIDL_ALIGN(type->coded_union.alt_type->size);	
-    case fidl::kFidlTypeArray:	
-      return FIDL_ALIGN(type->coded_array.alt_type->array_size);	
-    case fidl::kFidlTypeXUnion:	
-      return 24;	
-    case fidl::kFidlTypeHandle:	
-      return 8;	
-    case fidl::kFidlTypeTable:	
-      return 16;	
-  }	
+uint32_t AlignedAltInlineSize(const fidl_type_t* type) {
+  if (!type) {
+    // For integral types (i.e. primitive, enum, bits).
+    return 8;
+  }
+  switch (type->type_tag) {
+    case fidl::kFidlTypePrimitive:
+    case fidl::kFidlTypeEnum:
+    case fidl::kFidlTypeBits:
+      return 8;
+    case fidl::kFidlTypeStructPointer:
+    case fidl::kFidlTypeUnionPointer:
+      return 8;
+    case fidl::kFidlTypeVector:
+    case fidl::kFidlTypeString:
+      return 16;
+    case fidl::kFidlTypeStruct:
+      return FIDL_ALIGN(type->coded_struct.alt_type->size);
+    case fidl::kFidlTypeUnion:
+      return FIDL_ALIGN(type->coded_union.alt_type->size);
+    case fidl::kFidlTypeArray:
+      return FIDL_ALIGN(type->coded_array.alt_type->array_size);
+    case fidl::kFidlTypeXUnion:
+      return 24;
+    case fidl::kFidlTypeHandle:
+      return 8;
+    case fidl::kFidlTypeTable:
+      return 16;
+  }
 
-  assert(false && "unexpected non-exhaustive switch on fidl::FidlTypeTag");	
-  return 0;	
+  assert(false && "unexpected non-exhaustive switch on fidl::FidlTypeTag");
+  return 0;
 }
 
 struct Position {
@@ -215,16 +192,14 @@ class SrcDst final {
 
   // TODO(apang): Rename to CopyInline?
   void Copy(const Position& position, uint32_t size) {
-    DEBUG_PRINTF("Copy) src_inline_offset: %d, dst_inline_offset: %d, size: %d\n",
-        position.src_inline_offset, position.dst_inline_offset, size);
     assert(position.src_inline_offset + size <= src_num_bytes_);
+
     memcpy(dst_bytes_ + position.dst_inline_offset, src_bytes_ + position.src_inline_offset, size);
     UpdateMaxOffset(position.dst_inline_offset + size);
   }
 
   // TODO(apang): Rename to PadInline
   void Pad(const Position& position, uint32_t size) {
-    DEBUG_PRINTF("Pad) position.dst_inline_offset: %d, size: %d\n", position.dst_inline_offset, size);
     memset(dst_bytes_ + position.dst_inline_offset, 0, size);
     UpdateMaxOffset(position.dst_inline_offset + size);
   }
@@ -236,11 +211,9 @@ class SrcDst final {
 
   template <typename T>
   void Write(const Position& position, T value) {
-    auto size = static_cast<uint32_t>(sizeof(value));
-    DEBUG_PRINTF("Write) position.dst_inline_offset: %d, size: %d\n", position.dst_inline_offset, size);
     auto ptr = reinterpret_cast<T*>(dst_bytes_ + position.dst_inline_offset);
     *ptr = value;
-    UpdateMaxOffset(position.dst_inline_offset + size);
+    UpdateMaxOffset(position.dst_inline_offset + static_cast<uint32_t>(sizeof(value)));
   }
 
  private:
@@ -431,7 +404,7 @@ class TransformerBase {
       // Copy fields without coding tables.
       if (!src_field.type) {
         const uint32_t dst_field_size =
-            (src_field.padding_offset + src_start_of_struct) - current_position.src_inline_offset;
+            src_field.padding_offset + (src_start_of_struct - current_position.src_inline_offset);
         src_dst->Copy(current_position, dst_field_size);
         current_position = current_position.IncreaseInlineOffset(dst_field_size);
 

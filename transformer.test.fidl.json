@@ -11,8 +11,8 @@
     {
       "name": "example/StructSize16Alignement8",
       "location": {
-        "filename": "example.fidl",
-        "line": 16,
+        "filename": "transformer.test.fidl",
+        "line": 23,
         "column": 8
       },
       "anonymous": false,
@@ -24,8 +24,8 @@
           },
           "name": "f1",
           "location": {
-            "filename": "example.fidl",
-            "line": 17,
+            "filename": "transformer.test.fidl",
+            "line": 24,
             "column": 12
           },
           "size": 8,
@@ -34,6 +34,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -49,8 +53,8 @@
           },
           "name": "f2",
           "location": {
-            "filename": "example.fidl",
-            "line": 18,
+            "filename": "transformer.test.fidl",
+            "line": 25,
             "column": 12
           },
           "size": 8,
@@ -59,6 +63,10 @@
           "offset": 8,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 8,
             "padding": 0
           },
@@ -80,7 +88,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -89,14 +108,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Sandwich1",
       "location": {
-        "filename": "example.fidl",
-        "line": 28,
+        "filename": "transformer.test.fidl",
+        "line": 35,
         "column": 8
       },
       "anonymous": false,
@@ -108,8 +128,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 29,
+            "filename": "transformer.test.fidl",
+            "line": 36,
             "column": 11
           },
           "size": 4,
@@ -120,6 +140,10 @@
           "field_shape_old": {
             "offset": 0,
             "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 0,
+            "padding": 4
           },
           "field_shape_v1_no_ee": {
             "offset": 0,
@@ -132,10 +156,10 @@
             "identifier": "example/UnionSize8Aligned4",
             "nullable": false
           },
-          "name": "union",
+          "name": "the_union",
           "location": {
-            "filename": "example.fidl",
-            "line": 30,
+            "filename": "transformer.test.fidl",
+            "line": 37,
             "column": 23
           },
           "size": 8,
@@ -145,6 +169,10 @@
           "max_handles": 0,
           "field_shape_old": {
             "offset": 4,
+            "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 8,
             "padding": 0
           },
           "field_shape_v1_no_ee": {
@@ -159,8 +187,8 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 31,
+            "filename": "transformer.test.fidl",
+            "line": 38,
             "column": 11
           },
           "size": 4,
@@ -171,6 +199,10 @@
           "field_shape_old": {
             "offset": 12,
             "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 32,
+            "padding": 4
           },
           "field_shape_v1_no_ee": {
             "offset": 32,
@@ -190,7 +222,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -199,14 +242,15 @@
         "max_handles": 0,
         "max_out_of_line": 8,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
-      "name": "example/Sandwich2",
+      "name": "example/Sandwich1WithOptUnion",
       "location": {
-        "filename": "example.fidl",
-        "line": 34,
+        "filename": "transformer.test.fidl",
+        "line": 41,
         "column": 8
       },
       "anonymous": false,
@@ -218,8 +262,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 35,
+            "filename": "transformer.test.fidl",
+            "line": 42,
             "column": 11
           },
           "size": 4,
@@ -229,7 +273,11 @@
           "max_handles": 0,
           "field_shape_old": {
             "offset": 0,
-            "padding": 0
+            "padding": 4
+          },
+          "field_shape_v1": {
+            "offset": 0,
+            "padding": 4
           },
           "field_shape_v1_no_ee": {
             "offset": 0,
@@ -239,22 +287,26 @@
         {
           "type": {
             "kind": "identifier",
-            "identifier": "example/UnionSize16Aligned4",
-            "nullable": false
+            "identifier": "example/UnionSize8Aligned4",
+            "nullable": true
           },
-          "name": "union",
+          "name": "opt_union",
           "location": {
-            "filename": "example.fidl",
-            "line": 36,
+            "filename": "transformer.test.fidl",
+            "line": 43,
             "column": 24
           },
-          "size": 12,
-          "max_out_of_line": 0,
-          "alignment": 4,
-          "offset": 4,
+          "size": 8,
+          "max_out_of_line": 8,
+          "alignment": 8,
+          "offset": 8,
           "max_handles": 0,
           "field_shape_old": {
-            "offset": 4,
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 8,
             "padding": 0
           },
           "field_shape_v1_no_ee": {
@@ -269,8 +321,142 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 37,
+            "filename": "transformer.test.fidl",
+            "line": 44,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 16,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 16,
+            "padding": 4
+          },
+          "field_shape_v1": {
+            "offset": 32,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 32,
+            "padding": 4
+          }
+        }
+      ],
+      "size": 24,
+      "max_out_of_line": 8,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      }
+    },
+    {
+      "name": "example/Sandwich2",
+      "location": {
+        "filename": "transformer.test.fidl",
+        "line": 47,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "before",
+          "location": {
+            "filename": "transformer.test.fidl",
+            "line": 48,
+            "column": 11
+          },
+          "size": 4,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 4
+          }
+        },
+        {
+          "type": {
+            "kind": "identifier",
+            "identifier": "example/UnionSize16Aligned4",
+            "nullable": false
+          },
+          "name": "the_union",
+          "location": {
+            "filename": "transformer.test.fidl",
+            "line": 49,
+            "column": 24
+          },
+          "size": 12,
+          "max_out_of_line": 0,
+          "alignment": 4,
+          "offset": 4,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 4,
+            "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 8,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "primitive",
+            "subtype": "uint32"
+          },
+          "name": "after",
+          "location": {
+            "filename": "transformer.test.fidl",
+            "line": 50,
             "column": 11
           },
           "size": 4,
@@ -281,6 +467,10 @@
           "field_shape_old": {
             "offset": 16,
             "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 32,
+            "padding": 4
           },
           "field_shape_v1_no_ee": {
             "offset": 32,
@@ -300,7 +490,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -309,14 +510,15 @@
         "max_handles": 0,
         "max_out_of_line": 8,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/Sandwich3",
       "location": {
-        "filename": "example.fidl",
-        "line": 40,
+        "filename": "transformer.test.fidl",
+        "line": 53,
         "column": 8
       },
       "anonymous": false,
@@ -328,8 +530,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 41,
+            "filename": "transformer.test.fidl",
+            "line": 54,
             "column": 11
           },
           "size": 4,
@@ -338,6 +540,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 4
           },
@@ -352,10 +558,10 @@
             "identifier": "example/UnionSize24Alignement8",
             "nullable": false
           },
-          "name": "union",
+          "name": "the_union",
           "location": {
-            "filename": "example.fidl",
-            "line": 42,
+            "filename": "transformer.test.fidl",
+            "line": 55,
             "column": 27
           },
           "size": 24,
@@ -364,6 +570,10 @@
           "offset": 8,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 8,
             "padding": 0
           },
@@ -379,8 +589,8 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 43,
+            "filename": "transformer.test.fidl",
+            "line": 56,
             "column": 11
           },
           "size": 4,
@@ -389,6 +599,10 @@
           "offset": 32,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 32,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 32,
             "padding": 4
           },
@@ -410,7 +624,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 16,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -419,14 +644,15 @@
         "max_handles": 0,
         "max_out_of_line": 16,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/Sandwich4",
       "location": {
-        "filename": "example.fidl",
-        "line": 53,
+        "filename": "transformer.test.fidl",
+        "line": 66,
         "column": 8
       },
       "anonymous": false,
@@ -438,8 +664,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 54,
+            "filename": "transformer.test.fidl",
+            "line": 67,
             "column": 12
           },
           "size": 4,
@@ -450,6 +676,10 @@
           "field_shape_old": {
             "offset": 0,
             "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 0,
+            "padding": 4
           },
           "field_shape_v1_no_ee": {
             "offset": 0,
@@ -462,10 +692,10 @@
             "identifier": "example/UnionSize36Alignment4",
             "nullable": false
           },
-          "name": "union",
+          "name": "the_union",
           "location": {
-            "filename": "example.fidl",
-            "line": 55,
+            "filename": "transformer.test.fidl",
+            "line": 68,
             "column": 27
           },
           "size": 36,
@@ -475,6 +705,10 @@
           "max_handles": 0,
           "field_shape_old": {
             "offset": 4,
+            "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 8,
             "padding": 0
           },
           "field_shape_v1_no_ee": {
@@ -489,8 +723,8 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 56,
+            "filename": "transformer.test.fidl",
+            "line": 69,
             "column": 12
           },
           "size": 4,
@@ -501,6 +735,10 @@
           "field_shape_old": {
             "offset": 40,
             "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 32,
+            "padding": 4
           },
           "field_shape_v1_no_ee": {
             "offset": 32,
@@ -520,7 +758,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 32,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -529,14 +778,15 @@
         "max_handles": 0,
         "max_out_of_line": 32,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/Sandwich5",
       "location": {
-        "filename": "example.fidl",
-        "line": 68,
+        "filename": "transformer.test.fidl",
+        "line": 79,
         "column": 8
       },
       "anonymous": false,
@@ -548,8 +798,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 69,
+            "filename": "transformer.test.fidl",
+            "line": 80,
             "column": 12
           },
           "size": 4,
@@ -558,6 +808,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 4
           },
@@ -574,8 +828,8 @@
           },
           "name": "union_of_union",
           "location": {
-            "filename": "example.fidl",
-            "line": 70,
+            "filename": "transformer.test.fidl",
+            "line": 81,
             "column": 18
           },
           "size": 32,
@@ -584,6 +838,10 @@
           "offset": 8,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 8,
             "padding": 0
           },
@@ -599,8 +857,8 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 71,
+            "filename": "transformer.test.fidl",
+            "line": 82,
             "column": 12
           },
           "size": 4,
@@ -610,6 +868,10 @@
           "max_handles": 0,
           "field_shape_old": {
             "offset": 40,
+            "padding": 4
+          },
+          "field_shape_v1": {
+            "offset": 32,
             "padding": 4
           },
           "field_shape_v1_no_ee": {
@@ -630,7 +892,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 40,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -639,14 +912,15 @@
         "max_handles": 0,
         "max_out_of_line": 40,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/StructSize3Alignment1",
       "location": {
-        "filename": "example.fidl",
-        "line": 74,
+        "filename": "transformer.test.fidl",
+        "line": 85,
         "column": 8
       },
       "anonymous": false,
@@ -662,8 +936,8 @@
           },
           "name": "three_bytes",
           "location": {
-            "filename": "example.fidl",
-            "line": 75,
+            "filename": "transformer.test.fidl",
+            "line": 86,
             "column": 20
           },
           "size": 3,
@@ -672,6 +946,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -693,7 +971,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 3,
+        "alignment": 1,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 3,
@@ -702,14 +991,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/StructSize3Alignment2",
       "location": {
-        "filename": "example.fidl",
-        "line": 78,
+        "filename": "transformer.test.fidl",
+        "line": 89,
         "column": 8
       },
       "anonymous": false,
@@ -721,8 +1011,8 @@
           },
           "name": "f1",
           "location": {
-            "filename": "example.fidl",
-            "line": 79,
+            "filename": "transformer.test.fidl",
+            "line": 90,
             "column": 12
           },
           "size": 2,
@@ -731,6 +1021,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -746,8 +1040,8 @@
           },
           "name": "f2",
           "location": {
-            "filename": "example.fidl",
-            "line": 80,
+            "filename": "transformer.test.fidl",
+            "line": 91,
             "column": 11
           },
           "size": 1,
@@ -756,6 +1050,10 @@
           "offset": 2,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 2,
+            "padding": 1
+          },
+          "field_shape_v1": {
             "offset": 2,
             "padding": 1
           },
@@ -777,7 +1075,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 4,
+        "alignment": 2,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 4,
@@ -786,14 +1095,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Sandwich6",
       "location": {
-        "filename": "example.fidl",
-        "line": 96,
+        "filename": "transformer.test.fidl",
+        "line": 108,
         "column": 8
       },
       "anonymous": false,
@@ -805,8 +1115,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 97,
+            "filename": "transformer.test.fidl",
+            "line": 109,
             "column": 12
           },
           "size": 4,
@@ -815,6 +1125,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 4
           },
@@ -829,10 +1143,10 @@
             "identifier": "example/UnionWithVector",
             "nullable": false
           },
-          "name": "union",
+          "name": "the_union",
           "location": {
-            "filename": "example.fidl",
-            "line": 98,
+            "filename": "transformer.test.fidl",
+            "line": 110,
             "column": 21
           },
           "size": 24,
@@ -841,6 +1155,10 @@
           "offset": 8,
           "max_handles": 4294967295,
           "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 8,
             "padding": 0
           },
@@ -856,8 +1174,8 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 99,
+            "filename": "transformer.test.fidl",
+            "line": 111,
             "column": 12
           },
           "size": 4,
@@ -866,6 +1184,10 @@
           "offset": 32,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 32,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 32,
             "padding": 4
           },
@@ -887,7 +1209,18 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 3,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -896,14 +1229,15 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/Sandwich7",
       "location": {
-        "filename": "example.fidl",
-        "line": 102,
+        "filename": "transformer.test.fidl",
+        "line": 114,
         "column": 8
       },
       "anonymous": false,
@@ -915,8 +1249,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 103,
+            "filename": "transformer.test.fidl",
+            "line": 115,
             "column": 12
           },
           "size": 4,
@@ -925,6 +1259,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 4
           },
@@ -941,8 +1279,8 @@
           },
           "name": "opt_sandwich1",
           "location": {
-            "filename": "example.fidl",
-            "line": 104,
+            "filename": "transformer.test.fidl",
+            "line": 116,
             "column": 16
           },
           "size": 8,
@@ -951,6 +1289,10 @@
           "offset": 8,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 8,
             "padding": 0
           },
@@ -966,8 +1308,8 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 105,
+            "filename": "transformer.test.fidl",
+            "line": 117,
             "column": 12
           },
           "size": 4,
@@ -976,6 +1318,10 @@
           "offset": 16,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 16,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 16,
             "padding": 4
           },
@@ -997,7 +1343,18 @@
         "max_handles": 0,
         "max_out_of_line": 16,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 48,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -1006,14 +1363,15 @@
         "max_handles": 0,
         "max_out_of_line": 48,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/Sandwich8",
       "location": {
-        "filename": "example.fidl",
-        "line": 109,
+        "filename": "transformer.test.fidl",
+        "line": 122,
         "column": 8
       },
       "anonymous": false,
@@ -1025,8 +1383,8 @@
           },
           "name": "before",
           "location": {
-            "filename": "example.fidl",
-            "line": 110,
+            "filename": "transformer.test.fidl",
+            "line": 123,
             "column": 12
           },
           "size": 8,
@@ -1035,6 +1393,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1051,8 +1413,8 @@
           },
           "name": "union_of_union",
           "location": {
-            "filename": "example.fidl",
-            "line": 111,
+            "filename": "transformer.test.fidl",
+            "line": 124,
             "column": 18
           },
           "size": 32,
@@ -1061,6 +1423,10 @@
           "offset": 8,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 8,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 8,
             "padding": 0
           },
@@ -1076,8 +1442,8 @@
           },
           "name": "after",
           "location": {
-            "filename": "example.fidl",
-            "line": 112,
+            "filename": "transformer.test.fidl",
+            "line": 125,
             "column": 12
           },
           "size": 4,
@@ -1087,6 +1453,10 @@
           "max_handles": 0,
           "field_shape_old": {
             "offset": 40,
+            "padding": 4
+          },
+          "field_shape_v1": {
+            "offset": 32,
             "padding": 4
           },
           "field_shape_v1_no_ee": {
@@ -1107,7 +1477,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 40,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -1116,14 +1497,15 @@
         "max_handles": 0,
         "max_out_of_line": 40,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/Regression1",
       "location": {
-        "filename": "example.fidl",
-        "line": 115,
+        "filename": "transformer.test.fidl",
+        "line": 128,
         "column": 8
       },
       "anonymous": false,
@@ -1135,8 +1517,8 @@
           },
           "name": "f1",
           "location": {
-            "filename": "example.fidl",
-            "line": 116,
+            "filename": "transformer.test.fidl",
+            "line": 129,
             "column": 11
           },
           "size": 1,
@@ -1145,6 +1527,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 3
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 3
           },
@@ -1160,8 +1546,8 @@
           },
           "name": "f2",
           "location": {
-            "filename": "example.fidl",
-            "line": 117,
+            "filename": "transformer.test.fidl",
+            "line": 130,
             "column": 12
           },
           "size": 4,
@@ -1170,6 +1556,10 @@
           "offset": 4,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 4,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 4,
             "padding": 0
           },
@@ -1185,8 +1575,8 @@
           },
           "name": "f3",
           "location": {
-            "filename": "example.fidl",
-            "line": 118,
+            "filename": "transformer.test.fidl",
+            "line": 131,
             "column": 11
           },
           "size": 1,
@@ -1195,6 +1585,10 @@
           "offset": 8,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 8,
+            "padding": 1
+          },
+          "field_shape_v1": {
             "offset": 8,
             "padding": 1
           },
@@ -1210,8 +1604,8 @@
           },
           "name": "f4",
           "location": {
-            "filename": "example.fidl",
-            "line": 119,
+            "filename": "transformer.test.fidl",
+            "line": 132,
             "column": 12
           },
           "size": 2,
@@ -1220,6 +1614,10 @@
           "offset": 10,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 10,
+            "padding": 4
+          },
+          "field_shape_v1": {
             "offset": 10,
             "padding": 4
           },
@@ -1235,8 +1633,8 @@
           },
           "name": "f5",
           "location": {
-            "filename": "example.fidl",
-            "line": 120,
+            "filename": "transformer.test.fidl",
+            "line": 133,
             "column": 12
           },
           "size": 8,
@@ -1245,6 +1643,10 @@
           "offset": 16,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 16,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 16,
             "padding": 0
           },
@@ -1260,8 +1662,8 @@
           },
           "name": "f6",
           "location": {
-            "filename": "example.fidl",
-            "line": 121,
+            "filename": "transformer.test.fidl",
+            "line": 134,
             "column": 11
           },
           "size": 1,
@@ -1270,6 +1672,10 @@
           "offset": 24,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 24,
+            "padding": 7
+          },
+          "field_shape_v1": {
             "offset": 24,
             "padding": 7
           },
@@ -1291,7 +1697,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 32,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 32,
@@ -1300,14 +1717,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Regression2",
       "location": {
-        "filename": "example.fidl",
-        "line": 124,
+        "filename": "transformer.test.fidl",
+        "line": 137,
         "column": 8
       },
       "anonymous": false,
@@ -1320,8 +1738,8 @@
           },
           "name": "head",
           "location": {
-            "filename": "example.fidl",
-            "line": 125,
+            "filename": "transformer.test.fidl",
+            "line": 138,
             "column": 17
           },
           "size": 32,
@@ -1330,6 +1748,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1345,8 +1767,8 @@
           },
           "name": "f7",
           "location": {
-            "filename": "example.fidl",
-            "line": 126,
+            "filename": "transformer.test.fidl",
+            "line": 139,
             "column": 11
           },
           "size": 1,
@@ -1355,6 +1777,10 @@
           "offset": 32,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 32,
+            "padding": 7
+          },
+          "field_shape_v1": {
             "offset": 32,
             "padding": 7
           },
@@ -1376,7 +1802,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 40,
+        "alignment": 8,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 40,
@@ -1385,14 +1822,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Regression3",
       "location": {
-        "filename": "example.fidl",
-        "line": 129,
+        "filename": "transformer.test.fidl",
+        "line": 142,
         "column": 8
       },
       "anonymous": false,
@@ -1405,8 +1843,8 @@
           },
           "name": "opt_value",
           "location": {
-            "filename": "example.fidl",
-            "line": 130,
+            "filename": "transformer.test.fidl",
+            "line": 143,
             "column": 18
           },
           "size": 8,
@@ -1415,6 +1853,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1436,7 +1878,18 @@
         "max_handles": 0,
         "max_out_of_line": 40,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 8,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 40,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 8,
@@ -1445,14 +1898,15 @@
         "max_handles": 0,
         "max_out_of_line": 40,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Size5Alignment1",
       "location": {
-        "filename": "example.fidl",
-        "line": 185,
+        "filename": "transformer.test.fidl",
+        "line": 193,
         "column": 8
       },
       "anonymous": false,
@@ -1468,8 +1922,8 @@
           },
           "name": "data",
           "location": {
-            "filename": "example.fidl",
-            "line": 186,
+            "filename": "transformer.test.fidl",
+            "line": 194,
             "column": 20
           },
           "size": 5,
@@ -1478,6 +1932,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1499,7 +1957,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 5,
+        "alignment": 1,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 5,
@@ -1508,14 +1977,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Size5Alignment4",
       "location": {
-        "filename": "example.fidl",
-        "line": 189,
+        "filename": "transformer.test.fidl",
+        "line": 197,
         "column": 8
       },
       "anonymous": false,
@@ -1527,8 +1997,8 @@
           },
           "name": "four",
           "location": {
-            "filename": "example.fidl",
-            "line": 190,
+            "filename": "transformer.test.fidl",
+            "line": 198,
             "column": 12
           },
           "size": 4,
@@ -1537,6 +2007,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1552,8 +2026,8 @@
           },
           "name": "one",
           "location": {
-            "filename": "example.fidl",
-            "line": 191,
+            "filename": "transformer.test.fidl",
+            "line": 199,
             "column": 11
           },
           "size": 1,
@@ -1562,6 +2036,10 @@
           "offset": 4,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 4,
+            "padding": 3
+          },
+          "field_shape_v1": {
             "offset": 4,
             "padding": 3
           },
@@ -1583,7 +2061,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 8,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 8,
@@ -1592,14 +2081,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Size5Alignment1Vector",
       "location": {
-        "filename": "example.fidl",
-        "line": 194,
+        "filename": "transformer.test.fidl",
+        "line": 202,
         "column": 8
       },
       "anonymous": false,
@@ -1616,8 +2106,8 @@
           },
           "name": "v",
           "location": {
-            "filename": "example.fidl",
-            "line": 195,
+            "filename": "transformer.test.fidl",
+            "line": 203,
             "column": 29
           },
           "size": 16,
@@ -1626,6 +2116,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1647,7 +2141,18 @@
         "max_handles": 0,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -1656,14 +2161,15 @@
         "max_handles": 0,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Size5Alignment4Vector",
       "location": {
-        "filename": "example.fidl",
-        "line": 198,
+        "filename": "transformer.test.fidl",
+        "line": 206,
         "column": 8
       },
       "anonymous": false,
@@ -1680,8 +2186,8 @@
           },
           "name": "v",
           "location": {
-            "filename": "example.fidl",
-            "line": 199,
+            "filename": "transformer.test.fidl",
+            "line": 207,
             "column": 29
           },
           "size": 16,
@@ -1690,6 +2196,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1711,7 +2221,18 @@
         "max_handles": 0,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -1720,14 +2241,15 @@
         "max_handles": 0,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Size5Alignment1Array",
       "location": {
-        "filename": "example.fidl",
-        "line": 202,
+        "filename": "transformer.test.fidl",
+        "line": 210,
         "column": 8
       },
       "anonymous": false,
@@ -1744,8 +2266,8 @@
           },
           "name": "a",
           "location": {
-            "filename": "example.fidl",
-            "line": 203,
+            "filename": "transformer.test.fidl",
+            "line": 211,
             "column": 30
           },
           "size": 15,
@@ -1754,6 +2276,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1775,7 +2301,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 15,
+        "alignment": 1,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 15,
@@ -1784,14 +2321,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     },
     {
       "name": "example/Size5Alignment4Array",
       "location": {
-        "filename": "example.fidl",
-        "line": 206,
+        "filename": "transformer.test.fidl",
+        "line": 214,
         "column": 8
       },
       "anonymous": false,
@@ -1808,8 +2346,8 @@
           },
           "name": "a",
           "location": {
-            "filename": "example.fidl",
-            "line": 207,
+            "filename": "transformer.test.fidl",
+            "line": 215,
             "column": 30
           },
           "size": 24,
@@ -1818,6 +2356,10 @@
           "offset": 0,
           "max_handles": 0,
           "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
             "offset": 0,
             "padding": 0
           },
@@ -1839,7 +2381,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 4,
+        "depth": 0,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -1848,7 +2401,8 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": false
       }
     }
   ],
@@ -1856,8 +2410,8 @@
     {
       "name": "example/Table_NoFields",
       "location": {
-        "filename": "example.fidl",
-        "line": 133,
+        "filename": "transformer.test.fidl",
+        "line": 146,
         "column": 7
       },
       "members": [],
@@ -1873,7 +2427,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": true,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -1882,14 +2447,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
       }
     },
     {
       "name": "example/Table_TwoReservedFields",
       "location": {
-        "filename": "example.fidl",
-        "line": 136,
+        "filename": "transformer.test.fidl",
+        "line": 149,
         "column": 7
       },
       "members": [
@@ -1897,8 +2463,8 @@
           "ordinal": 1,
           "reserved": true,
           "location": {
-            "filename": "example.fidl",
-            "line": 137,
+            "filename": "transformer.test.fidl",
+            "line": 150,
             "column": 5
           }
         },
@@ -1906,8 +2472,8 @@
           "ordinal": 2,
           "reserved": true,
           "location": {
-            "filename": "example.fidl",
-            "line": 138,
+            "filename": "transformer.test.fidl",
+            "line": 151,
             "column": 5
           }
         }
@@ -1924,7 +2490,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 0,
+        "has_padding": false,
+        "has_flexible_envelope": true,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -1933,14 +2510,15 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": false,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
       }
     },
     {
       "name": "example/Table_StructWithReservedSandwich",
       "location": {
-        "filename": "example.fidl",
-        "line": 141,
+        "filename": "transformer.test.fidl",
+        "line": 154,
         "column": 7
       },
       "members": [
@@ -1948,8 +2526,8 @@
           "ordinal": 1,
           "reserved": true,
           "location": {
-            "filename": "example.fidl",
-            "line": 142,
+            "filename": "transformer.test.fidl",
+            "line": 155,
             "column": 5
           }
         },
@@ -1963,8 +2541,8 @@
           },
           "name": "s1",
           "location": {
-            "filename": "example.fidl",
-            "line": 143,
+            "filename": "transformer.test.fidl",
+            "line": 156,
             "column": 30
           },
           "size": 3,
@@ -1982,8 +2560,8 @@
           },
           "name": "s2",
           "location": {
-            "filename": "example.fidl",
-            "line": 144,
+            "filename": "transformer.test.fidl",
+            "line": 157,
             "column": 30
           },
           "size": 3,
@@ -1995,8 +2573,8 @@
           "ordinal": 4,
           "reserved": true,
           "location": {
-            "filename": "example.fidl",
-            "line": 145,
+            "filename": "transformer.test.fidl",
+            "line": 158,
             "column": 5
           }
         }
@@ -2013,7 +2591,18 @@
         "max_handles": 0,
         "max_out_of_line": 48,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 48,
+        "has_padding": true,
+        "has_flexible_envelope": true,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -2022,14 +2611,15 @@
         "max_handles": 0,
         "max_out_of_line": 48,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
       }
     },
     {
       "name": "example/Table_StructWithUint32Sandwich",
       "location": {
-        "filename": "example.fidl",
-        "line": 148,
+        "filename": "transformer.test.fidl",
+        "line": 161,
         "column": 7
       },
       "members": [
@@ -2042,8 +2632,8 @@
           },
           "name": "i",
           "location": {
-            "filename": "example.fidl",
-            "line": 149,
+            "filename": "transformer.test.fidl",
+            "line": 162,
             "column": 15
           },
           "size": 4,
@@ -2061,8 +2651,8 @@
           },
           "name": "s1",
           "location": {
-            "filename": "example.fidl",
-            "line": 150,
+            "filename": "transformer.test.fidl",
+            "line": 163,
             "column": 30
           },
           "size": 3,
@@ -2080,8 +2670,8 @@
           },
           "name": "s2",
           "location": {
-            "filename": "example.fidl",
-            "line": 151,
+            "filename": "transformer.test.fidl",
+            "line": 164,
             "column": 30
           },
           "size": 3,
@@ -2098,8 +2688,8 @@
           },
           "name": "i2",
           "location": {
-            "filename": "example.fidl",
-            "line": 152,
+            "filename": "transformer.test.fidl",
+            "line": 165,
             "column": 15
           },
           "size": 4,
@@ -2120,7 +2710,18 @@
         "max_handles": 0,
         "max_out_of_line": 96,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 96,
+        "has_padding": true,
+        "has_flexible_envelope": true,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -2129,14 +2730,15 @@
         "max_handles": 0,
         "max_out_of_line": 96,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
       }
     },
     {
       "name": "example/Table_UnionWithVector_ReservedSandwich",
       "location": {
-        "filename": "example.fidl",
-        "line": 155,
+        "filename": "transformer.test.fidl",
+        "line": 168,
         "column": 7
       },
       "members": [
@@ -2144,8 +2746,8 @@
           "ordinal": 1,
           "reserved": true,
           "location": {
-            "filename": "example.fidl",
-            "line": 156,
+            "filename": "transformer.test.fidl",
+            "line": 169,
             "column": 5
           }
         },
@@ -2159,8 +2761,8 @@
           },
           "name": "uv",
           "location": {
-            "filename": "example.fidl",
-            "line": 157,
+            "filename": "transformer.test.fidl",
+            "line": 170,
             "column": 24
           },
           "size": 24,
@@ -2172,8 +2774,8 @@
           "ordinal": 3,
           "reserved": true,
           "location": {
-            "filename": "example.fidl",
-            "line": 158,
+            "filename": "transformer.test.fidl",
+            "line": 171,
             "column": 5
           }
         }
@@ -2190,7 +2792,18 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 5,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": true,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -2199,14 +2812,15 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": true
       }
     },
     {
       "name": "example/Table_UnionWithVector_StructSandwich",
       "location": {
-        "filename": "example.fidl",
-        "line": 161,
+        "filename": "transformer.test.fidl",
+        "line": 174,
         "column": 7
       },
       "members": [
@@ -2220,8 +2834,8 @@
           },
           "name": "s1",
           "location": {
-            "filename": "example.fidl",
-            "line": 162,
+            "filename": "transformer.test.fidl",
+            "line": 175,
             "column": 30
           },
           "size": 3,
@@ -2239,8 +2853,8 @@
           },
           "name": "uv",
           "location": {
-            "filename": "example.fidl",
-            "line": 163,
+            "filename": "transformer.test.fidl",
+            "line": 176,
             "column": 24
           },
           "size": 24,
@@ -2258,8 +2872,8 @@
           },
           "name": "s2",
           "location": {
-            "filename": "example.fidl",
-            "line": 164,
+            "filename": "transformer.test.fidl",
+            "line": 177,
             "column": 30
           },
           "size": 3,
@@ -2280,7 +2894,18 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 16,
+        "alignment": 8,
+        "depth": 5,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": true,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 16,
@@ -2289,7 +2914,8 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": true
       }
     }
   ],
@@ -2297,21 +2923,22 @@
     {
       "name": "example/UnionSize8Aligned4",
       "location": {
-        "filename": "example.fidl",
-        "line": 3,
+        "filename": "transformer.test.fidl",
+        "line": 10,
         "column": 7
       },
       "members": [
         {
+          "xunion_ordinal": 964920088,
+          "reserved": false,
           "name": "unused1",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 964920088,
           "location": {
-            "filename": "example.fidl",
-            "line": 4,
+            "filename": "transformer.test.fidl",
+            "line": 11,
             "column": 11
           },
           "size": 1,
@@ -2320,15 +2947,16 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 1734933826,
+          "reserved": false,
           "name": "unused2",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1734933826,
           "location": {
-            "filename": "example.fidl",
-            "line": 5,
+            "filename": "transformer.test.fidl",
+            "line": 12,
             "column": 11
           },
           "size": 1,
@@ -2337,15 +2965,16 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 2143482075,
+          "reserved": false,
           "name": "variant",
           "type": {
             "kind": "primitive",
             "subtype": "uint32"
           },
-          "xunion_ordinal": 2143482075,
           "location": {
-            "filename": "example.fidl",
-            "line": 6,
+            "filename": "transformer.test.fidl",
+            "line": 13,
             "column": 12
           },
           "size": 4,
@@ -2365,7 +2994,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -2374,27 +3014,29 @@
         "max_handles": 0,
         "max_out_of_line": 8,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/UnionSize16Aligned4",
       "location": {
-        "filename": "example.fidl",
-        "line": 9,
+        "filename": "transformer.test.fidl",
+        "line": 16,
         "column": 7
       },
       "members": [
         {
+          "xunion_ordinal": 1136806121,
+          "reserved": false,
           "name": "unused1",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1136806121,
           "location": {
-            "filename": "example.fidl",
-            "line": 10,
+            "filename": "transformer.test.fidl",
+            "line": 17,
             "column": 11
           },
           "size": 1,
@@ -2403,15 +3045,16 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 1657784343,
+          "reserved": false,
           "name": "unused2",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1657784343,
           "location": {
-            "filename": "example.fidl",
-            "line": 11,
+            "filename": "transformer.test.fidl",
+            "line": 18,
             "column": 11
           },
           "size": 1,
@@ -2420,15 +3063,16 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 1244121714,
+          "reserved": false,
           "name": "unused3",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1244121714,
           "location": {
-            "filename": "example.fidl",
-            "line": 12,
+            "filename": "transformer.test.fidl",
+            "line": 19,
             "column": 11
           },
           "size": 1,
@@ -2437,6 +3081,8 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 550622143,
+          "reserved": false,
           "name": "variant",
           "type": {
             "kind": "array",
@@ -2446,10 +3092,9 @@
             },
             "element_count": 6
           },
-          "xunion_ordinal": 550622143,
           "location": {
-            "filename": "example.fidl",
-            "line": 13,
+            "filename": "transformer.test.fidl",
+            "line": 20,
             "column": 20
           },
           "size": 6,
@@ -2469,7 +3114,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -2478,27 +3134,29 @@
         "max_handles": 0,
         "max_out_of_line": 8,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/UnionSize24Alignement8",
       "location": {
-        "filename": "example.fidl",
-        "line": 21,
+        "filename": "transformer.test.fidl",
+        "line": 28,
         "column": 7
       },
       "members": [
         {
+          "xunion_ordinal": 621982873,
+          "reserved": false,
           "name": "unused1",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 621982873,
           "location": {
-            "filename": "example.fidl",
-            "line": 22,
+            "filename": "transformer.test.fidl",
+            "line": 29,
             "column": 11
           },
           "size": 1,
@@ -2507,15 +3165,16 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 1544195805,
+          "reserved": false,
           "name": "unused2",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1544195805,
           "location": {
-            "filename": "example.fidl",
-            "line": 23,
+            "filename": "transformer.test.fidl",
+            "line": 30,
             "column": 11
           },
           "size": 1,
@@ -2524,15 +3183,16 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 1885474715,
+          "reserved": false,
           "name": "unused3",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1885474715,
           "location": {
-            "filename": "example.fidl",
-            "line": 24,
+            "filename": "transformer.test.fidl",
+            "line": 31,
             "column": 11
           },
           "size": 1,
@@ -2541,16 +3201,17 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 872699291,
+          "reserved": false,
           "name": "variant",
           "type": {
             "kind": "identifier",
             "identifier": "example/StructSize16Alignement8",
             "nullable": false
           },
-          "xunion_ordinal": 872699291,
           "location": {
-            "filename": "example.fidl",
-            "line": 25,
+            "filename": "transformer.test.fidl",
+            "line": 32,
             "column": 29
           },
           "size": 16,
@@ -2570,7 +3231,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 16,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -2579,27 +3251,29 @@
         "max_handles": 0,
         "max_out_of_line": 16,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/UnionSize36Alignment4",
       "location": {
-        "filename": "example.fidl",
-        "line": 46,
+        "filename": "transformer.test.fidl",
+        "line": 59,
         "column": 7
       },
       "members": [
         {
+          "xunion_ordinal": 1946634093,
+          "reserved": false,
           "name": "unused1",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1946634093,
           "location": {
-            "filename": "example.fidl",
-            "line": 47,
+            "filename": "transformer.test.fidl",
+            "line": 60,
             "column": 11
           },
           "size": 1,
@@ -2608,15 +3282,16 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 627860762,
+          "reserved": false,
           "name": "unused2",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 627860762,
           "location": {
-            "filename": "example.fidl",
-            "line": 48,
+            "filename": "transformer.test.fidl",
+            "line": 61,
             "column": 11
           },
           "size": 1,
@@ -2625,15 +3300,16 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 79574741,
+          "reserved": false,
           "name": "unused3",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 79574741,
           "location": {
-            "filename": "example.fidl",
-            "line": 49,
+            "filename": "transformer.test.fidl",
+            "line": 62,
             "column": 11
           },
           "size": 1,
@@ -2642,6 +3318,8 @@
           "offset": 4
         },
         {
+          "xunion_ordinal": 1581322265,
+          "reserved": false,
           "name": "variant",
           "type": {
             "kind": "array",
@@ -2651,10 +3329,9 @@
             },
             "element_count": 32
           },
-          "xunion_ordinal": 1581322265,
           "location": {
-            "filename": "example.fidl",
-            "line": 50,
+            "filename": "transformer.test.fidl",
+            "line": 63,
             "column": 21
           },
           "size": 32,
@@ -2674,7 +3351,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 32,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -2683,27 +3371,29 @@
         "max_handles": 0,
         "max_out_of_line": 32,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/UnionOfUnion",
       "location": {
-        "filename": "example.fidl",
-        "line": 59,
+        "filename": "transformer.test.fidl",
+        "line": 72,
         "column": 7
       },
       "members": [
         {
+          "xunion_ordinal": 1201318480,
+          "reserved": false,
           "name": "unused",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 1201318480,
           "location": {
-            "filename": "example.fidl",
-            "line": 60,
+            "filename": "transformer.test.fidl",
+            "line": 73,
             "column": 11
           },
           "size": 1,
@@ -2712,16 +3402,17 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 548068704,
+          "reserved": false,
           "name": "size8aligned4",
           "type": {
             "kind": "identifier",
             "identifier": "example/UnionSize8Aligned4",
             "nullable": false
           },
-          "xunion_ordinal": 548068704,
           "location": {
-            "filename": "example.fidl",
-            "line": 61,
+            "filename": "transformer.test.fidl",
+            "line": 74,
             "column": 24
           },
           "size": 8,
@@ -2730,16 +3421,17 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 762734029,
+          "reserved": false,
           "name": "size16aligned4",
           "type": {
             "kind": "identifier",
             "identifier": "example/UnionSize16Aligned4",
             "nullable": false
           },
-          "xunion_ordinal": 762734029,
           "location": {
-            "filename": "example.fidl",
-            "line": 62,
+            "filename": "transformer.test.fidl",
+            "line": 75,
             "column": 25
           },
           "size": 12,
@@ -2748,16 +3440,17 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 108145951,
+          "reserved": false,
           "name": "size24aligned8",
           "type": {
             "kind": "identifier",
             "identifier": "example/UnionSize24Alignement8",
             "nullable": false
           },
-          "xunion_ordinal": 108145951,
           "location": {
-            "filename": "example.fidl",
-            "line": 63,
+            "filename": "transformer.test.fidl",
+            "line": 76,
             "column": 28
           },
           "size": 24,
@@ -2777,7 +3470,18 @@
         "max_handles": 0,
         "max_out_of_line": 0,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 40,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -2786,27 +3490,29 @@
         "max_handles": 0,
         "max_out_of_line": 40,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     },
     {
       "name": "example/UnionWithVector",
       "location": {
-        "filename": "example.fidl",
-        "line": 83,
+        "filename": "transformer.test.fidl",
+        "line": 96,
         "column": 7
       },
       "members": [
         {
+          "xunion_ordinal": 124309599,
+          "reserved": false,
           "name": "unused",
           "type": {
             "kind": "primitive",
             "subtype": "uint8"
           },
-          "xunion_ordinal": 124309599,
           "location": {
-            "filename": "example.fidl",
-            "line": 85,
+            "filename": "transformer.test.fidl",
+            "line": 97,
             "column": 11
           },
           "size": 1,
@@ -2815,6 +3521,8 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 2042875053,
+          "reserved": false,
           "name": "vector_of_uint8",
           "type": {
             "kind": "vector",
@@ -2824,10 +3532,9 @@
             },
             "nullable": false
           },
-          "xunion_ordinal": 2042875053,
           "location": {
-            "filename": "example.fidl",
-            "line": 86,
+            "filename": "transformer.test.fidl",
+            "line": 98,
             "column": 19
           },
           "size": 16,
@@ -2836,15 +3543,16 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 993084216,
+          "reserved": false,
           "name": "string",
           "type": {
             "kind": "string",
             "nullable": false
           },
-          "xunion_ordinal": 993084216,
           "location": {
-            "filename": "example.fidl",
-            "line": 87,
+            "filename": "transformer.test.fidl",
+            "line": 99,
             "column": 12
           },
           "size": 16,
@@ -2853,6 +3561,8 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 1270955228,
+          "reserved": false,
           "name": "vector_s3_a1",
           "type": {
             "kind": "vector",
@@ -2863,10 +3573,9 @@
             },
             "nullable": false
           },
-          "xunion_ordinal": 1270955228,
           "location": {
-            "filename": "example.fidl",
-            "line": 88,
+            "filename": "transformer.test.fidl",
+            "line": 100,
             "column": 35
           },
           "size": 16,
@@ -2875,6 +3584,8 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 487107132,
+          "reserved": false,
           "name": "vector_s3_a2",
           "type": {
             "kind": "vector",
@@ -2885,10 +3596,9 @@
             },
             "nullable": false
           },
-          "xunion_ordinal": 487107132,
           "location": {
-            "filename": "example.fidl",
-            "line": 89,
+            "filename": "transformer.test.fidl",
+            "line": 101,
             "column": 35
           },
           "size": 16,
@@ -2897,6 +3607,8 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 1193192054,
+          "reserved": false,
           "name": "handles",
           "type": {
             "kind": "vector",
@@ -2907,10 +3619,9 @@
             },
             "nullable": false
           },
-          "xunion_ordinal": 1193192054,
           "location": {
-            "filename": "example.fidl",
-            "line": 90,
+            "filename": "transformer.test.fidl",
+            "line": 102,
             "column": 20
           },
           "size": 16,
@@ -2919,6 +3630,8 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 1587587088,
+          "reserved": false,
           "name": "array_s3_a1",
           "type": {
             "kind": "array",
@@ -2929,10 +3642,9 @@
             },
             "element_count": 2
           },
-          "xunion_ordinal": 1587587088,
           "location": {
-            "filename": "example.fidl",
-            "line": 91,
+            "filename": "transformer.test.fidl",
+            "line": 103,
             "column": 36
           },
           "size": 6,
@@ -2941,6 +3653,8 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 1559803661,
+          "reserved": false,
           "name": "array_s3_a2",
           "type": {
             "kind": "array",
@@ -2951,10 +3665,9 @@
             },
             "element_count": 2
           },
-          "xunion_ordinal": 1559803661,
           "location": {
-            "filename": "example.fidl",
-            "line": 92,
+            "filename": "transformer.test.fidl",
+            "line": 104,
             "column": 36
           },
           "size": 8,
@@ -2963,6 +3676,8 @@
           "offset": 8
         },
         {
+          "xunion_ordinal": 729189425,
+          "reserved": false,
           "name": "vector_union",
           "type": {
             "kind": "vector",
@@ -2973,10 +3688,9 @@
             },
             "nullable": false
           },
-          "xunion_ordinal": 729189425,
           "location": {
-            "filename": "example.fidl",
-            "line": 93,
+            "filename": "transformer.test.fidl",
+            "line": 105,
             "column": 32
           },
           "size": 16,
@@ -2996,7 +3710,18 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 3,
+        "max_handles": 4294967295,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -3005,7 +3730,8 @@
         "max_handles": 4294967295,
         "max_out_of_line": 4294967295,
         "has_padding": true,
-        "has_flexible_envelope": false
+        "has_flexible_envelope": false,
+        "contains_union": true
       }
     }
   ],
@@ -3013,22 +3739,23 @@
     {
       "name": "example/XUnionWithStruct",
       "location": {
-        "filename": "example.fidl",
-        "line": 167,
+        "filename": "transformer.test.fidl",
+        "line": 180,
         "column": 8
       },
       "members": [
         {
+          "ordinal": 78693387,
+          "reserved": false,
           "name": "s",
           "type": {
             "kind": "identifier",
             "identifier": "example/StructSize3Alignment1",
             "nullable": false
           },
-          "ordinal": 78693387,
           "location": {
-            "filename": "example.fidl",
-            "line": 168,
+            "filename": "transformer.test.fidl",
+            "line": 181,
             "column": 27
           },
           "size": 3,
@@ -3049,7 +3776,18 @@
         "max_handles": 0,
         "max_out_of_line": 8,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 8,
+        "has_padding": true,
+        "has_flexible_envelope": true,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -3058,28 +3796,30 @@
         "max_handles": 0,
         "max_out_of_line": 8,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
       }
     },
     {
       "name": "example/XUnionWithXUnion",
       "location": {
-        "filename": "example.fidl",
-        "line": 171,
+        "filename": "transformer.test.fidl",
+        "line": 184,
         "column": 8
       },
       "members": [
         {
+          "ordinal": 1316738703,
+          "reserved": false,
           "name": "xu",
           "type": {
             "kind": "identifier",
             "identifier": "example/XUnionWithStruct",
             "nullable": false
           },
-          "ordinal": 1316738703,
           "location": {
-            "filename": "example.fidl",
-            "line": 172,
+            "filename": "transformer.test.fidl",
+            "line": 185,
             "column": 22
           },
           "size": 24,
@@ -3100,7 +3840,18 @@
         "max_handles": 0,
         "max_out_of_line": 32,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 32,
+        "has_padding": true,
+        "has_flexible_envelope": true,
+        "contains_union": false
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -3109,28 +3860,30 @@
         "max_handles": 0,
         "max_out_of_line": 32,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": false
       }
     },
     {
       "name": "example/XUnionWithUnions",
       "location": {
-        "filename": "example.fidl",
-        "line": 175,
+        "filename": "transformer.test.fidl",
+        "line": 188,
         "column": 8
       },
       "members": [
         {
+          "ordinal": 156307043,
+          "reserved": false,
           "name": "u1",
           "type": {
             "kind": "identifier",
             "identifier": "example/UnionSize8Aligned4",
             "nullable": false
           },
-          "ordinal": 156307043,
           "location": {
-            "filename": "example.fidl",
-            "line": 176,
+            "filename": "transformer.test.fidl",
+            "line": 189,
             "column": 24
           },
           "size": 8,
@@ -3139,16 +3892,17 @@
           "offset": 0
         },
         {
+          "ordinal": 1987954326,
+          "reserved": false,
           "name": "u2",
           "type": {
             "kind": "identifier",
             "identifier": "example/UnionSize16Aligned4",
             "nullable": false
           },
-          "ordinal": 1987954326,
           "location": {
-            "filename": "example.fidl",
-            "line": 177,
+            "filename": "transformer.test.fidl",
+            "line": 190,
             "column": 25
           },
           "size": 12,
@@ -3169,7 +3923,18 @@
         "max_handles": 0,
         "max_out_of_line": 16,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 32,
+        "has_padding": true,
+        "has_flexible_envelope": true,
+        "contains_union": true
       },
       "type_shape_v1_no_ee": {
         "inline_size": 24,
@@ -3178,7 +3943,8 @@
         "max_handles": 0,
         "max_out_of_line": 32,
         "has_padding": true,
-        "has_flexible_envelope": true
+        "has_flexible_envelope": true,
+        "contains_union": true
       }
     }
   ],
@@ -3216,6 +3982,7 @@
     "example/Size5Alignment1Vector",
     "example/Size5Alignment1Array",
     "example/Sandwich7",
+    "example/Sandwich1WithOptUnion",
     "example/Regression3",
     "example/Regression1",
     "example/Regression2"
@@ -3223,6 +3990,7 @@
   "declarations": {
     "example/StructSize16Alignement8": "struct",
     "example/Sandwich1": "struct",
+    "example/Sandwich1WithOptUnion": "struct",
     "example/Sandwich2": "struct",
     "example/Sandwich3": "struct",
     "example/Sandwich4": "struct",
