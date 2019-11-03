@@ -45,6 +45,7 @@ typedef int32_t zx_status_t;
 #define ZX_OK (0)
 #define ZX_ERR_BAD_STATE (-20)
 #define ZX_ERR_INVALID_ARGS (-10)
+#define ZX_ERR_BUFFER_TOO_SMALL (-789)
 
 #define FIDL_MAX_SIZE UINT32_MAX
 
@@ -62,22 +63,13 @@ typedef int32_t zx_status_t;
 #define FIDL_ALLOC_PRESENT ((uintptr_t)UINTPTR_MAX)
 #define FIDL_ALLOC_ABSENT ((uintptr_t)0)
 
+#define FIDL_HANDLE_ABSENT (0u)
+#define FIDL_HANDLE_PRESENT (UINT32_MAX)
+
 // Out of line allocations are all 8 byte aligned.
 #define FIDL_ALIGNMENT ((size_t)8)
-#define FIDL_ALIGN(a) (((a) + 7) & ~7)
+#define FIDL_ALIGN(a) (((a) + 7) & ~7u)
 #define FIDL_ALIGNDECL alignas(FIDL_ALIGNMENT)
-
-// Aligns elements within an array or vector. Similar to FIDL_ALIGN except that
-// alignment is 1 for elements of size 1,
-//              2 for those of size 2
-//              4 for elements smaller than 4,
-//              FIDL_ALIGN otherwise.
-// clang-format off
-#define FIDL_ELEM_ALIGN(a)        \
-  (((a) < 3) ? (a) :              \
-  ((a) <= 4) ? (((a) + 3) & ~3)   \
-             : (((a) + 7) & ~7))
-// clang-format on
 
 // An opaque struct representing the encoding of a particular fidl
 // type.

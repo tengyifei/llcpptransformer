@@ -15,7 +15,7 @@
 //
 // Note: in order to avoid any padding in `fidl_transform` invocations, we
 // define this as an alias of `uint64_t`.
-typedef uint64_t fidl_transformation_t;
+typedef uint32_t fidl_transformation_t;
 
 // No-op transformation.
 //
@@ -48,11 +48,9 @@ typedef uint64_t fidl_transformation_t;
 // error message.
 //
 // See also `fidl_transformation_t` and `FIDL_TRANSFORMATION_...` constants.
-zx_status_t fidl_transform(fidl_transformation_t transformation,
-                           const fidl_type_t* type,
-                           const uint8_t* src_bytes, uint8_t* dst_bytes,
-                           uint32_t src_num_bytes, uint32_t* out_dst_num_bytes,
-                           const char** out_error_msg);
+zx_status_t fidl_transform(fidl_transformation_t transformation, const fidl_type_t* type,
+                           const uint8_t* src_bytes, uint32_t src_num_bytes, uint8_t* dst_bytes,
+                           uint32_t* out_dst_num_bytes, const char** out_error_msg);
 
 // __END_CDECLS
 
