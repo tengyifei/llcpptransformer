@@ -8,8 +8,6 @@
 #include <cassert>
 #include <cstring>
 
-#include <cstdio>
-
 // Disable warning about implicit fallthrough, since it's intentionally used a lot in this code, and
 // the switch()es end up being harder to read without it. Note that "#pragma GCC" works for both GCC
 // & Clang.
@@ -154,7 +152,7 @@ struct Position {
 
   inline Position IncreaseSrcOutOfLineOffset(uint32_t increase) const
       __attribute__((warn_unused_result)) {
-    return Position(src_inline_offset + increase, src_out_of_line_offset, dst_inline_offset,
+    return Position(src_inline_offset, src_out_of_line_offset + increase, dst_inline_offset,
                     dst_out_of_line_offset);
   }
 
@@ -261,8 +259,13 @@ class TransformerBase {
  protected:
   zx_status_t Transform(const fidl_type_t* type, const Position& position, const uint32_t dst_size,
                         TraversalResult* out_traversal_result) {
+    auto copy = [&] {
+      src_dst->Copy(position, dst_size);
+      return ZX_OK;
+    };
+
     if (!type) {
-      goto no_transform_just_copy;
+      return copy();
     }
 
     switch (type->type_tag) {
@@ -271,11 +274,12 @@ class TransformerBase {
         if (presence == FIDL_HANDLE_PRESENT) {
           out_traversal_result->handle_count++;
         }
+        // fallthrough
       }
       case fidl::kFidlTypePrimitive:
       case fidl::kFidlTypeEnum:
       case fidl::kFidlTypeBits:
-        goto no_transform_just_copy;
+        return copy();
       case fidl::kFidlTypeStructPointer: {
         const auto& src_coded_struct = *type->coded_struct_pointer.struct_type;
         const auto& dst_coded_struct = *src_coded_struct.alt_type;
@@ -323,12 +327,9 @@ class TransformerBase {
         return TransformTable(type->coded_table, position, out_traversal_result);
       case fidl::kFidlTypeXUnion:
         return TransformXUnion(type->coded_xunion, position, out_traversal_result);
-      default:
-        return ZX_ERR_BAD_STATE;
     }
 
-  no_transform_just_copy:  // TODO(apang): Remove goto here (can be inlined into case)
-    src_dst->Copy(position, dst_size);
+    return Fail(ZX_ERR_BAD_STATE, "unknown type tag");
 
     // TODO(apang): Think about putting logic for updating out_traversal_result in Copy/etc
     // functions.
@@ -364,7 +365,7 @@ class TransformerBase {
   }
 
   zx_status_t TransformStruct(const fidl::FidlCodedStruct& src_coded_struct,
-                              const fidl::FidlCodedStruct& dst_coded_struct,
+                              const fidl::FidlCodedStruct&,
                               const Position& position, uint32_t dst_size,
                               TraversalResult* out_traversal_result) {
     // Note: we cannot use dst_coded_struct.size, and must instead rely on
@@ -441,15 +442,20 @@ class TransformerBase {
           current_position.dst_inline_offset + AlignedInlineSize(dst_field.type, To());
       uint32_t dst_field_size = dst_next_field_offset - dst_field.offset;
 
+      TraversalResult field_traversal_result;
       const zx_status_t status =
-          Transform(src_field.type, current_position, dst_field_size, out_traversal_result);
+          Transform(src_field.type, current_position, dst_field_size, &field_traversal_result);
       if (status != ZX_OK) {
         return status;
       }
 
+      *out_traversal_result += field_traversal_result;
+
       // Update current position for next iteration.
       current_position.src_inline_offset = src_next_field_offset;
       current_position.dst_inline_offset = dst_next_field_offset;
+      current_position.src_out_of_line_offset += field_traversal_result.src_out_of_line_size;
+      current_position.dst_out_of_line_offset += field_traversal_result.dst_out_of_line_size;
     }
 
     // Copy everything after the last non-primitive field.
@@ -487,7 +493,7 @@ class TransformerBase {
     }
 
     const auto convert = [&](const fidl::FidlCodedVector& coded_vector) {
-      return fidl::FidlCodedArrayNew(coded_vector.element, src_vector.count,
+      return fidl::FidlCodedArrayNew(coded_vector.element, static_cast<uint32_t>(src_vector.count),
                                      coded_vector.element_size, 0,
                                      nullptr /* alt_type unused, we provide both src and dst */);
     };
@@ -672,9 +678,9 @@ class TransformerBase {
     // Slow path otherwise.
     auto current_element_position = position;
     for (uint32_t i = 0; i < src_coded_array.element_count; i++) {
-      TraversalResult foo;
+      TraversalResult element_traversal_result;
       const zx_status_t status = Transform(src_coded_array.element, current_element_position,
-                                           dst_coded_array.element_size, out_traversal_result);
+                                           dst_coded_array.element_size, &element_traversal_result);
 
       if (status != ZX_OK) {
         return status;
@@ -689,10 +695,10 @@ class TransformerBase {
       current_element_position =
           padding_position.IncreaseSrcInlineOffset(src_coded_array.element_padding)
               .IncreaseDstInlineOffset(dst_coded_array.element_padding)
-              .IncreaseSrcOutOfLineOffset(foo.src_out_of_line_size)
-              .IncreaseDstOutOfLineOffset(foo.dst_out_of_line_size);
+              .IncreaseSrcOutOfLineOffset(element_traversal_result.src_out_of_line_size)
+              .IncreaseDstOutOfLineOffset(element_traversal_result.dst_out_of_line_size);
 
-      *out_traversal_result += foo;
+      *out_traversal_result += element_traversal_result;
     }
 
     // Pad end of elements.
@@ -732,9 +738,7 @@ class TransformerBase {
 
 class V1ToOld final : public TransformerBase {
  public:
-  V1ToOld(SrcDst* src_dst, const char** out_error_msg) : TransformerBase(src_dst, out_error_msg) {
-    printf("V1ToOld\n");
-  }
+  V1ToOld(SrcDst* src_dst, const char** out_error_msg) : TransformerBase(src_dst, out_error_msg) {}
 
   WireFormat From() const { return WireFormat::kV1; }
   WireFormat To() const { return WireFormat::kOld; }
@@ -751,7 +755,6 @@ class V1ToOld final : public TransformerBase {
 
     src_dst->Write(position, FIDL_ALLOC_PRESENT);
 
-    const uint32_t src_aligned_size = FIDL_ALIGN(src_coded_union.size);
     const uint32_t dst_aligned_size = FIDL_ALIGN(dst_coded_union.size);
     const auto union_position = Position{
         position.src_inline_offset,
@@ -850,9 +853,7 @@ class V1ToOld final : public TransformerBase {
 
 class OldToV1 final : public TransformerBase {
  public:
-  OldToV1(SrcDst* src_dst, const char** out_error_msg) : TransformerBase(src_dst, out_error_msg) {
-    printf("OldToV1\n");
-  }
+  OldToV1(SrcDst* src_dst, const char** out_error_msg) : TransformerBase(src_dst, out_error_msg) {}
 
  private:
   // TODO(apang): Could CRTP this.
@@ -878,6 +879,7 @@ class OldToV1 final : public TransformerBase {
         position.dst_out_of_line_offset,
     };
 
+    out_traversal_result->src_out_of_line_size += aligned_src_size;
     return TransformUnion(src_coded_union, dst_coded_union, union_position, out_traversal_result);
   }
 
@@ -898,7 +900,6 @@ class OldToV1 final : public TransformerBase {
     const fidl::FidlUnionField& dst_field = dst_coded_union.fields[union_tag];
 
     // Write: xunion tag & envelope.
-    const uint32_t src_inline_field_size = src_coded_union.size;
     const uint32_t dst_inline_field_size = [&] {
       if (src_field.type && src_field.type->type_tag == fidl::kFidlTypeUnion) {
         return 24u;

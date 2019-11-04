@@ -2404,6 +2404,120 @@
         "has_flexible_envelope": false,
         "contains_union": false
       }
+    },
+    {
+      "name": "example/ArrayStruct",
+      "location": {
+        "filename": "transformer.test.fidl",
+        "line": 224,
+        "column": 8
+      },
+      "anonymous": false,
+      "members": [
+        {
+          "type": {
+            "kind": "array",
+            "element_type": {
+              "kind": "identifier",
+              "identifier": "example/StringUnion",
+              "nullable": false
+            },
+            "element_count": 3
+          },
+          "name": "unions",
+          "location": {
+            "filename": "transformer.test.fidl",
+            "line": 225,
+            "column": 26
+          },
+          "size": 72,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 0,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 0,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 0,
+            "padding": 0
+          }
+        },
+        {
+          "type": {
+            "kind": "array",
+            "element_type": {
+              "kind": "identifier",
+              "identifier": "example/StringUnion",
+              "nullable": true
+            },
+            "element_count": 3
+          },
+          "name": "optional_unions",
+          "location": {
+            "filename": "transformer.test.fidl",
+            "line": 226,
+            "column": 27
+          },
+          "size": 24,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 72,
+          "max_handles": 0,
+          "field_shape_old": {
+            "offset": 72,
+            "padding": 0
+          },
+          "field_shape_v1": {
+            "offset": 72,
+            "padding": 0
+          },
+          "field_shape_v1_no_ee": {
+            "offset": 72,
+            "padding": 0
+          }
+        }
+      ],
+      "size": 96,
+      "max_out_of_line": 4294967295,
+      "alignment": 8,
+      "max_handles": 0,
+      "has_padding": true,
+      "type_shape_old": {
+        "inline_size": 96,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 144,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 144,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      }
     }
   ],
   "table_declarations": [
@@ -3733,6 +3847,68 @@
         "has_flexible_envelope": false,
         "contains_union": true
       }
+    },
+    {
+      "name": "example/StringUnion",
+      "location": {
+        "filename": "transformer.test.fidl",
+        "line": 220,
+        "column": 7
+      },
+      "members": [
+        {
+          "xunion_ordinal": 1264565120,
+          "reserved": false,
+          "name": "s",
+          "type": {
+            "kind": "string",
+            "nullable": false
+          },
+          "location": {
+            "filename": "transformer.test.fidl",
+            "line": 221,
+            "column": 12
+          },
+          "size": 16,
+          "max_out_of_line": 4294967295,
+          "alignment": 8,
+          "offset": 8
+        }
+      ],
+      "size": 24,
+      "max_out_of_line": 4294967295,
+      "alignment": 8,
+      "max_handles": 0,
+      "type_shape_old": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 1,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      },
+      "type_shape_v1_no_ee": {
+        "inline_size": 24,
+        "alignment": 8,
+        "depth": 2,
+        "max_handles": 0,
+        "max_out_of_line": 4294967295,
+        "has_padding": true,
+        "has_flexible_envelope": false,
+        "contains_union": true
+      }
     }
   ],
   "xunion_declarations": [
@@ -3975,6 +4151,8 @@
     "example/Sandwich8",
     "example/Sandwich5",
     "example/Sandwich3",
+    "example/StringUnion",
+    "example/ArrayStruct",
     "example/Size5Alignment4",
     "example/Size5Alignment4Vector",
     "example/Size5Alignment4Array",
@@ -4009,6 +4187,7 @@
     "example/Size5Alignment4Vector": "struct",
     "example/Size5Alignment1Array": "struct",
     "example/Size5Alignment4Array": "struct",
+    "example/ArrayStruct": "struct",
     "example/Table_NoFields": "table",
     "example/Table_TwoReservedFields": "table",
     "example/Table_StructWithReservedSandwich": "table",
@@ -4021,6 +4200,7 @@
     "example/UnionSize36Alignment4": "union",
     "example/UnionOfUnion": "union",
     "example/UnionWithVector": "union",
+    "example/StringUnion": "union",
     "example/XUnionWithStruct": "xunion",
     "example/XUnionWithXUnion": "xunion",
     "example/XUnionWithUnions": "xunion"
