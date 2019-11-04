@@ -1,15 +1,22 @@
+// Copyright 2019 The Fuchsia Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// NOTE: Refer to README.md to regenerate the coding tables whenever these
+// definitions change.
+
 library example;
 
 union UnionSize8Aligned4 {
-    uint8 unused1;   // makes `variant` tagged 2
-    uint8 unused2;   // since it is the third
-    uint32 variant;  // xunion_ordinal = 0x7fc2f0db
+    uint8 unused1; // makes `variant` tagged 2
+    uint8 unused2; // since it is the third
+    uint32 variant; // xunion_ordinal = 0x7fc2f0db
 };
 
 union UnionSize16Aligned4 {
-    uint8 unused1;   // makes `variant` tagged 3
-    uint8 unused2;   // since it is the
-    uint8 unused3;   // the fourth
+    uint8 unused1; // avoid tag 0
+    uint8 unused2; // avoid tag 1
+    uint8 unused3; // avoid tag 2
     array<uint8>:6 variant; // 0x20d1d3bf
 };
 
@@ -19,51 +26,55 @@ struct StructSize16Alignement8 {
 };
 
 union UnionSize24Alignement8 {
-    uint8 unused1;   // makes `variant` tagged 3
-    uint8 unused2;   // since it is the
-    uint8 unused3;   // the fourth
+    uint8 unused1; // avoid tag 0
+    uint8 unused2; // avoid tag 1
+    uint8 unused3; // avoid tag 2
     StructSize16Alignement8 variant; // 0x3404559b
 };
 
 struct Sandwich1 {
    uint32 before;
-   UnionSize8Aligned4 union;
+   UnionSize8Aligned4 the_union;
+   uint32 after;
+};
+
+struct Sandwich1WithOptUnion {
+   uint32 before;
+   UnionSize8Aligned4? opt_union;
    uint32 after;
 };
 
 struct Sandwich2 {
    uint32 before;
-   UnionSize16Aligned4 union;
+   UnionSize16Aligned4 the_union;
    uint32 after;
 };
 
 struct Sandwich3 {
    uint32 before;
-   UnionSize24Alignement8 union;
+   UnionSize24Alignement8 the_union;
    uint32 after;
 };
 
 union UnionSize36Alignment4 {
-    uint8 unused1;           // avoid tag 0
-    uint8 unused2;           // avoid tag 1
-    uint8 unused3;           // avoid tag 2
+    uint8 unused1; // avoid tag 0
+    uint8 unused2; // avoid tag 1
+    uint8 unused3; // avoid tag 2
     array<uint8>:32 variant; // 0x5e411019
 };
 
 struct Sandwich4 {
     uint32 before;
-    UnionSize36Alignment4 union;
+    UnionSize36Alignment4 the_union;
     uint32 after;
 };
 
 union UnionOfUnion {
-    uint8 unused;                          // avoid tag 0
-    UnionSize8Aligned4 size8aligned4;      // 0x20AADD60
-    UnionSize16Aligned4 size16aligned4;    // 0x2D7665CD
+    uint8 unused; // avoid tag 0
+    UnionSize8Aligned4 size8aligned4; // 0x20AADD60
+    UnionSize16Aligned4 size16aligned4; // 0x2D7665CD
     UnionSize24Alignement8 size24aligned8; // 0x06722D1F
 };
-
-// TODO(apang): Test out-of-line objects (for size computation of xunion envelope)
 
 struct Sandwich5 {
     uint32 before;
@@ -80,22 +91,23 @@ struct StructSize3Alignment2 {
     uint8 f2;
 };
 
+// We name Sandwich6 cases by the tag number, i.e. Sandwich6 case 2 is
+// testing the `string` variant.
 union UnionWithVector {
-                                                     // case number is by tag
-    uint8 unused;                                    // 0: unused
-    vector<uint8> vector_of_uint8;                   // 1: 0x79C3CCAD
-    string string;                                   // 2: 0x3B314338
-    vector<StructSize3Alignment1> vector_s3_a1;      // 3: 0x4BC13CDC
-    vector<StructSize3Alignment2> vector_s3_a2;      // 4: 0x1D08AA3C
-    vector<handle> handles;                          // 5: 0x471EAA76
-    array<StructSize3Alignment1>:2 array_s3_a1;      // 6: 0x5EA0A810
-    array<StructSize3Alignment2>:2 array_s3_a2;      // 7: 0x5CF8B70D
-    vector<UnionSize8Aligned4> vector_union;         // 8: 0x2B768C31
+    uint8 unused; // 0: unused
+    vector<uint8> vector_of_uint8; // 1: 0x79C3CCAD
+    string string; // 2: 0x3B314338
+    vector<StructSize3Alignment1> vector_s3_a1; // 3: 0x4BC13CDC
+    vector<StructSize3Alignment2> vector_s3_a2; // 4: 0x1D08AA3C
+    vector<handle> handles; // 5: 0x471EAA76
+    array<StructSize3Alignment1>:2 array_s3_a1; // 6: 0x5EA0A810
+    array<StructSize3Alignment2>:2 array_s3_a2; // 7: 0x5CF8B70D
+    vector<UnionSize8Aligned4> vector_union; // 8: 0x2B768C31
 };
 
 struct Sandwich6 {
     uint32 before;
-    UnionWithVector union;
+    UnionWithVector the_union;
     uint32 after;
 };
 
@@ -105,7 +117,8 @@ struct Sandwich7 {
     uint32 after;
 };
 
-// Same as Sandwich5, except "before" is uint64 instead of uint32, so there's no padding before the union.
+// Same as Sandwich5, except "before" is uint64 instead of uint32, so there's no padding before the
+// union.
 struct Sandwich8 {
     uint64 before;
     UnionOfUnion union_of_union;
@@ -177,11 +190,6 @@ xunion XUnionWithUnions {
     UnionSize16Aligned4 u2;
 };
 
-// TODO(apang): Union containing a table (to test out-of-line sizing)
-
-// TODO: simple struct examples without any union, e.g. struct{uint8;uint32;uint8;uint16;uint64;}
-// TODO: struct{opt_struct_size4;opt_struct_size4;} to check alignment of secondary objects
-
 struct Size5Alignment1 {
     array<uint8>:5 data;
 };
@@ -206,3 +214,16 @@ struct Size5Alignment1Array {
 struct Size5Alignment4Array {
     array<Size5Alignment4>:3 a;
 };
+
+// compatibility_test turned up a problem with this StringUnion & ArrayStruct
+// definitions.
+union StringUnion {
+    string s;  // 0x80BB5F4B
+};
+
+struct ArrayStruct {
+    array<StringUnion>:3 unions;
+    array<StringUnion?>:3 optional_unions;
+};
+
+// TODO(apang): Union containing a table (to test out-of-line sizing)
