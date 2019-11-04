@@ -20,3 +20,13 @@ main: clean
 
 clean:
 	rm -f *.o
+
+fromf:
+	cp $$FUCHSIA_DIR/zircon/system/utest/fidl/transformer.test.fidl .
+	cp $$FUCHSIA_DIR/zircon/system/utest/fidl/transformer_tests.cc .
+	cp $$FUCHSIA_DIR/zircon/system/ulib/fidl/transformer.cc .
+
+tof:
+	cp transformer.test.fidl $$FUCHSIA_DIR/zircon/system/utest/fidl/
+	cp transformer_tests.cc $$FUCHSIA_DIR/zircon/system/utest/fidl/
+	cp transformer.cc $$FUCHSIA_DIR/zircon/system/ulib/fidl/
