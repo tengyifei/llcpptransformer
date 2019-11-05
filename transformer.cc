@@ -30,7 +30,6 @@ struct TraversalResult {
   uint32_t dst_out_of_line_size = 0u;
   uint32_t handle_count = 0u;
 
-  // TODO(apang): Can we delete this?
   TraversalResult& operator+=(const TraversalResult rhs) {
     src_out_of_line_size += rhs.src_out_of_line_size;
     dst_out_of_line_size += rhs.dst_out_of_line_size;
@@ -333,8 +332,6 @@ class TransformerBase {
 
     // TODO(apang): Think about putting logic for updating out_traversal_result in Copy/etc
     // functions.
-
-    return ZX_OK;
   }
 
   zx_status_t TransformStructPointer(const fidl::FidlCodedStruct& src_coded_struct,
@@ -348,26 +345,25 @@ class TransformerBase {
       return ZX_OK;
     }
 
-    uint32_t aligned_src_size = FIDL_ALIGN(src_coded_struct.size);
-    uint32_t aligned_dst_size = FIDL_ALIGN(dst_coded_struct.size);
+    uint32_t src_aligned_size = FIDL_ALIGN(src_coded_struct.size);
+    uint32_t dst_aligned_size = FIDL_ALIGN(dst_coded_struct.size);
     const auto struct_position = Position{
         position.src_out_of_line_offset,
-        position.src_out_of_line_offset + aligned_src_size,
+        position.src_out_of_line_offset + src_aligned_size,
         position.dst_out_of_line_offset,
-        position.dst_out_of_line_offset + aligned_dst_size,
+        position.dst_out_of_line_offset + dst_aligned_size,
     };
 
-    out_traversal_result->src_out_of_line_size += aligned_src_size;
-    out_traversal_result->dst_out_of_line_size += aligned_dst_size;
+    out_traversal_result->src_out_of_line_size += src_aligned_size;
+    out_traversal_result->dst_out_of_line_size += dst_aligned_size;
 
-    return TransformStruct(src_coded_struct, dst_coded_struct, struct_position, aligned_dst_size,
+    return TransformStruct(src_coded_struct, dst_coded_struct, struct_position, dst_aligned_size,
                            out_traversal_result);
   }
 
   zx_status_t TransformStruct(const fidl::FidlCodedStruct& src_coded_struct,
-                              const fidl::FidlCodedStruct&,
-                              const Position& position, uint32_t dst_size,
-                              TraversalResult* out_traversal_result) {
+                              const fidl::FidlCodedStruct&, const Position& position,
+                              uint32_t dst_size, TraversalResult* out_traversal_result) {
     // Note: we cannot use dst_coded_struct.size, and must instead rely on
     // the provided dst_size since this struct could be placed in an alignment
     // context that is larger than its inherent size.
@@ -419,6 +415,7 @@ class TransformerBase {
 
       assert(src_field.alt_field);
       const auto& dst_field = *src_field.alt_field;
+      assert(dst_field.type);
 
       // Pad between fields (if needed).
       if (current_position.dst_inline_offset < dst_field.offset) {
@@ -566,8 +563,10 @@ class TransformerBase {
       return result;
     }
 
-    const uint32_t src_contents_size = FIDL_ALIGN(src_field_size) + contents_traversal_result.src_out_of_line_size; // here
-    const uint32_t dst_contents_size = dst_field_size + contents_traversal_result.dst_out_of_line_size;
+    const uint32_t src_contents_size =
+        FIDL_ALIGN(src_field_size) + contents_traversal_result.src_out_of_line_size;
+    const uint32_t dst_contents_size =
+        dst_field_size + contents_traversal_result.dst_out_of_line_size;
 
     fidl_envelope_t dst_envelope = *src_envelope;
     dst_envelope.num_bytes = dst_contents_size;
@@ -611,7 +610,7 @@ class TransformerBase {
     src_dst->Copy(position, sizeof(fidl_table_t));
 
     const Position envelopes_vector_position = position.IncreaseInlineOffset(sizeof(fidl_table_t));
-    const fidl_envelope_t* envelopes_vector =
+    const fidl_envelope_t* __attribute__((unused)) envelopes_vector =
         src_dst->Read<fidl_envelope_t>(envelopes_vector_position);
     const uint32_t envelopes_vector_size =
         static_cast<uint32_t>(table->envelopes.count * sizeof(fidl_envelope_t));
@@ -656,7 +655,6 @@ class TransformerBase {
       src_envelope_data_offset += envelope_traversal_result.src_out_of_line_size;
       dst_envelope_data_offset += envelope_traversal_result.dst_out_of_line_size;
 
-      // TODO(apang): Add operator+ to TraversalResult?
       *out_traversal_result += envelope_traversal_result;
     }
 
@@ -763,7 +761,6 @@ class V1ToOld final : public TransformerBase {
         position.dst_out_of_line_offset + dst_aligned_size,
     };
 
-    // out_traversal_result->src_out_of_line_size += src_aligned_size; // ?
     out_traversal_result->dst_out_of_line_size += dst_aligned_size;
 
     return TransformUnion(src_coded_union, dst_coded_union, union_position, out_traversal_result);
@@ -871,15 +868,15 @@ class OldToV1 final : public TransformerBase {
       return ZX_OK;
     }
 
-    uint32_t aligned_src_size = FIDL_ALIGN(src_coded_union.size);
+    uint32_t src_aligned_size = FIDL_ALIGN(src_coded_union.size);
     const auto union_position = Position{
         position.src_out_of_line_offset,
-        position.src_out_of_line_offset + aligned_src_size,
+        position.src_out_of_line_offset + src_aligned_size,
         position.dst_inline_offset,
         position.dst_out_of_line_offset,
     };
 
-    out_traversal_result->src_out_of_line_size += aligned_src_size;
+    out_traversal_result->src_out_of_line_size += src_aligned_size;
     return TransformUnion(src_coded_union, dst_coded_union, union_position, out_traversal_result);
   }
 
@@ -954,6 +951,8 @@ zx_status_t fidl_transform(fidl_transformation_t transformation, const fidl_type
   assert(src_bytes);
   assert(dst_bytes);
   assert(out_dst_num_bytes);
+  assert(fidl::IsAligned(src_bytes));
+  assert(fidl::IsAligned(dst_bytes));
 
   switch (transformation) {
     case FIDL_TRANSFORMATION_NONE:
